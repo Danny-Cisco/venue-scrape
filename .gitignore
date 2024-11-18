@@ -1,0 +1,32 @@
+# macOS system files
+.DS_Store
+
+# Node.js dependencies
+node_modules/
+
+# Build and output files
+/build/
+/.svelte-kit/
+/package/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# npm-specific files
+package-lock.json
+
+# IDE-specific files
+.vscode/
+.idea/
