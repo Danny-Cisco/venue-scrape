@@ -9,10 +9,10 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Skeleton</strong>
+				<strong class="text-xl uppercase">MindMapr</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a
+				<!-- <a
 					class="btn btn-sm variant-ghost-surface"
 					href="https://discord.gg/EXqV7W8MtY"
 					target="_blank"
@@ -35,7 +35,7 @@
 					rel="noreferrer"
 				>
 					GitHub
-				</a>
+				</a> -->
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
