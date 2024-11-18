@@ -69,8 +69,46 @@
 		capturedImage = canvas.toDataURL('image/png');
 	}
 
+	// Add event listener for the hotkey Alt + Shift + Y
+	function handleHotkey(event) {
+		console.log('Keydown Event:', event); // Log the entire event object for debugging
+
+		if (event.altKey) {
+			console.log('Alt/Option key is pressed');
+		} else {
+			console.log('Alt/Option key is NOT pressed');
+		}
+
+		if (event.shiftKey) {
+			console.log('Shift key is pressed');
+		} else {
+			console.log('Shift key is NOT pressed');
+		}
+
+		// Use event.code instead of event.key for consistent detection
+		if (event.code === 'KeyY') {
+			console.log('Y key is pressed (detected via code)');
+		} else {
+			console.log(`Key pressed is not Y, it is: ${event.code}`);
+		}
+
+		// Check if the full hotkey combination is detected
+		if (event.altKey && event.shiftKey && event.code === 'KeyY') {
+			console.log('Hotkey Alt + Shift + Y detected!');
+			captureImage(); // Trigger the image capture
+		} else {
+			console.log('Hotkey combination not detected');
+		}
+	}
+
+	// Add and remove event listener on component lifecycle
 	onMount(() => {
 		getVideoDevices();
+		window.addEventListener('keydown', handleHotkey);
+
+		return () => {
+			window.removeEventListener('keydown', handleHotkey);
+		};
 	});
 </script>
 
