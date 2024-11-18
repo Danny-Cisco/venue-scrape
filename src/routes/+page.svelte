@@ -17,7 +17,7 @@
 		}
 	}
 
-	// Function to start video stream with selected device and resolution
+	// Function to start video stream with the selected device and preferred resolution
 	async function startStream() {
 		if (!selectedDeviceId) return;
 
@@ -26,22 +26,28 @@
 			videoElement.srcObject.getTracks().forEach((track) => track.stop());
 		}
 
+		// Constraints for 1280x720 resolution, or fallback to available resolution
+		const constraints = {
+			video: {
+				deviceId: { exact: selectedDeviceId },
+				width: { ideal: 1280 }, // Request 1280px width if available
+				height: { ideal: 720 } // Request 720px height if available
+			}
+		};
+
 		try {
-			const constraints = {
-				video: {
-					deviceId: { exact: selectedDeviceId },
-					width: { ideal: 1280 }, // Set desired width
-					height: { ideal: 720 } // Set desired height
-				}
-			};
 			const stream = await navigator.mediaDevices.getUserMedia(constraints);
 			videoElement.srcObject = stream;
+
+			// Log the actual resolution used
+			const settings = stream.getVideoTracks()[0].getSettings();
+			console.log('Actual Resolution:', settings.width, 'x', settings.height);
 		} catch (error) {
 			console.error('Error accessing webcam:', error);
 		}
 	}
 
-	// Update selected device and start stream
+	// Handle device change
 	function handleDeviceChange(event) {
 		selectedDeviceId = event.target.value;
 		startStream();
@@ -53,7 +59,9 @@
 </script>
 
 <main class="flex flex-col items-center justify-center min-h-screen text-gray-800 bg-gray-100">
-	<h1 class="mb-6 text-2xl font-bold">Select Camera and View Live Feed</h1>
+	<h1 class="mb-6 text-2xl font-bold">Select Camera</h1>
+
+	<!-- Camera Selector -->
 	<div class="w-full max-w-md mb-6">
 		<label for="camera-select" class="block mb-2 text-sm font-medium text-gray-700">
 			Choose Camera:
@@ -69,6 +77,8 @@
 			{/each}
 		</select>
 	</div>
+
+	<!-- Video Feed -->
 	<video
 		bind:this={videoElement}
 		autoplay
