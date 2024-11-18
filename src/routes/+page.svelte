@@ -5,6 +5,7 @@
 	let videoElement;
 	let selectedDeviceId = '';
 	let devices = writable([]);
+	let capturedImage = ''; // Base64 string to hold the captured image
 
 	// Function to enumerate video input devices
 	async function getVideoDevices() {
@@ -47,10 +48,25 @@
 		}
 	}
 
-	// Handle device change
+	// Function to handle device change
 	function handleDeviceChange(event) {
 		selectedDeviceId = event.target.value;
 		startStream();
+	}
+
+	// Function to capture a still picture from the video feed
+	function captureImage() {
+		// Create a canvas to draw the video frame
+		const canvas = document.createElement('canvas');
+		canvas.width = videoElement.videoWidth;
+		canvas.height = videoElement.videoHeight;
+
+		// Draw the current frame of the video onto the canvas
+		const context = canvas.getContext('2d');
+		context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+		// Convert the canvas to a Base64 image
+		capturedImage = canvas.toDataURL('image/png');
 	}
 
 	onMount(() => {
@@ -84,6 +100,25 @@
 		autoplay
 		playsinline
 		class="w-full max-w-3xl border-4 border-indigo-600 rounded-lg shadow-lg"
+	></video>
+
+	<!-- Capture Button -->
+	<button
+		on:click={captureImage}
+		class="px-4 py-2 mt-4 text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700"
 	>
-	</video>
+		Capture Image
+	</button>
+
+	<!-- Display Captured Image -->
+	{#if capturedImage}
+		<div class="mt-6">
+			<h2 class="mb-4 text-lg font-bold">Captured Image:</h2>
+			<img
+				src={capturedImage}
+				alt="Captured Frame"
+				class="max-w-full border rounded-lg shadow-md"
+			/>
+		</div>
+	{/if}
 </main>
