@@ -1,7 +1,19 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
 	export let videoElement;
 	export let triggerStartStream = false;
 	export let selectedDeviceId = '';
+	export let capturedImage;
+
+	let dispatch = createEventDispatcher();
+
+	function dispatchOpen() {
+		dispatch('openModal');
+	}
+
+	function dispatchCaptureImage() {
+		dispatch('captureImage');
+	}
 
 	$: if (triggerStartStream) {
 		startStream();
@@ -10,6 +22,7 @@
 
 	// Function to start video stream with the selected device and preferred resolution
 	async function startStream() {
+		triggerStartStream = false;
 		if (!selectedDeviceId) return;
 
 		// Stop any existing video stream
@@ -39,9 +52,17 @@
 	}
 </script>
 
-<video
-	bind:this={videoElement}
-	autoplay
-	playsinline
+<div
 	class="w-full max-w-[250px] h-[144px] absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
-></video>
+>
+	<div class="h-[144px]">
+		<video on:click={dispatchOpen} bind:this={videoElement} autoplay playsinline></video>
+	</div>
+	<!-- Capture Button -->
+	<button
+		on:click={dispatchCaptureImage}
+		class="w-full px-4 py-2 text-white bg-indigo-600 rounded-full shadow hover:bg-indigo-700"
+	>
+		Capture Image
+	</button>
+</div>
