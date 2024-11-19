@@ -18,7 +18,7 @@
 					target="_blank"
 					rel="noreferrer"
 				>
-					Discord
+					DiscordÁ
 				</a>
 				<a
 					class="btn btn-sm variant-ghost-surface"
@@ -39,6 +39,7 @@
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
+
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>

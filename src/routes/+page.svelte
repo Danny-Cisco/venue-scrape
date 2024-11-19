@@ -111,33 +111,10 @@
 
 	// Add event listener for the hotkey Alt + Shift + Y
 	function handleHotkey(event) {
-		console.log('Keydown Event:', event); // Log the entire event object for debugging
-
-		if (event.altKey) {
-			console.log('Alt/Option key is pressed');
-		} else {
-			console.log('Alt/Option key is NOT pressed');
-		}
-
-		if (event.shiftKey) {
-			console.log('Shift key is pressed');
-		} else {
-			console.log('Shift key is NOT pressed');
-		}
-
-		// Use event.code instead of event.key for consistent detection
-		if (event.code === 'KeyY') {
-			console.log('Y key is pressed (detected via code)');
-		} else {
-			console.log(`Key pressed is not Y, it is: ${event.code}`);
-		}
-
 		// Check if the full hotkey combination is detected
 		if (event.altKey && event.shiftKey && event.code === 'KeyY') {
 			console.log('Hotkey Alt + Shift + Y detected!');
 			captureImage(); // Trigger the image capture
-		} else {
-			console.log('Hotkey combination not detected');
 		}
 	}
 
@@ -191,7 +168,7 @@
 		bind:this={videoElement}
 		autoplay
 		playsinline
-		class="w-full max-w-3xl border-4 border-indigo-600 rounded-lg shadow-lg"
+		class="w-full max-w-[250px] h-[144px] absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
 	></video>
 
 	<!-- Capture Button -->
