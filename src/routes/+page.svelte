@@ -6,6 +6,46 @@
 	let selectedDeviceId = '';
 	let devices = writable([]);
 	let capturedImage = ''; // Base64 string to hold the captured image
+	let permissionStatus = writable('pending'); // Track permission status
+
+	// Function to request camera permissions
+	async function requestCameraPermission() {
+		try {
+			// First check if permissions are already granted
+			const result = await navigator.permissions.query({ name: 'camera' });
+
+			if (result.state === 'granted') {
+				permissionStatus.set('granted');
+				await getVideoDevices();
+			} else if (result.state === 'prompt') {
+				// If permission hasn't been granted yet, request it
+				try {
+					// Request access to just video to get initial permission
+					await navigator.mediaDevices.getUserMedia({ video: true });
+					permissionStatus.set('granted');
+					await getVideoDevices();
+				} catch (error) {
+					console.error('Permission denied or error occurred:', error);
+					permissionStatus.set('denied');
+				}
+			} else {
+				// Permission was denied previously
+				permissionStatus.set('denied');
+				console.error('Camera permission denied');
+			}
+
+			// Listen for permission changes
+			result.addEventListener('change', (e) => {
+				permissionStatus.set(e.target.state);
+				if (e.target.state === 'granted') {
+					getVideoDevices();
+				}
+			});
+		} catch (error) {
+			console.error('Error checking camera permissions:', error);
+			permissionStatus.set('error');
+		}
+	}
 
 	// Function to enumerate video input devices
 	async function getVideoDevices() {
@@ -103,17 +143,32 @@
 
 	// Add and remove event listener on component lifecycle
 	onMount(() => {
-		getVideoDevices();
+		requestCameraPermission(); // Request camera permissions on mount
 		window.addEventListener('keydown', handleHotkey);
 
 		return () => {
+			// Clean up event listener and stop any active streams when component unmounts
 			window.removeEventListener('keydown', handleHotkey);
+			if (videoElement?.srcObject) {
+				videoElement.srcObject.getTracks().forEach((track) => track.stop());
+			}
 		};
 	});
 </script>
 
 <main class="flex flex-col items-center justify-center min-h-screen text-gray-800 bg-gray-100">
 	<h1 class="mb-6 text-2xl font-bold">Select Camera</h1>
+
+	{#if $permissionStatus === 'denied'}
+		<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
+			Camera access was denied. Please enable camera access in your browser settings to use this
+			feature.
+		</div>
+	{:else if $permissionStatus === 'error'}
+		<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
+			An error occurred while accessing the camera. Please try again.
+		</div>
+	{/if}
 
 	<!-- Camera Selector -->
 	<div class="w-full max-w-md mb-6">
