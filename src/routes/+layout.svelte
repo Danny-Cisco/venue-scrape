@@ -1,8 +1,7 @@
 <script>
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
-	import { fly } from 'svelte/transition';
-
+	import CapturedImageFly from '$lib/components/video/CapturedImageFly.svelte';
 	import { onMount, tick } from 'svelte';
 
 	import Video from '$lib/components/video/Video.svelte';
@@ -10,6 +9,7 @@
 	import { writable } from 'svelte/store';
 
 	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
+	import { capturedImage } from '$lib/stores/capturedImage.js';
 
 	const hotkeyEmitter = createHotkeyEmitter();
 
@@ -17,7 +17,6 @@
 	let triggerStartStream = false;
 	let selectedDeviceId = '';
 	let devices = writable([]);
-	let capturedImage = ''; // Base64 string to hold the captured image
 	let permissionStatus = writable('pending'); // Track permission status
 	let showCameraSettingsModal = false;
 
@@ -26,8 +25,6 @@
 	function startStream() {
 		triggerStartStream = true;
 	}
-
-	$: capturedImage = capturedImage;
 
 	// Function to request camera permissions
 	async function requestCameraPermission() {
@@ -84,7 +81,7 @@
 	}
 	// Function to capture a still picture from the video feed
 	function captureImage() {
-		capturedImage = null; // Clear the image temporarily
+		capturedImage.set(''); // Clear the image temporarily
 		tick().then(() => {
 			setTimeout(() => {
 				if (!selectedDeviceId) return;
@@ -98,8 +95,9 @@
 				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
 				// Convert the canvas to a Base64 image
-				capturedImage = canvas.toDataURL('image/png');
-			}, 10); // 50ms timeout to ensure a re-render
+				const imageData = canvas.toDataURL('image/png');
+				capturedImage.set(imageData); // Update the store with the new image
+			}, 10); // 10ms timeout to ensure re-render
 		});
 	}
 	// Add and remove event listener on component lifecycle
@@ -171,25 +169,12 @@
 		<Video
 			bind:videoElement
 			bind:triggerStartStream
-			bind:capturedImage
 			{selectedDeviceId}
 			on:openModal={handleVideoClick}
 			on:captureImage={captureImage}
 		/>
 
-		<!-- Display Captured Image -->
-		{#if capturedImage}
-			<div
-				in:fly={{ y: -200, duration: 500 }}
-				class="w-full max-w-[250px] h-[144px] absolute top-[270px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
-			>
-				<img
-					src={capturedImage}
-					alt="Captured Frame"
-					class="max-w-full border rounded-lg shadow-md"
-				/>
-			</div>
-		{/if}
+		<CapturedImageFly />
 
 		<CameraSettingsModal
 			bind:showCameraSettingsModal
