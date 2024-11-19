@@ -86,15 +86,6 @@
 		capturedImage = canvas.toDataURL('image/png');
 	}
 
-	// // Add event listener for the hotkey Alt + Shift + Y
-	// function handleHotkey(event) {
-	// 	// Check if the full hotkey combination is detected
-	// 	if (event.altKey && event.shiftKey && event.code === 'KeyY') {
-	// 		console.log('Hotkey Alt + Shift + Y detected!');
-	// 		captureImage(); // Trigger the image capture
-	// 	}
-	// }
-
 	// Add and remove event listener on component lifecycle
 	onMount(() => {
 		requestCameraPermission(); // Request camera permissions on mount
