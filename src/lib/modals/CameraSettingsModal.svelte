@@ -15,6 +15,7 @@
 		selectedDeviceId = event.target.value;
 		// triggerStartStream = true;
 		dispatch('startStream');
+		handleCloseModal();
 	}
 
 	function handleCloseModal() {
