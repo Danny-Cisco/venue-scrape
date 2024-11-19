@@ -1,8 +1,9 @@
 <script>
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { fly } from 'svelte/transition';
 
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	import Video from '$lib/components/video/Video.svelte';
 	import CameraSettingsModal from '$lib/modals/CameraSettingsModal.svelte';
@@ -25,6 +26,8 @@
 	function startStream() {
 		triggerStartStream = true;
 	}
+
+	$: capturedImage = capturedImage;
 
 	// Function to request camera permissions
 	async function requestCameraPermission() {
@@ -81,17 +84,23 @@
 	}
 	// Function to capture a still picture from the video feed
 	function captureImage() {
-		// Create a canvas to draw the video frame
-		const canvas = document.createElement('canvas');
-		canvas.width = videoElement.videoWidth;
-		canvas.height = videoElement.videoHeight;
+		capturedImage = null; // Clear the image temporarily
+		tick().then(() => {
+			setTimeout(() => {
+				if (!selectedDeviceId) return;
+				// Create a canvas to draw the video frame
+				const canvas = document.createElement('canvas');
+				canvas.width = videoElement.videoWidth;
+				canvas.height = videoElement.videoHeight;
 
-		// Draw the current frame of the video onto the canvas
-		const context = canvas.getContext('2d');
-		context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+				// Draw the current frame of the video onto the canvas
+				const context = canvas.getContext('2d');
+				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-		// Convert the canvas to a Base64 image
-		capturedImage = canvas.toDataURL('image/png');
+				// Convert the canvas to a Base64 image
+				capturedImage = canvas.toDataURL('image/png');
+			}, 10); // 50ms timeout to ensure a re-render
+		});
 	}
 	// Add and remove event listener on component lifecycle
 	onMount(() => {
@@ -171,7 +180,8 @@
 		<!-- Display Captured Image -->
 		{#if capturedImage}
 			<div
-				class="w-full max-w-[250px] h-[144px] absolute bottom-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
+				in:fly={{ y: -200, duration: 500 }}
+				class="w-full max-w-[250px] h-[144px] absolute top-[270px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
 			>
 				<img
 					src={capturedImage}

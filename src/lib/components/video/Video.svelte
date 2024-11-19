@@ -3,9 +3,13 @@
 	export let videoElement;
 	export let triggerStartStream = false;
 	export let selectedDeviceId = '';
-	export let capturedImage;
 
 	let dispatch = createEventDispatcher();
+	let hover = false;
+
+	function showTips() {
+		hover = true;
+	}
 
 	function dispatchOpen() {
 		dispatch('openModal');
@@ -55,9 +59,15 @@
 <div
 	class="w-full max-w-[250px] h-[144px] absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
 >
-	<div class="h-[144px]">
-		<video on:click={dispatchOpen} bind:this={videoElement} autoplay playsinline></video>
+	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
+		<video bind:this={videoElement} autoplay playsinline></video>
+		{#if !selectedDeviceId || hover}
+			<div class="absolute inset-0 flex flex-col items-center justify-center text-red-500">
+				click to select camera
+			</div>
+		{/if}
 	</div>
+
 	<!-- Capture Button -->
 	<button
 		on:click={dispatchCaptureImage}

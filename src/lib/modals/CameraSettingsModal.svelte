@@ -35,10 +35,11 @@
 		on:click={handleClickOutside}
 		class="absolute inset-0 flex flex-col items-center justify-center h-full mx-auto bg-black/50"
 	>
-		<div bind:this={modalBox} class="w-full max-w-md p-4 mb-6 bg-white rounded-xl">
-			<label for="camera-select" class="block mb-2 text-sm font-medium text-gray-700">
+		<div bind:this={modalBox} class="w-full max-w-md p-4 pb-6 bg-white rounded-xl">
+			<h2 class="mb-2 text-center">Camera Settings</h2>
+			<!-- <label for="camera-select" class="block mb-2 text-sm font-medium text-gray-700">
 				Choose Camera:
-			</label>
+			</label> -->
 			<select
 				id="camera-select"
 				class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
