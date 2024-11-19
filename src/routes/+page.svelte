@@ -161,8 +161,7 @@
 
 	{#if $permissionStatus === 'denied'}
 		<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
-			Camera access was denied. Please enable camera access in your browser settings to use this
-			feature.
+			Copy this link to a new tab to enable camera: chrome://settings/content/camera
 		</div>
 	{:else if $permissionStatus === 'error'}
 		<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
