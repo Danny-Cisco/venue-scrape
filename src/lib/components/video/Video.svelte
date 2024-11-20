@@ -57,12 +57,12 @@
 </script>
 
 <div
-	class="w-full max-w-[250px] h-[144px] absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
+	class="w-full max-w-[250px] h-[144px] bg-gray-400 absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
 >
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
 		<video bind:this={videoElement} autoplay playsinline></video>
 		{#if !selectedDeviceId || hover}
-			<div class="absolute inset-0 flex flex-col items-center justify-center text-red-500">
+			<div class="absolute inset-0 flex flex-col items-center justify-center text-gray-200">
 				click to select camera
 			</div>
 		{/if}
