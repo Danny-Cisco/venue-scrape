@@ -33,7 +33,7 @@
 {#if showCameraSettingsModal}
 	<div
 		on:click={handleClickOutside}
-		class="absolute inset-0 flex flex-col items-center justify-center h-full mx-auto bg-black/50"
+		class="absolute inset-0 flex flex-col items-center justify-center h-full mx-auto z-[99] bg-black/50"
 	>
 		<div bind:this={modalBox} class="w-full max-w-md p-4 pb-6 bg-white rounded-xl">
 			<h2 class="mb-2 text-center">Camera Settings</h2>

@@ -56,9 +56,7 @@
 	}
 </script>
 
-<div
-	class="w-full max-w-[250px] h-[144px] bg-gray-100 border-2 border-[magenta] rounded-lg shadow-lg"
->
+<div class="w-full max-w-[250px] h-[144px] bg-gray-100 border-2 border-[magenta] rounded-lg shadow">
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
 		<video bind:this={videoElement} autoplay playsinline></video>
 		{#if !selectedDeviceId || hover}
