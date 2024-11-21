@@ -57,12 +57,12 @@
 </script>
 
 <div
-	class="w-full max-w-[250px] h-[144px] bg-gray-400 absolute top-[70px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
+	class="w-full max-w-[250px] h-[144px] bg-gray-100 absolute top-[70px] right-[30px] border-2 border-[magenta] rounded-lg shadow-lg"
 >
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
 		<video bind:this={videoElement} autoplay playsinline></video>
 		{#if !selectedDeviceId || hover}
-			<div class="absolute inset-0 flex flex-col items-center justify-center text-gray-200">
+			<div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
 				click to select camera
 			</div>
 		{/if}
@@ -71,22 +71,34 @@
 	<!-- Capture Button -->
 	<button
 		on:click={dispatchCaptureImage}
-		class="flex w-full gap-2 px-4 py-2 text-white bg-indigo-600 rounded-full shadow btn hover:bg-indigo-700"
+		class="flex w-full gap-1 items-center px-4 py-2 text-[magenta] bg-white rounded-full shadow btn hover:bg-gray-200"
 	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 424 500"
+			width="18pt"
+			height="18pt"
 			fill="none"
-			viewBox="0 0 24 24"
-			stroke-width="1.5"
-			stroke="currentColor"
-			class="size-6"
+			stroke="magenta"
+			stroke-width="2"
+			><circle cx="17" cy="407" r="15" /><circle cx="32" cy="392" r="30" /><circle
+				cx="47"
+				cy="377"
+				r="45"
+			/><circle cx="62" cy="362" r="60" /><circle cx="77" cy="347" r="75" /><circle
+				cx="92"
+				cy="332"
+				r="90"
+			/><circle cx="107" cy="317" r="105" /><circle cx="122" cy="302" r="120" /><circle
+				cx="137"
+				cy="287"
+				r="135"
+			/><circle cx="152" cy="272" r="150" /><circle cx="167" cy="257" r="165" /><circle
+				cx="182"
+				cy="242"
+				r="180"
+			/></svg
 		>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-			/>
-		</svg>
 		Action
 	</button>
 </div>
