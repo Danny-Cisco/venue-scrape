@@ -57,7 +57,7 @@
 </script>
 
 <div
-	class="w-full max-w-[250px] h-[144px] bg-gray-100 absolute top-[70px] right-[30px] border-2 border-[magenta] rounded-lg shadow-lg"
+	class="w-full max-w-[250px] h-[144px] bg-gray-100 border-2 border-[magenta] rounded-lg shadow-lg"
 >
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
 		<video bind:this={videoElement} autoplay playsinline></video>
@@ -67,38 +67,38 @@
 			</div>
 		{/if}
 	</div>
-
-	<!-- Capture Button -->
-	<button
-		on:click={dispatchCaptureImage}
-		class="flex w-full gap-1 items-center px-4 py-2 text-[magenta] bg-white rounded-full shadow btn hover:bg-gray-200"
-	>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 424 500"
-			width="18pt"
-			height="18pt"
-			fill="none"
-			stroke="magenta"
-			stroke-width="2"
-			><circle cx="17" cy="407" r="15" /><circle cx="32" cy="392" r="30" /><circle
-				cx="47"
-				cy="377"
-				r="45"
-			/><circle cx="62" cy="362" r="60" /><circle cx="77" cy="347" r="75" /><circle
-				cx="92"
-				cy="332"
-				r="90"
-			/><circle cx="107" cy="317" r="105" /><circle cx="122" cy="302" r="120" /><circle
-				cx="137"
-				cy="287"
-				r="135"
-			/><circle cx="152" cy="272" r="150" /><circle cx="167" cy="257" r="165" /><circle
-				cx="182"
-				cy="242"
-				r="180"
-			/></svg
-		>
-		Action
-	</button>
 </div>
+
+<!-- Capture Button -->
+<button
+	on:click={dispatchCaptureImage}
+	class="flex w-full gap-1 items-center my-4 px-4 py-2 text-[magenta] bg-white rounded-full shadow btn hover:bg-gray-200"
+>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 424 500"
+		width="18pt"
+		height="18pt"
+		fill="none"
+		stroke="magenta"
+		stroke-width="2"
+		><circle cx="17" cy="407" r="15" /><circle cx="32" cy="392" r="30" /><circle
+			cx="47"
+			cy="377"
+			r="45"
+		/><circle cx="62" cy="362" r="60" /><circle cx="77" cy="347" r="75" /><circle
+			cx="92"
+			cy="332"
+			r="90"
+		/><circle cx="107" cy="317" r="105" /><circle cx="122" cy="302" r="120" /><circle
+			cx="137"
+			cy="287"
+			r="135"
+		/><circle cx="152" cy="272" r="150" /><circle cx="167" cy="257" r="165" /><circle
+			cx="182"
+			cy="242"
+			r="180"
+		/></svg
+	>
+	Action
+</button>

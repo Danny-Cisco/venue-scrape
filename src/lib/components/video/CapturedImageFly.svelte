@@ -8,7 +8,7 @@
 {#if $capturedImage}
 	<div
 		in:fly={{ y: -200, duration: 500 }}
-		class="w-full max-w-[250px] h-[144px] absolute top-[270px] right-[30px] border-4 border-indigo-600 rounded-lg shadow-lg"
+		class="w-full max-w-[250px] h-[144px] absolute inset-0 border-0 border-[magenta] rounded-lg shadow-lg"
 	>
 		<img src={$capturedImage} alt="Captured Frame" class="max-w-full border rounded-lg shadow-md" />
 	</div>
