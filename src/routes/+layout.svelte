@@ -2,7 +2,7 @@
 	import '../app.postcss';
 	import CapturedImageFly from '$lib/components/video/CapturedImageFly.svelte';
 	import { onMount, tick } from 'svelte';
-	import { slide, fly } from 'svelte/transition';
+	import { slide, fly, fade } from 'svelte/transition';
 	import Video from '$lib/components/video/Video.svelte';
 	import CameraSettingsModal from '$lib/modals/CameraSettingsModal.svelte';
 	import { writable } from 'svelte/store';
@@ -18,12 +18,22 @@
 	let permissionStatus = writable('pending');
 	let showCameraSettingsModal = false;
 
-	const showLeftSidebar = writable(false);
-	const showRightSidebar = writable(false);
+	const showLeftSidebar = writable(true);
+	const showRightSidebar = writable(true);
 
 	function startStream() {
 		triggerStartStream = true;
 	}
+
+	// Detect if the user is on mobile and update the stores
+	onMount(() => {
+		const isMobile = window.innerWidth <= 768; // Common breakpoint for mobile
+
+		if (isMobile) {
+			showLeftSidebar.set(false);
+			showRightSidebar.set(false);
+		}
+	});
 
 	async function requestCameraPermission() {
 		try {
@@ -103,7 +113,7 @@
 
 <div class="relative flex flex-col min-h-screen text-gray-800 bg-gray-200">
 	<!-- Header -->
-	<header class="flex items-center px-4 h-[10vh] py-2 bg-white shadow">
+	<header class="flex items-center px-4 h-[10vh] py-2 bg-white">
 		<strong class="flex items-end gap-1 text-3xl text-[magenta]">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -271,6 +281,8 @@
 				stroke-width="1.5"
 				stroke="currentColor"
 				class="size-6"
+				style="transition: transform 0.3s ease;"
+				style:transform={$showLeftSidebar ? 'rotate(0deg)' : 'rotate(180deg)'}
 			>
 				<path
 					stroke-linecap="round"
@@ -343,13 +355,16 @@
 		<button
 			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow right-0 top-[10vh]"
 			on:click={() => showRightSidebar.update((v) => !v)}
-			><svg
+		>
+			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="size-6"
+				class=" size-6"
+				style="transition: transform 0.3s ease;"
+				style:transform={$showRightSidebar ? 'rotate(0deg)' : 'rotate(-180deg)'}
 			>
 				<path
 					stroke-linecap="round"
@@ -372,5 +387,9 @@
 	.size-5 {
 		width: 20px;
 		height: 20px;
+	}
+
+	.rotate-180 {
+		transform: rotate(180deg);
 	}
 </style>
