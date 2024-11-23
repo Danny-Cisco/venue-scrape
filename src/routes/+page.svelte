@@ -1,3 +1,20 @@
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import type { ActionData, SubmitFunction } from './$types.js';
+
+	export let form: ActionData;
+
+	let loading = false;
+
+	const handleSubmit: SubmitFunction = () => {
+		loading = true;
+		return async ({ update }) => {
+			update();
+			loading = false;
+		};
+	};
+</script>
+
 <div class="flex flex-col justify-center h-full max-w-md gap-2 mx-auto">
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -40,4 +57,40 @@
 
 		<p>Amplify your thoughts in Ai meeting rooms now</p>
 	</div>
+
+	<form class="flex row flex-center" method="POST" use:enhance={handleSubmit}>
+		<div class="col-6 form-widget">
+			<h2 class="header">Sign in via magic link with your email below</h2>
+			{#if form?.message !== undefined}
+				<div class="success {form?.success ? '' : 'fail'}">
+					{form?.message}
+				</div>
+			{/if}
+			<div>
+				<label for="email">Email address</label>
+				<input
+					id="email"
+					name="email"
+					class="inputField"
+					type="email"
+					placeholder="Your email"
+					value={form?.email ?? ''}
+				/>
+			</div>
+			{#if form?.errors}
+				<div class="flex flex-col gap-1 mt-2">
+					{#each Object.entries(form.errors) as [key, error]}
+						<span class="flex items-center text-sm text-red-500 error">
+							{error}
+						</span>
+					{/each}
+				</div>
+			{/if}
+			<div>
+				<button class="block button primary">
+					{loading ? 'Loading' : 'Send magic link'}
+				</button>
+			</div>
+		</div>
+	</form>
 </div>

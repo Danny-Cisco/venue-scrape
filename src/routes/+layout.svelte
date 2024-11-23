@@ -9,6 +9,12 @@
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
 
+	import { invalidate } from '$app/navigation';
+
+	export let data;
+	let { supabase, session } = data;
+	$: ({ supabase, session } = data);
+
 	const hotkeyEmitter = createHotkeyEmitter();
 
 	let videoElement;
@@ -101,9 +107,15 @@
 	onMount(() => {
 		requestCameraPermission();
 		const unsubscribe = hotkeyEmitter.subscribe(captureImage);
+		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
+			if (newSession?.expires_at !== session?.expires_at) {
+				invalidate('supabase:auth');
+			}
+		});
 
 		return () => {
 			unsubscribe();
+			data.subscription.unsubscribe();
 			if (videoElement?.srcObject) {
 				videoElement.srcObject.getTracks().forEach((track) => track.stop());
 			}
