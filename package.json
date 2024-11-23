@@ -32,6 +32,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.1",
     "openai": "^4.72.0"
   }
