@@ -1,4 +1,3 @@
-<!-- src/routes/account/+page.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
@@ -11,10 +10,50 @@
 
 	let profileForm: HTMLFormElement;
 	let loading = false;
-	let fullName: string = profile?.full_name ?? '';
 	let username: string = profile?.username ?? '';
-	let website: string = profile?.website ?? '';
 	let avatarUrl: string = profile?.avatar_url ?? '';
+	let avatarFile: FileList;
+	let uploading = false;
+	let uploadError: string | null = null;
+
+	async function uploadAvatar() {
+		try {
+			uploading = true;
+			uploadError = null;
+
+			if (!avatarFile?.[0]) {
+				throw new Error('Please select an image to upload.');
+			}
+
+			const file = avatarFile[0];
+			const fileExt = file.name.split('.').pop();
+			const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
+			const filePath = `${fileName}`;
+
+			// Upload the file to Supabase storage
+			const { error: storageError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+			if (storageError) {
+				throw storageError;
+			}
+
+			// Get the public URL
+			const {
+				data: { publicUrl }
+			} = supabase.storage.from('avatars').getPublicUrl(filePath);
+
+			// Update the avatar_url in the form input
+			avatarUrl = publicUrl;
+
+			// Reset file input
+			avatarFile = undefined;
+		} catch (error) {
+			uploadError = error instanceof Error ? error.message : 'Error uploading avatar';
+			console.error('Upload error:', error);
+		} finally {
+			uploading = false;
+		}
+	}
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true;
@@ -40,33 +79,77 @@
 		use:enhance={handleSubmit}
 		bind:this={profileForm}
 	>
-		<div>
-			<label for="email">Email</label>
-			<input id="email" type="text" value={session.user.email} disabled />
-		</div>
+		<div class="flex flex-col gap-6">
+			<!-- Avatar Upload Section -->
+			<div class="flex flex-col gap-2">
+				<label class="text-sm font-medium">Profile Picture</label>
+				<div class="flex items-center gap-4">
+					{#if avatarUrl}
+						<img src={avatarUrl} alt="Avatar" class="object-cover w-16 h-16 rounded-full" />
+					{:else}
+						<div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+								/>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
+								/>
+							</svg>
+						</div>
+					{/if}
 
-		<div>
-			<label for="fullName">Full Name</label>
-			<input id="fullName" name="fullName" type="text" value={form?.fullName ?? fullName} />
-		</div>
+					<div class="flex flex-col gap-2">
+						<input
+							type="file"
+							id="avatar"
+							accept="image/*"
+							class="hidden"
+							bind:files={avatarFile}
+							on:change={uploadAvatar}
+						/>
+						<input type="text" name="avatarUrl" value={avatarUrl} />
+						<label
+							for="avatar"
+							class="inline-block px-4 py-2 text-center text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700"
+							class:opacity-50={uploading}
+							class:cursor-not-allowed={uploading}
+						>
+							{uploading ? 'Uploading...' : 'Upload New Picture'}
+						</label>
+						{#if uploadError}
+							<p class="text-sm text-red-600">{uploadError}</p>
+						{/if}
+					</div>
+				</div>
+			</div>
 
-		<div>
-			<label for="username">Username</label>
-			<input id="username" name="username" type="text" value={form?.username ?? username} />
-		</div>
+			<div>
+				<label for="email">Email</label>
+				<input id="email" type="text" value={session.user.email} disabled />
+			</div>
 
-		<div>
-			<label for="website">Website</label>
-			<input id="website" name="website" type="url" value={form?.website ?? website} />
-		</div>
+			<div>
+				<label for="username">Username</label>
+				<input id="username" name="username" type="text" value={form?.username ?? username} />
+			</div>
 
-		<div>
-			<input
-				type="submit"
-				class="block button primary"
-				value={loading ? 'Loading...' : 'Update'}
-				disabled={loading}
-			/>
+			<div>
+				<button type="submit" class="block btn button primary" disabled={loading || uploading}>
+					{loading ? 'Loading...' : 'Update'}
+				</button>
+			</div>
 		</div>
 	</form>
 
