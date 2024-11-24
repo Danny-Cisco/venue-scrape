@@ -1,14 +1,14 @@
 <script>
-	import { messages, updateSystemMessage } from '$lib/stores/messages.js'; // Import the messages store and helper
+	import { messages, updateSystemPrompt } from '$lib/stores/messages.js'; // Import the messages store and helper
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { get } from 'svelte/store';
 
 	let userInput = '';
-	let systemMessage = '';
+	let systemPrompt = '';
 
-	$: if (systemMessage.trim()) {
+	$: if (systemPrompt.trim()) {
 		// Update system message reactively
-		updateSystemMessage(systemMessage);
+		updateSystemPrompt(systemPrompt);
 	}
 
 	$: if ($capturedImage) {
@@ -80,14 +80,14 @@
 
 <div class="absolute inset-0">
 	<div class="absolute top-0 flex flex-col w-full p-4 bottom-4">
-		<!-- System message input -->
+		<!-- System Prompt input -->
 		<div class="mb-4">
-			<label class="block mb-2 font-bold text-gray-700">Set System Message:</label>
+			<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
 			<input
 				class="w-full p-2 border rounded"
 				type="text"
-				bind:value={systemMessage}
-				placeholder="Enter system message"
+				bind:value={systemPrompt}
+				placeholder="Enter System Prompt"
 			/>
 		</div>
 

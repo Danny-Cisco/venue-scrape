@@ -8,11 +8,11 @@ export const messages = writable([
 ]);
 
 // Helper to update the system message
-export function updateSystemMessage(newText) {
+export function updateSystemPrompt(newText) {
 	messages.update((msgs) => {
-		const systemMessage = msgs.find((msg) => msg.role === 'system');
-		if (systemMessage) {
-			systemMessage.content = [{ type: 'text', text: newText }];
+		const systemPrompt = msgs.find((msg) => msg.role === 'system');
+		if (systemPrompt) {
+			systemPrompt.content = [{ type: 'text', text: newText }];
 		}
 		return [...msgs];
 	});
