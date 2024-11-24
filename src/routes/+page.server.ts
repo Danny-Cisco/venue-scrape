@@ -1,104 +1,47 @@
-// src/routes/+page.server.ts
-import { fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+// import { fail } from '@sveltejs/kit';
+// import { sendMagicLink } from '$lib/utils/magicLink';
+// import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
-	const { session } = await safeGetSession();
+// export const actions: Actions = {
+// 	default: async ({ request, locals: { supabase } }) => {
+// 		const formData = await request.formData();
+// 		const email = formData.get('email') as string;
 
-	// if the user is already logged in return them to the account page
-	if (session) {
-		redirect(303, '/account');
-	}
+// 		const result = await sendMagicLink(email, supabase);
 
-	return { url: url.origin };
-};
+// 		if (!result.success) {
+// 			return fail(400, { ...result });
+// 		}
 
-export const actions: Actions = {
-	default: async (event) => {
-		const {
-			url,
-			request,
-			locals: { supabase }
-		} = event;
+// 		return {
+// 			success: true,
+// 			message: result.message
+// 		};
+// 	}
+// };
 
-		try {
-			const formData = await request.formData();
-			const email = formData.get('email') as string;
+// // // src/routes/+layout.server.ts
+// import { redirect } from '@sveltejs/kit';
 
-			console.log('Received email:', email); // Log the received email
+// export const load = async ({ locals: { supabase, safeGetSession } }) => {
+// 	const { session } = await safeGetSession();
 
-			const validEmail = /^[\w-\.+]+@([\w-]+\.)+[\w-]{2,8}$/.test(email);
+// 	if (!session) {
+// 		// Optionally redirect unauthenticated users to the home page
+// 		return { session: null, profile: null };
+// 	}
 
-			if (!email) {
-				console.log('Email is empty');
-				return fail(400, {
-					errors: { email: 'Email is required' },
-					email: '',
-					success: false,
-					details: 'No email provided'
-				});
-			}
+// 	// Fetch user profile
+// 	const { data: profile, error: profileError } = await supabase
+// 		.from('profiles')
+// 		.select('username, avatar_url')
+// 		.eq('id', session.user.id)
+// 		.single();
 
-			if (!validEmail) {
-				console.log('Invalid email format:', email);
-				return fail(400, {
-					errors: { email: 'Please enter a valid email address' },
-					email,
-					success: false,
-					details: 'Email format validation failed'
-				});
-			}
+// 	if (profileError) {
+// 		console.error('Error fetching profile:', profileError);
+// 		return { session, profile: null }; // Return session even if profile fetch fails
+// 	}
 
-			console.log('Attempting to sign in with OTP for email:', email);
-			const { error } = await supabase.auth.signInWithOtp({ email });
-
-			if (error) {
-				console.error('Supabase OTP error:', {
-					message: error.message,
-					status: error.status,
-					name: error.name,
-					details: error
-				});
-
-				return fail(400, {
-					success: false,
-					email,
-					message: 'Authentication failed',
-					errors: {
-						email: 'Authentication failed',
-						details: error.message
-					},
-					details: {
-						errorMessage: error.message,
-						errorStatus: error.status,
-						errorName: error.name
-					}
-				});
-			}
-
-			console.log('OTP sign-in successful for:', email);
-			return {
-				success: true,
-				message: 'Please check your email for a magic link to log into the website.',
-				email
-			};
-		} catch (error) {
-			console.error('Unexpected error in auth action:', error);
-			return fail(500, {
-				success: false,
-				message: 'An unexpected error occurred',
-				errors: {
-					system: error instanceof Error ? error.message : 'Unknown error'
-				},
-				details:
-					error instanceof Error
-						? {
-								name: error.name,
-								message: error.message,
-								stack: error.stack
-							}
-						: 'Unknown error structure'
-			});
-		}
-	}
-};
+// 	return { session, profile };
+// };

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '../app.postcss';
 	import CapturedImageFly from '$lib/components/video/CapturedImageFly.svelte';
 	import { onMount, tick } from 'svelte';
@@ -6,14 +6,47 @@
 	import Video from '$lib/components/video/Video.svelte';
 	import CameraSettingsModal from '$lib/modals/CameraSettingsModal.svelte';
 	import { writable } from 'svelte/store';
+	import { enhance } from '$app/forms';
+
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
+
+	import type { ActionData, SubmitFunction } from './$types.js';
 
 	import { invalidate } from '$app/navigation';
 
 	export let data;
-	let { supabase, session } = data;
-	$: ({ supabase, session } = data);
+	export let form;
+
+	import { handleMagicLink } from '$lib/utils/magicLink';
+	// import { supabase } from '$lib/supabaseClient';
+
+	let email = '';
+	const message = writable('');
+	const error = writable('');
+	let isSubmitting = false;
+
+	async function submitMagicLink() {
+		isSubmitting = true;
+		const result = await handleMagicLink(email, supabase);
+		console.log('🚀 ~ submitMagicLink ~ result:', result);
+
+		if (result.success) {
+			message.set(result.message);
+			error.set('');
+		} else {
+			message.set('');
+			error.set(result.errors?.email || result.message);
+		}
+		isSubmitting = false;
+	}
+
+	let loading;
+
+	let { supabase, session, profile } = data;
+	$: ({ supabase, session, profile } = data);
+	$: console.log('🚀 ~ profile:', profile);
+	$: console.log('🚀 ~ data:', data);
 
 	const hotkeyEmitter = createHotkeyEmitter();
 
@@ -30,6 +63,14 @@
 	function startStream() {
 		triggerStartStream = true;
 	}
+
+	const handleSubmit: SubmitFunction = () => {
+		loading = true;
+		return async ({ update }) => {
+			update();
+			loading = false;
+		};
+	};
 
 	// Detect if the user is on mobile and update the stores
 	onMount(() => {
@@ -125,7 +166,8 @@
 
 <div class="relative flex flex-col min-h-screen text-gray-800 bg-gray-200">
 	<!-- Header -->
-	<header class="flex items-center px-4 h-[10vh] py-2 bg-white">
+	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-white">
+		<!-- Logo -->
 		<strong class="flex items-end gap-1 text-3xl text-[magenta]">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -151,6 +193,55 @@
 			</svg>
 			MindMapr.ai
 		</strong>
+
+		<!-- User Authentication -->
+		{#if !loading}
+			<div class="flex items-end h-full gap-4 mb-6">
+				{#if session}
+					<a href="/account" class="flex items-end gap-4"
+						><p class="font-light text-gray-500">
+							{profile?.username || session.user.email || session.user.displayName}
+						</p>
+
+						<!-- User Avatar -->
+						<img
+							src={profile?.avatar_url || '/default-avatar.png'}
+							alt="User Avatar"
+							class="w-10 h-10 rounded-full"
+						/>
+					</a>
+				{:else}
+					<!-- Magic Link Form -->
+					<div class="flex flex-col items-end">
+						{#if $message}
+							<div class="" in:fly={{ x: 200, duration: 500 }}>
+								{$message}
+							</div>
+						{/if}
+						{#if $error}
+							<div class="" in:fly={{ x: 200, duration: 500 }}>
+								{$error}
+							</div>
+						{/if}
+						<div class="flex items-center justify-end gap-2 text-sm">
+							<label for="email" class="hidden">Email</label>
+							<input
+								type="email"
+								bind:value={email}
+								placeholder="Enter your email"
+								class="w-64 px-2 py-1 border rounded inputField"
+							/>
+							<button
+								on:click={submitMagicLink}
+								class="px-4 py-2 font-semibold text-[1rem] w-[160px] text-white bg-[magenta] rounded"
+							>
+								{isSubmitting ? 'Loading...' : 'Send Magic Link'}
+							</button>
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</header>
 
 	<div class="flex flex-1">
@@ -203,8 +294,30 @@
 								/>
 							</svg>
 
-							Settings
+							Camera
 						</button>
+					</li>
+					<li class="mb-2">
+						<a
+							href="/account"
+							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+								/>
+							</svg>
+							Account
+						</a>
 					</li>
 				</ul>
 

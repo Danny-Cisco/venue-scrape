@@ -59,6 +59,8 @@
 		loading = true;
 		return async () => {
 			loading = false;
+			// Reload the page after the form submission is processed
+			window.location.reload();
 		};
 	};
 
@@ -66,14 +68,15 @@
 		loading = true;
 		return async ({ update }) => {
 			loading = false;
-			update();
+			// Reload the page after the sign-out is processed
+			window.location.reload();
 		};
 	};
 </script>
 
-<div class="form-widget">
+<div class="max-w-xl mx-auto">
 	<form
-		class="form-widget"
+		class="w-full"
 		method="post"
 		action="?/update"
 		use:enhance={handleSubmit}
@@ -82,7 +85,7 @@
 		<div class="flex flex-col gap-6">
 			<!-- Avatar Upload Section -->
 			<div class="flex flex-col gap-2">
-				<label class="text-sm font-medium">Profile Picture</label>
+				<!-- <label class="text-sm font-medium">Profile Picture</label> -->
 				<div class="flex items-center gap-4">
 					{#if avatarUrl}
 						<img src={avatarUrl} alt="Avatar" class="object-cover w-16 h-16 rounded-full" />
@@ -110,7 +113,16 @@
 						</div>
 					{/if}
 
-					<div class="flex flex-col gap-2">
+					<div class="flex flex-col w-full gap-2">
+						<label
+							id="UploadLabel"
+							for="avatar"
+							class="font-semibold hover:text-[magenta] hover:cursor-pointer"
+							class:opacity-50={uploading}
+							class:cursor-not-allowed={uploading}
+						>
+							{uploading ? 'Uploading...' : 'Upload New Picture'}
+						</label>
 						<input
 							type="file"
 							id="avatar"
@@ -120,14 +132,7 @@
 							on:change={uploadAvatar}
 						/>
 						<input type="text" name="avatarUrl" value={avatarUrl} />
-						<label
-							for="avatar"
-							class="inline-block px-4 py-2 text-center text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700"
-							class:opacity-50={uploading}
-							class:cursor-not-allowed={uploading}
-						>
-							{uploading ? 'Uploading...' : 'Upload New Picture'}
-						</label>
+
 						{#if uploadError}
 							<p class="text-sm text-red-600">{uploadError}</p>
 						{/if}
@@ -146,7 +151,21 @@
 			</div>
 
 			<div>
-				<button type="submit" class="block btn button primary" disabled={loading || uploading}>
+				<button
+					type="submit"
+					class="gap-2 shadow btn button primary"
+					disabled={loading || uploading}
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+					</svg>
+
 					{loading ? 'Loading...' : 'Update'}
 				</button>
 			</div>
@@ -155,7 +174,56 @@
 
 	<form method="post" action="?/signout" use:enhance={handleSignOut}>
 		<div>
-			<button class="block button" disabled={loading}>Sign Out</button>
+			<button id="sign-out" class="gap-2 shadow btn" disabled={loading}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-6"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+					/>
+				</svg>
+				Sign Out</button
+			>
 		</div>
 	</form>
 </div>
+
+<style>
+	label {
+		font-weight: 700;
+	}
+
+	input {
+		border-radius: 8px;
+		width: 100%;
+		border: none;
+	}
+
+	button {
+		background-color: white;
+		border-radius: 9999px;
+		width: 100%;
+		color: magenta;
+		height: 3rem;
+		margin-bottom: 8px;
+	}
+	#sign-out {
+		background: magenta;
+		color: white;
+	}
+	#upload-label {
+		background-color: white;
+		border-radius: 9999px;
+		width: 100%;
+		color: magenta;
+		height: 3rem;
+		margin-bottom: 8px;
+	}
+</style>

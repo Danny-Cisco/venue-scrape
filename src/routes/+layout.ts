@@ -23,14 +23,26 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 				}
 			});
 
-	/**
-	 * It's fine to use `getSession` here, because on the client, `getSession` is
-	 * safe, and on the server, it reads `session` from the `LayoutData`, which
-	 * safely checked the session using `safeGetSession`.
-	 */
+	// Fetch the session
 	const {
 		data: { session }
 	} = await supabase.auth.getSession();
 
-	return { supabase, session };
+	// Fetch the profile if the session exists
+	let profile = null;
+	if (session) {
+		const { data, error } = await supabase
+			.from('profiles')
+			.select('username, avatar_url')
+			.eq('id', session.user.id)
+			.single();
+
+		if (error) {
+			console.error('Error fetching profile:', error);
+		} else {
+			profile = data;
+		}
+	}
+
+	return { supabase, session, profile };
 };
