@@ -1,12 +1,19 @@
 <script>
-	import { messages } from '$lib/stores/messages.js'; // Import the messages store
-	import { capturedImage } from '$lib/stores/capturedImage.js'; // Import the captured image store
+	import { messages, updateSystemMessage } from '$lib/stores/messages.js'; // Import the messages store and helper
+	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { get } from 'svelte/store';
 
 	let userInput = '';
+	let systemMessage = '';
+
+	$: if (systemMessage.trim()) {
+		// Update system message reactively
+		updateSystemMessage(systemMessage);
+	}
+
 	$: if ($capturedImage) {
 		sendMessage();
-	} // Reactive reference to the captured image store
+	}
 
 	let isLoading = false; // To show a loading indicator
 	let errorMessage = ''; // To display errors
@@ -73,20 +80,33 @@
 
 <div class="absolute inset-0">
 	<div class="absolute top-0 flex flex-col w-full p-4 bottom-4">
+		<!-- System message input -->
+		<div class="mb-4">
+			<label class="block mb-2 font-bold text-gray-700">Set System Message:</label>
+			<input
+				class="w-full p-2 border rounded"
+				type="text"
+				bind:value={systemMessage}
+				placeholder="Enter system message"
+			/>
+		</div>
+
 		<!-- Chat display -->
-		<div id="chat-container" class="flex-1 mb-4 overflow-y-auto">
+		<div id="chat-container" class="flex-1 mb-4 overflow-y-auto pb-[100px]">
 			{#each $messages as message}
 				<div class="py-2">
-					<p class="font-semibold">{message.role}:</p>
-					{#each message.content as content}
-						{#if content.type === 'text'}
-							<p>{content.text}</p>
-						{:else if content.type === 'image_url'}
-							<img src={content.image_url.url} alt="image" />
-						{:else}
-							{content}
-						{/if}
-					{/each}
+					{#if message.role !== 'system'}
+						<p class="font-semibold">{message.role}:</p>
+						{#each message.content as content}
+							{#if content.type === 'text'}
+								<p>{content.text}</p>
+							{:else if content.type === 'image_url'}
+								<img src={content.image_url.url} alt="image" />
+							{:else}
+								{content}
+							{/if}
+						{/each}
+					{/if}
 				</div>
 			{/each}
 		</div>
