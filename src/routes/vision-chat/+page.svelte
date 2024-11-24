@@ -4,7 +4,9 @@
 	import { get } from 'svelte/store';
 
 	let userInput = '';
-	$: $capturedImage; // Reactive reference to the captured image store
+	$: if ($capturedImage) {
+		sendMessage();
+	} // Reactive reference to the captured image store
 
 	let isLoading = false; // To show a loading indicator
 	let errorMessage = ''; // To display errors
