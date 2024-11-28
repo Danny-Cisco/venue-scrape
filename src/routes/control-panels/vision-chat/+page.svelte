@@ -1,13 +1,14 @@
 <script>
-	import { messages, updateSystemPrompt } from '$lib/stores/messages.js'; // Import the messages store and helper
+	import { messages, updateSystemPrompt } from '$lib/stores/messages.js';
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { get } from 'svelte/store';
 
 	let userInput = '';
 	let systemPrompt = '';
+	let secretKey = ''; // New secret key input
+	let saveError = ''; // For tracking save errors
 
 	$: if (systemPrompt.trim()) {
-		// Update system message reactively
 		updateSystemPrompt(systemPrompt);
 	}
 
@@ -15,8 +16,41 @@
 		sendMessage();
 	}
 
-	let isLoading = false; // To show a loading indicator
-	let errorMessage = ''; // To display errors
+	let isLoading = false;
+	let errorMessage = '';
+
+	// New function to save to Supabase
+	async function saveToSupabase(content) {
+		if (!secretKey.trim()) {
+			saveError = 'Secret key is required for saving updates';
+			return;
+		}
+
+		try {
+			const response = await fetch(`/api/supabase/update?table=markdown`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					key: secretKey,
+					content: content
+				})
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to save update');
+			}
+
+			const result = await response.json();
+			console.log('Saved to Supabase:', result.updated_data);
+			saveError = ''; // Clear any previous errors
+		} catch (err) {
+			console.error('Error saving to Supabase:', err);
+			saveError = err.message;
+		}
+	}
 
 	async function sendMessage() {
 		if (!userInput.trim() && !$capturedImage) return;
@@ -24,7 +58,6 @@
 		isLoading = true;
 		errorMessage = '';
 
-		// Create new message content
 		let newMessageContent = [];
 		if (userInput.trim()) {
 			newMessageContent.push({ type: 'text', text: userInput });
@@ -36,7 +69,6 @@
 			});
 		}
 
-		// Add new user message to the store
 		if (newMessageContent.length > 0) {
 			messages.update((msgs) => [...msgs, { role: 'user', content: newMessageContent }]);
 		}
@@ -45,7 +77,6 @@
 		capturedImage.set(null);
 
 		try {
-			// Send messages to the server
 			const response = await fetch('/api/openai/chat', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -54,9 +85,13 @@
 
 			const data = await response.json();
 
-			// Add assistant's reply to the store
 			if (data.reply && data.reply.content) {
 				messages.update((msgs) => [...msgs, { role: 'assistant', content: data.reply.content }]);
+
+				// Automatically save the assistant's reply to Supabase
+				if (secretKey.trim()) {
+					await saveToSupabase(data.reply.content);
+				}
 			} else {
 				errorMessage = 'No reply received from the assistant.';
 			}
@@ -70,7 +105,6 @@
 	}
 
 	function scrollToBottom() {
-		// Scroll to the bottom of the chat
 		const chatContainer = document.querySelector('#chat-container');
 		if (chatContainer) {
 			chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -80,15 +114,30 @@
 
 <div class="absolute inset-0">
 	<div class="absolute top-0 flex flex-col w-full p-4 bottom-4">
-		<!-- System Prompt input -->
-		<div class="mb-4">
-			<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
-			<input
-				class="w-full p-2 border rounded"
-				type="text"
-				bind:value={systemPrompt}
-				placeholder="Enter System Prompt"
-			/>
+		<!-- System Prompt and Secret Key inputs -->
+		<div class="mb-4 space-y-4">
+			<div>
+				<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
+				<input
+					class="w-full p-2 border rounded"
+					type="text"
+					bind:value={systemPrompt}
+					placeholder="Enter System Prompt"
+				/>
+			</div>
+
+			<div>
+				<label class="block mb-2 font-bold text-gray-700">Secret Key:</label>
+				<input
+					class="w-full p-2 border rounded"
+					type="text"
+					bind:value={secretKey}
+					placeholder="Enter secret key for auto-saving responses"
+				/>
+				{#if saveError}
+					<p class="mt-1 text-sm text-red-500">{saveError}</p>
+				{/if}
+			</div>
 		</div>
 
 		<!-- Chat display -->
