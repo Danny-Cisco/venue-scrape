@@ -51,6 +51,27 @@ export async function supabaseGetOne(recordId) {
 	}
 }
 
+export async function supabaseGetOneMarkdown(secretKey) {
+	secretKey = secretKey.trim();
+	try {
+		const response = await fetch(`/api/supabase/markdown/get-one?key=${secretKey}`);
+		if (!response.ok) {
+			const errorResponse = await response.json();
+			if (response.status === 401) {
+				return { error: 'User not authenticated' };
+			} else if (response.status === 403) {
+				return { error: 'Unauthorized access' };
+			} else {
+				return { error: errorResponse.error || 'Failed to fetch record' };
+			}
+		}
+		return { record: await response.json() };
+	} catch (err) {
+		console.error('Failed to fetch record:', err);
+		return { error: 'Network error' };
+	}
+}
+
 export async function supabaseGetPaginated(page = 1, pageSize = 5) {
 	try {
 		const response = await fetch(`/api/supabase/get-paginated?page=${page}&pageSize=${pageSize}`);
