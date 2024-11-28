@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import { onMount } from 'svelte';
 
 	import FormDataPlusUiUpdater from '$lib/components/capture/FormDataPlusUiUpdater.svelte';
@@ -72,7 +72,7 @@
 	}
 </script>
 
-<main class="mx-auto max-w-2xl p-4">
+<main class="max-w-2xl p-4 mx-auto">
 	<h1 class="mb-4 text-2xl font-bold">Update a Record</h1>
 
 	<form on:submit|preventDefault={handleSubmit} class="space-y-4">
@@ -80,15 +80,15 @@
 			type="text"
 			bind:value={recordId}
 			placeholder="Enter record ID"
-			class="flex-grow rounded-l border p-2"
+			class="flex-grow p-2 border rounded-l"
 		/>
 		<div>
-			<label for="email" class="mb-1 block">Email</label>
+			<label for="email" class="block mb-1">Email</label>
 			<input
 				type="email"
 				id="email"
 				bind:value={formData.email}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 				on:blur={() => {
 					if (formData.email && !validateEmail(formData.email)) {
 						error = 'Please enter a valid email address';
@@ -100,38 +100,38 @@
 		</div>
 
 		<div>
-			<label for="short" class="mb-1 block">Short Title</label>
+			<label for="short" class="block mb-1">Short Title</label>
 			<input
 				type="text"
 				id="short"
 				bind:value={formData.short}
 				required
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
 		<div>
-			<label for="summary" class="mb-1 block">Summary</label>
+			<label for="summary" class="block mb-1">Summary</label>
 			<textarea
 				id="summary"
 				bind:value={formData.summary}
 				rows="3"
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			></textarea>
 		</div>
 
 		<div>
-			<label for="type" class="mb-1 block">Type</label>
-			<input type="text" id="type" bind:value={formData.type} class="w-full rounded border p-2" />
+			<label for="type" class="block mb-1">Type</label>
+			<input type="text" id="type" bind:value={formData.type} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="outcome" class="mb-1 block">Outcome</label>
+			<label for="outcome" class="block mb-1">Outcome</label>
 			<input
 				type="text"
 				id="outcome"
 				bind:value={formData.outcome}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
@@ -151,73 +151,73 @@
 		</div>
 
 		<div>
-			<label for="natural_when" class="mb-1 block">Natural When</label>
+			<label for="natural_when" class="block mb-1">Natural When</label>
 			<input
 				type="text"
 				id="natural_when"
 				bind:value={formData.natural_when}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
 		<div>
-			<label for="to" class="mb-1 block">To</label>
-			<input type="text" id="to" bind:value={formData.to} class="w-full rounded border p-2" />
+			<label for="to" class="block mb-1">To</label>
+			<input type="text" id="to" bind:value={formData.to} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="from" class="mb-1 block">From</label>
-			<input type="text" id="from" bind:value={formData.from} class="w-full rounded border p-2" />
+			<label for="from" class="block mb-1">From</label>
+			<input type="text" id="from" bind:value={formData.from} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="who" class="mb-1 block">Who</label>
-			<input type="text" id="who" bind:value={formData.who} class="w-full rounded border p-2" />
+			<label for="who" class="block mb-1">Who</label>
+			<input type="text" id="who" bind:value={formData.who} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="user_full_name" class="mb-1 block">User Full Name</label>
+			<label for="user_full_name" class="block mb-1">User Full Name</label>
 			<input
 				type="text"
 				id="user_full_name"
 				bind:value={formData.user_full_name}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
 		<div>
-			<label for="owner" class="mb-1 block">Owner</label>
-			<input type="text" id="owner" bind:value={formData.owner} class="w-full rounded border p-2" />
+			<label for="owner" class="block mb-1">Owner</label>
+			<input type="text" id="owner" bind:value={formData.owner} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="org" class="mb-1 block">Organization</label>
-			<input type="text" id="org" bind:value={formData.org} class="w-full rounded border p-2" />
+			<label for="org" class="block mb-1">Organization</label>
+			<input type="text" id="org" bind:value={formData.org} class="w-full p-2 border rounded" />
 		</div>
 
 		<div>
-			<label for="access" class="mb-1 block">Access</label>
+			<label for="access" class="block mb-1">Access</label>
 			<input
 				type="text"
 				id="access"
 				bind:value={formData.access}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
 		<div>
-			<label for="subject" class="mb-1 block">Subject</label>
+			<label for="subject" class="block mb-1">Subject</label>
 			<input
 				type="text"
 				id="subject"
 				bind:value={formData.subject}
-				class="w-full rounded border p-2"
+				class="w-full p-2 border rounded"
 			/>
 		</div>
 
 		<button
 			type="submit"
-			class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+			class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
 			disabled={isLoading || (formData.email && !validateEmail(formData.email))}
 		>
 			{isLoading ? 'Updating...' : 'Update Record'}
@@ -237,4 +237,4 @@
 
 <style>
 	/* Add any additional styles here if needed */
-</style>
+</style> -->
