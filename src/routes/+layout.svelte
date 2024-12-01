@@ -1,5 +1,7 @@
 <script lang="ts">
 	import '../app.postcss';
+	import GIF from 'gif.js'; // Ensure gif.js is installed: npm install gif.js
+
 	import CapturedImageFly from '$lib/components/video/CapturedImageFly.svelte';
 	import { onMount, tick } from 'svelte';
 	import { slide, fly, fade } from 'svelte/transition';
@@ -141,6 +143,85 @@
 
 				const imageData = canvas.toDataURL('image/png');
 				capturedImage.set(imageData);
+			}, 10);
+		});
+	}
+
+	function captureImageAsGif() {
+		// We start by resetting the store to indicate we're starting a new capture
+		capturedImage.set('');
+
+		console.log('capturing gif image');
+
+		// We use tick() to ensure the DOM has updated before we proceed
+		tick().then(() => {
+			// Small delay to ensure camera frame is ready
+			setTimeout(() => {
+				// Safety check for device selection
+				if (!selectedDeviceId) {
+					console.error('No camera device selected');
+					return;
+				}
+
+				// Create a canvas to capture the current video frame
+				const canvas = document.createElement('canvas');
+
+				// Safety checks for video element
+				if (!videoElement || !videoElement.videoWidth) {
+					console.error('Video element not ready');
+					return;
+				}
+
+				// Set canvas dimensions to match video
+				canvas.width = videoElement.videoWidth;
+				canvas.height = videoElement.videoHeight;
+
+				// Get the drawing context and capture the current frame
+				const context = canvas.getContext('2d');
+				if (!context) {
+					console.error('Could not get canvas context');
+					return;
+				}
+
+				// Draw the current video frame onto the canvas
+				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+				// Configure our GIF encoder with optimal settings
+				const gif = new GIF({
+					workers: 2, // Use 2 worker threads for better performance
+					quality: 10, // Lower number means better compression
+					workerScript: '/gif.worker.js', // Path to worker script in public directory
+					width: canvas.width, // Match video dimensions
+					height: canvas.height
+				});
+
+				// Add the single frame to our GIF
+				gif.addFrame(canvas, {
+					delay: 100, // Frame delay in milliseconds
+					copy: true // Make a copy of the canvas data for safety
+				});
+
+				// Handle successful GIF creation
+				gif.on('finished', (blob) => {
+					// Create a URL from the GIF blob
+					const gifURL = URL.createObjectURL(blob);
+
+					// Store the GIF URL in our Svelte store
+					capturedImage.set(gifURL);
+
+					// Optional: Log success for debugging
+					console.log('GIF captured and stored successfully');
+				});
+
+				// Handle any errors during GIF creation
+				gif.on('error', (error) => {
+					console.error('Error creating GIF:', error);
+					// Reset the store on error
+					capturedImage.set('');
+				});
+
+				// Start the GIF rendering process
+				gif.render();
 			}, 10);
 		});
 	}
@@ -490,7 +571,7 @@
 					bind:triggerStartStream
 					{selectedDeviceId}
 					on:openModal={handleVideoClick}
-					on:captureImage={captureImage}
+					on:captureImage={captureImageAsGif}
 				/>
 
 				<div
