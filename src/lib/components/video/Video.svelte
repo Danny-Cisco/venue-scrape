@@ -2,11 +2,15 @@
 	import { createEventDispatcher } from 'svelte';
 	export let videoElement;
 	export let triggerStartStream = false;
+	export let triggerStopStream = false;
 	export let selectedDeviceId = '';
 	import { selectedDevice } from '$lib/stores/deviceStore';
 
 	let dispatch = createEventDispatcher();
 	let hover = false;
+
+	// Track if the stream is active
+	let isStreamActive = false;
 
 	selectedDeviceId = $selectedDevice;
 
@@ -22,40 +26,63 @@
 		dispatch('captureImage');
 	}
 
-	$: if (triggerStartStream && $selectedDevice && videoElement) {
-		startStream();
-		triggerStartStream = false;
-	}
-
-	// Function to start video stream with the selected device and preferred resolution
+	// Explicitly handle starting the video stream
 	async function startStream() {
-		triggerStartStream = false;
-		if (!selectedDeviceId) return;
-
-		// Stop any existing video stream
-		if (videoElement.srcObject) {
-			videoElement.srcObject.getTracks().forEach((track) => track.stop());
+		if (isStreamActive) {
+			console.log('Stream already active.');
+			return;
 		}
 
-		// Constraints for 1280x720 resolution, or fallback to available resolution
+		if (!selectedDeviceId || !videoElement) {
+			console.error('No selected device or video element.');
+			return;
+		}
+
+		// Stop any existing video stream to ensure only one is active
+		stopStream();
+
 		const constraints = {
 			video: {
 				deviceId: { exact: selectedDeviceId },
-				width: { ideal: 1280 }, // Request 1280px width if available
-				height: { ideal: 720 } // Request 720px height if available
+				width: { ideal: 1280 },
+				height: { ideal: 720 }
 			}
 		};
 
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia(constraints);
 			videoElement.srcObject = stream;
+			isStreamActive = true;
 
-			// Log the actual resolution used
+			// Log actual resolution
 			const settings = stream.getVideoTracks()[0].getSettings();
 			console.log('Actual Resolution:', settings.width, 'x', settings.height);
 		} catch (error) {
 			console.error('Error accessing webcam:', error);
 		}
+	}
+
+	// Explicitly handle stopping the video stream
+	function stopStream() {
+		if (!isStreamActive || !videoElement?.srcObject) {
+			console.log('No active stream to stop.');
+			return;
+		}
+
+		videoElement.srcObject.getTracks().forEach((track) => track.stop());
+		videoElement.srcObject = null;
+		isStreamActive = false;
+	}
+
+	// Handle trigger reactivity
+	$: if (triggerStartStream && videoElement) {
+		triggerStartStream = false; // Reset the trigger
+		startStream();
+	}
+
+	$: if (triggerStopStream) {
+		triggerStopStream = false; // Reset the trigger
+		stopStream();
 	}
 </script>
 

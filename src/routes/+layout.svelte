@@ -32,11 +32,6 @@
 
 	$: $selectedDevice;
 
-	// Clear the selection if needed
-	function clearDevice() {
-		$selectedDevice = null;
-	}
-
 	let email = '';
 	const message = writable('');
 	const error = writable('');
@@ -68,6 +63,7 @@
 
 	let videoElement;
 	let triggerStartStream = false;
+	let triggerStopStream = false;
 	let selectedDeviceId = '';
 	let devices = writable([]);
 	let permissionStatus = writable('pending');
@@ -79,9 +75,14 @@
 	function startStream() {
 		triggerStartStream = true;
 	}
+	function stopStream() {
+		triggerStopStream = true;
+	}
 
 	$: if ($selectedDevice) {
 		triggerStartStream = true;
+	} else {
+		triggerStopStream = true;
 	}
 
 	const handleSubmit: SubmitFunction = () => {
@@ -858,6 +859,7 @@
 				<Video
 					bind:videoElement
 					bind:triggerStartStream
+					bind:triggerStopStream
 					selectedDeviceId={$selectedDevice}
 					on:openModal={handleVideoClick}
 					on:captureImage={captureImageAsGif}
@@ -897,7 +899,12 @@
 	</div>
 </div>
 
-<CameraSettingsModal bind:showCameraSettingsModal bind:devices on:startStream={startStream} />
+<CameraSettingsModal
+	bind:showCameraSettingsModal
+	bind:devices
+	on:startStream={startStream}
+	on:stopStream={stopStream}
+/>
 
 <style>
 	.size-5 {
