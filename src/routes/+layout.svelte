@@ -147,15 +147,43 @@
 		});
 	}
 
+	function quantizeToBlackAndWhite(context, width, height) {
+		// Get the pixel data from the canvas
+		const imageData = context.getImageData(0, 0, width, height);
+		const data = imageData.data;
+
+		// Loop through each pixel and modify it
+		for (let i = 0; i < data.length; i += 4) {
+			const r = data[i];
+			const g = data[i + 1];
+			const b = data[i + 2];
+
+			// Calculate the luminance (perceptual brightness)
+			const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+			// Threshold to decide black or white
+			const isWhite = luminance > 127; // Threshold can be adjusted
+			const color = isWhite ? 255 : 0;
+
+			// Set the pixel to black or white
+			data[i] = color; // Red
+			data[i + 1] = color; // Green
+			data[i + 2] = color; // Blue
+		}
+
+		// Put the modified pixel data back into the canvas
+		context.putImageData(imageData, 0, 0);
+	}
+
 	function captureImageAsGif() {
-		// We start by resetting the store to indicate we're starting a new capture
+		// Reset the store to indicate we're starting a new capture
 		capturedImage.set('');
 
-		console.log('capturing gif image');
+		console.log('Capturing GIF image...');
 
-		// We use tick() to ensure the DOM has updated before we proceed
+		// Use tick() to ensure the DOM has updated before we proceed
 		tick().then(() => {
-			// Small delay to ensure camera frame is ready
+			// Small delay to ensure the camera frame is ready
 			setTimeout(() => {
 				// Safety check for device selection
 				if (!selectedDeviceId) {
@@ -186,6 +214,9 @@
 				// Draw the current video frame onto the canvas
 				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
+				// Quantize the canvas to black and white
+				quantizeToBlackAndWhite(context, canvas.width, canvas.height);
+
 				// Configure our GIF encoder with optimal settings
 				const gif = new GIF({
 					workers: 2, // Use 2 worker threads for better performance
@@ -203,14 +234,21 @@
 
 				// Handle successful GIF creation
 				gif.on('finished', (blob) => {
-					// Create a URL from the GIF blob
-					const gifURL = URL.createObjectURL(blob);
+					// Convert Blob to Base64
+					const reader = new FileReader();
+					reader.onload = function () {
+						const base64String = reader.result.split(',')[1]; // Extract Base64 data
 
-					// Store the GIF URL in our Svelte store
-					capturedImage.set(gifURL);
+						// Log file size in KB
+						const fileSizeKB = (blob.size / 1024).toFixed(2);
+						console.log(`GIF file size: ${fileSizeKB} KB`);
 
-					// Optional: Log success for debugging
-					console.log('GIF captured and stored successfully');
+						// Store the Base64-encoded GIF in the Svelte store
+						capturedImage.set(`data:image/gif;base64,${base64String}`);
+					};
+
+					// Start reading the blob as a Base64 string
+					reader.readAsDataURL(blob);
 				});
 
 				// Handle any errors during GIF creation
