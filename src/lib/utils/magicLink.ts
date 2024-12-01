@@ -21,17 +21,22 @@ export async function handleMagicLink(
 	}
 
 	try {
-		const { error } = await supabase.auth.signInWithOtp({ email });
-		if (error) {
-			return {
-				success: false,
-				message: 'Authentication failed',
-				errors: {
-					email: 'Authentication failed',
-					details: error.message
-				}
-			};
-		}
+		// Helper to get the base URL of your application
+		const getURL = () => {
+			const url = window.location.origin;
+			return url.endsWith('/') ? url : `${url}/`;
+		};
+
+		// Now using /auth/confirm as your callback route
+		const { error } = await supabase.auth.signInWithOtp({
+			email,
+			options: {
+				// The immediate redirect after clicking the email link
+				emailRedirectTo: `${getURL()}auth/confirm`,
+				// Where they should end up after authentication
+				redirectTo: `${getURL()}` // or whatever your final destination is
+			}
+		});
 
 		return {
 			success: true,
