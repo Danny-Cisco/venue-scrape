@@ -175,26 +175,60 @@
 		context.putImageData(imageData, 0, 0);
 	}
 
-	function quantizeToBasicColors(context, width, height) {
+	function quantizeToBasicColors(
+		context,
+		width,
+		height,
+		saturationThreshold = 0.99,
+		lightnessThreshold = 0.85
+	) {
 		// Get the pixel data from the canvas
 		const imageData = context.getImageData(0, 0, width, height);
 		const data = imageData.data;
 
-		// Define the target palette: black, white, red, green, blue, yellow, cyan, magenta
-		const palette = [
-			{ r: 0, g: 0, b: 0 }, // Black
-			{ r: 255, g: 255, b: 255 }, // White
-			{ r: 255, g: 0, b: 0 }, // Red
-			{ r: 0, g: 255, b: 0 }, // Green
-			{ r: 0, g: 0, b: 255 }, // Blue
-			{ r: 255, g: 255, b: 0 }, // Yellow
-			{ r: 0, g: 255, b: 255 }, // Cyan
-			{ r: 255, g: 0, b: 255 } // Magenta
+		// Define the target colors: black, white, and fully saturated colors
+		const colors = [
+			{ r: 0, g: 0, b: 0, name: 'black' }, // Black
+			{ r: 255, g: 255, b: 255, name: 'white' }, // White
+			{ r: 255, g: 0, b: 0, name: 'red' }, // Red
+			{ r: 0, g: 255, b: 0, name: 'green' }, // Green
+			{ r: 0, g: 0, b: 255, name: 'blue' }, // Blue
+			{ r: 255, g: 255, b: 0, name: 'yellow' }, // Yellow
+			{ r: 0, g: 255, b: 255, name: 'cyan' }, // Cyan
+			{ r: 255, g: 0, b: 255, name: 'magenta' } // Magenta
 		];
 
-		// Helper function to calculate the squared distance between two colors
-		function colorDistanceSquared(r1, g1, b1, r2, g2, b2) {
-			return (r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2;
+		// Helper function to convert RGB to HSL
+		function rgbToHsl(r, g, b) {
+			r /= 255;
+			g /= 255;
+			b /= 255;
+			const max = Math.max(r, g, b);
+			const min = Math.min(r, g, b);
+			let h,
+				s,
+				l = (max + min) / 2;
+
+			if (max === min) {
+				h = s = 0; // Achromatic (no hue, no saturation)
+			} else {
+				const d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r:
+						h = (g - b) / d + (g < b ? 6 : 0);
+						break;
+					case g:
+						h = (b - r) / d + 2;
+						break;
+					case b:
+						h = (r - g) / d + 4;
+						break;
+				}
+				h /= 6;
+			}
+
+			return [h, s, l]; // Hue, Saturation, Lightness
 		}
 
 		// Loop through each pixel and quantize it
@@ -203,29 +237,41 @@
 			const g = data[i + 1];
 			const b = data[i + 2];
 
-			// Find the closest color in the palette
-			let closestColor = palette[0];
-			let smallestDistance = colorDistanceSquared(
-				r,
-				g,
-				b,
-				closestColor.r,
-				closestColor.g,
-				closestColor.b
-			);
+			// Convert RGB to HSL
+			const [h, s, l] = rgbToHsl(r, g, b);
 
-			for (const color of palette) {
-				const distance = colorDistanceSquared(r, g, b, color.r, color.g, color.b);
-				if (distance < smallestDistance) {
-					smallestDistance = distance;
-					closestColor = color;
+			let mappedColor;
+
+			// Step 1: Map high lightness pixels to white
+			if (l > lightnessThreshold) {
+				mappedColor = colors.find((c) => c.name === 'white');
+			}
+			// Step 2: Map low saturation pixels to black or white based on lightness
+			else if (s < saturationThreshold) {
+				mappedColor =
+					l < 0.5 ? colors.find((c) => c.name === 'black') : colors.find((c) => c.name === 'white');
+			}
+			// Step 3: Map high saturation pixels based on hue
+			else {
+				if (h >= 0.1 && h < 0.2) {
+					mappedColor = colors.find((c) => c.name === 'yellow'); // Yellow range
+				} else if ((h >= 0 && h < 0.1) || (h >= 0.9 && h <= 1.0)) {
+					mappedColor = colors.find((c) => c.name === 'red'); // Red range
+				} else if (h >= 0.2 && h < 0.4) {
+					mappedColor = colors.find((c) => c.name === 'green'); // Green range
+				} else if (h >= 0.4 && h < 0.6) {
+					mappedColor = colors.find((c) => c.name === 'cyan'); // Cyan range
+				} else if (h >= 0.6 && h < 0.8) {
+					mappedColor = colors.find((c) => c.name === 'blue'); // Blue range
+				} else if (h >= 0.8 && h < 0.9) {
+					mappedColor = colors.find((c) => c.name === 'magenta'); // Magenta range
 				}
 			}
 
-			// Set the pixel to the closest color
-			data[i] = closestColor.r; // Red
-			data[i + 1] = closestColor.g; // Green
-			data[i + 2] = closestColor.b; // Blue
+			// Apply the mapped color to the pixel
+			data[i] = mappedColor.r; // Red
+			data[i + 1] = mappedColor.g; // Green
+			data[i + 2] = mappedColor.b; // Blue
 		}
 
 		// Put the modified pixel data back into the canvas
@@ -233,7 +279,7 @@
 	}
 
 	function captureImageAsGif() {
-		const squish512x512 = true;
+		const squish512x512 = false;
 		// Reset the store to indicate we're starting a new capture
 		capturedImage.set('');
 
