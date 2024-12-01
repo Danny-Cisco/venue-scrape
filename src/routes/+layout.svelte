@@ -176,6 +176,7 @@
 	}
 
 	function captureImageAsGif() {
+		const squish512x512 = true;
 		// Reset the store to indicate we're starting a new capture
 		capturedImage.set('');
 
@@ -217,51 +218,70 @@
 				// Quantize the canvas to black and white
 				quantizeToBlackAndWhite(context, canvas.width, canvas.height);
 
+				// Perform the resize operation while maintaining content
+				const finalCanvas = squish512x512 ? resizeCanvas(canvas, 512, 512) : canvas;
+
 				// Configure our GIF encoder with optimal settings
 				const gif = new GIF({
 					workers: 2, // Use 2 worker threads for better performance
 					quality: 10, // Lower number means better compression
 					workerScript: '/gif.worker.js', // Path to worker script in public directory
-					width: canvas.width, // Match video dimensions
-					height: canvas.height
+					width: finalCanvas.width,
+					height: finalCanvas.height
 				});
 
 				// Add the single frame to our GIF
-				gif.addFrame(canvas, {
+				gif.addFrame(finalCanvas, {
 					delay: 100, // Frame delay in milliseconds
 					copy: true // Make a copy of the canvas data for safety
 				});
 
 				// Handle successful GIF creation
 				gif.on('finished', (blob) => {
-					// Convert Blob to Base64
 					const reader = new FileReader();
 					reader.onload = function () {
-						const base64String = reader.result.split(',')[1]; // Extract Base64 data
-
-						// Log file size in KB
+						const base64String = reader.result.split(',')[1];
 						const fileSizeKB = (blob.size / 1024).toFixed(2);
 						console.log(`GIF file size: ${fileSizeKB} KB`);
-
-						// Store the Base64-encoded GIF in the Svelte store
 						capturedImage.set(`data:image/gif;base64,${base64String}`);
 					};
-
-					// Start reading the blob as a Base64 string
 					reader.readAsDataURL(blob);
 				});
 
-				// Handle any errors during GIF creation
 				gif.on('error', (error) => {
 					console.error('Error creating GIF:', error);
-					// Reset the store on error
 					capturedImage.set('');
 				});
 
-				// Start the GIF rendering process
 				gif.render();
 			}, 10);
 		});
+	}
+
+	function resizeCanvas(sourceCanvas, targetWidth, targetHeight) {
+		// Create an intermediate canvas for the resize operation
+		const resizedCanvas = document.createElement('canvas');
+		resizedCanvas.width = targetWidth;
+		resizedCanvas.height = targetHeight;
+		const resizedContext = resizedCanvas.getContext('2d');
+
+		// Calculate scaling factors for width and height
+		const scaleX = targetWidth / sourceCanvas.width;
+		const scaleY = targetHeight / sourceCanvas.height;
+
+		// Apply the transformation to squish the image
+		resizedContext.scale(scaleX, scaleY);
+
+		// Draw the image with the applied transformation
+		resizedContext.drawImage(sourceCanvas, 0, 0);
+
+		// Log the transformation details
+		console.log(
+			`Canvas squished from ${sourceCanvas.width}x${sourceCanvas.height} to ${targetWidth}x${targetHeight}`,
+			`Scale factors: x=${scaleX.toFixed(2)}, y=${scaleY.toFixed(2)}`
+		);
+
+		return resizedCanvas;
 	}
 
 	onMount(() => {
