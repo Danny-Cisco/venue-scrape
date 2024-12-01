@@ -175,6 +175,63 @@
 		context.putImageData(imageData, 0, 0);
 	}
 
+	function quantizeToBasicColors(context, width, height) {
+		// Get the pixel data from the canvas
+		const imageData = context.getImageData(0, 0, width, height);
+		const data = imageData.data;
+
+		// Define the target palette: black, white, red, green, blue, yellow, cyan, magenta
+		const palette = [
+			{ r: 0, g: 0, b: 0 }, // Black
+			{ r: 255, g: 255, b: 255 }, // White
+			{ r: 255, g: 0, b: 0 }, // Red
+			{ r: 0, g: 255, b: 0 }, // Green
+			{ r: 0, g: 0, b: 255 }, // Blue
+			{ r: 255, g: 255, b: 0 }, // Yellow
+			{ r: 0, g: 255, b: 255 }, // Cyan
+			{ r: 255, g: 0, b: 255 } // Magenta
+		];
+
+		// Helper function to calculate the squared distance between two colors
+		function colorDistanceSquared(r1, g1, b1, r2, g2, b2) {
+			return (r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2;
+		}
+
+		// Loop through each pixel and quantize it
+		for (let i = 0; i < data.length; i += 4) {
+			const r = data[i];
+			const g = data[i + 1];
+			const b = data[i + 2];
+
+			// Find the closest color in the palette
+			let closestColor = palette[0];
+			let smallestDistance = colorDistanceSquared(
+				r,
+				g,
+				b,
+				closestColor.r,
+				closestColor.g,
+				closestColor.b
+			);
+
+			for (const color of palette) {
+				const distance = colorDistanceSquared(r, g, b, color.r, color.g, color.b);
+				if (distance < smallestDistance) {
+					smallestDistance = distance;
+					closestColor = color;
+				}
+			}
+
+			// Set the pixel to the closest color
+			data[i] = closestColor.r; // Red
+			data[i + 1] = closestColor.g; // Green
+			data[i + 2] = closestColor.b; // Blue
+		}
+
+		// Put the modified pixel data back into the canvas
+		context.putImageData(imageData, 0, 0);
+	}
+
 	function captureImageAsGif() {
 		const squish512x512 = true;
 		// Reset the store to indicate we're starting a new capture
@@ -216,7 +273,19 @@
 				context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
 				// Quantize the canvas to black and white
-				quantizeToBlackAndWhite(context, canvas.width, canvas.height);
+				// quantizeToBlackAndWhite(context, canvas.width, canvas.height);
+
+				// Quantize the canvas to basic colors
+				// quantizeToBasicColors(context, canvas.width, canvas.height);
+
+				const saturationFactor = 2;
+
+				captureImageWithSaturationAndQuantization(
+					context,
+					canvas.width,
+					canvas.height,
+					saturationFactor
+				);
 
 				// Perform the resize operation while maintaining content
 				const finalCanvas = squish512x512 ? resizeCanvas(canvas, 512, 512) : canvas;
@@ -256,6 +325,104 @@
 				gif.render();
 			}, 10);
 		});
+	}
+
+	function captureImageWithSaturationAndQuantization(context, width, height, saturationFactor) {
+		// Increase saturation first
+		adjustSaturation(context, width, height, saturationFactor);
+
+		// Then quantize to the basic color palette
+		quantizeToBasicColors(context, width, height);
+	}
+
+	function adjustSaturation(context, width, height, saturationFactor = 1.5) {
+		// Get the pixel data from the canvas
+		const imageData = context.getImageData(0, 0, width, height);
+		const data = imageData.data;
+
+		// Helper to convert RGB to HSL
+		function rgbToHsl(r, g, b) {
+			r /= 255;
+			g /= 255;
+			b /= 255;
+			const max = Math.max(r, g, b);
+			const min = Math.min(r, g, b);
+			let h,
+				s,
+				l = (max + min) / 2;
+
+			if (max === min) {
+				h = s = 0; // achromatic
+			} else {
+				const d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r:
+						h = (g - b) / d + (g < b ? 6 : 0);
+						break;
+					case g:
+						h = (b - r) / d + 2;
+						break;
+					case b:
+						h = (r - g) / d + 4;
+						break;
+				}
+				h /= 6;
+			}
+
+			return [h, s, l];
+		}
+
+		// Helper to convert HSL back to RGB
+		function hslToRgb(h, s, l) {
+			let r, g, b;
+
+			function hueToRgb(p, q, t) {
+				if (t < 0) t += 1;
+				if (t > 1) t -= 1;
+				if (t < 1 / 6) return p + (q - p) * 6 * t;
+				if (t < 1 / 2) return q;
+				if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+				return p;
+			}
+
+			if (s === 0) {
+				r = g = b = l; // achromatic
+			} else {
+				const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+				const p = 2 * l - q;
+				r = hueToRgb(p, q, h + 1 / 3);
+				g = hueToRgb(p, q, h);
+				b = hueToRgb(p, q, h - 1 / 3);
+			}
+
+			return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+		}
+
+		// Loop through each pixel and adjust saturation
+		for (let i = 0; i < data.length; i += 4) {
+			const r = data[i];
+			const g = data[i + 1];
+			const b = data[i + 2];
+
+			// Convert RGB to HSL
+			let [h, s, l] = rgbToHsl(r, g, b);
+
+			// Increase saturation
+			s *= saturationFactor;
+			s = Math.min(1, Math.max(0, s)); // Clamp between 0 and 1
+
+			// Convert HSL back to RGB
+			const [newR, newG, newB] = hslToRgb(h, s, l);
+
+			// Update pixel data
+			data[i] = newR;
+			data[i + 1] = newG;
+			data[i + 2] = newB;
+		}
+
+		// Put the modified pixel data back into the canvas
+		context.putImageData(imageData, 0, 0);
 	}
 
 	function resizeCanvas(sourceCanvas, targetWidth, targetHeight) {
