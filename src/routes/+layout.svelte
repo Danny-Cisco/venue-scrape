@@ -15,6 +15,8 @@
 
 	import type { ActionData, SubmitFunction } from './$types.js';
 
+	import { selectedDevice } from '$lib/stores/deviceStore';
+
 	import { invalidate } from '$app/navigation';
 
 	export let data;
@@ -22,6 +24,18 @@
 
 	import { handleMagicLink } from '$lib/utils/magicLink';
 	// import { supabase } from '$lib/supabaseClient';
+
+	// Set the device
+	function selectDevice(deviceId) {
+		$selectedDevice = deviceId;
+	}
+
+	$: $selectedDevice;
+
+	// Clear the selection if needed
+	function clearDevice() {
+		$selectedDevice = null;
+	}
 
 	let email = '';
 	const message = writable('');
@@ -63,6 +77,10 @@
 	const showRightSidebar = writable(true);
 
 	function startStream() {
+		triggerStartStream = true;
+	}
+
+	$: if ($selectedDevice) {
 		triggerStartStream = true;
 	}
 
@@ -133,7 +151,7 @@
 		capturedImage.set('');
 		tick().then(() => {
 			setTimeout(() => {
-				if (!selectedDeviceId) return;
+				if (!$selectedDevice) return;
 				const canvas = document.createElement('canvas');
 				canvas.width = videoElement.videoWidth;
 				canvas.height = videoElement.videoHeight;
@@ -290,7 +308,7 @@
 			// Small delay to ensure the camera frame is ready
 			setTimeout(() => {
 				// Safety check for device selection
-				if (!selectedDeviceId) {
+				if (!$selectedDevice) {
 					console.error('No camera device selected');
 					return;
 				}
@@ -840,7 +858,7 @@
 				<Video
 					bind:videoElement
 					bind:triggerStartStream
-					{selectedDeviceId}
+					selectedDeviceId={$selectedDevice}
 					on:openModal={handleVideoClick}
 					on:captureImage={captureImageAsGif}
 				/>
@@ -879,12 +897,7 @@
 	</div>
 </div>
 
-<CameraSettingsModal
-	bind:showCameraSettingsModal
-	bind:devices
-	bind:selectedDeviceId
-	on:startStream={startStream}
-/>
+<CameraSettingsModal bind:showCameraSettingsModal bind:devices on:startStream={startStream} />
 
 <style>
 	.size-5 {

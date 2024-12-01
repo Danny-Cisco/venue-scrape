@@ -3,9 +3,12 @@
 	export let videoElement;
 	export let triggerStartStream = false;
 	export let selectedDeviceId = '';
+	import { selectedDevice } from '$lib/stores/deviceStore';
 
 	let dispatch = createEventDispatcher();
 	let hover = false;
+
+	selectedDeviceId = $selectedDevice;
 
 	function showTips() {
 		hover = true;
@@ -19,7 +22,7 @@
 		dispatch('captureImage');
 	}
 
-	$: if (triggerStartStream) {
+	$: if (triggerStartStream && $selectedDevice && videoElement) {
 		startStream();
 		triggerStartStream = false;
 	}

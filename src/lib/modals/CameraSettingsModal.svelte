@@ -1,8 +1,9 @@
 <script>
 	export let devices;
-	export let selectedDeviceId;
+	// export let selectedDeviceId;
 	// export let triggerStartStream;
 	export let showCameraSettingsModal = false;
+	import { selectedDevice } from '$lib/stores/deviceStore';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -12,7 +13,8 @@
 
 	// Function to handle device change
 	function handleDeviceChange(event) {
-		selectedDeviceId = event.target.value;
+		$selectedDevice = event.target.value;
+
 		// triggerStartStream = true;
 		dispatch('startStream');
 		handleCloseModal();
