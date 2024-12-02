@@ -18,7 +18,7 @@
 	let result = { record: null, error: null };
 	let error = '';
 	let record = '';
-	let pollingInterval = 5000; // Polling interval in milliseconds
+	let pollingInterval = 1000; // Polling interval in milliseconds
 
 	// Reactive statements
 	$: error = result.error;
