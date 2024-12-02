@@ -117,17 +117,7 @@
 		<!-- System Prompt and Secret Key inputs -->
 		<div class="mb-4 space-y-4">
 			<div>
-				<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
-				<input
-					class="w-full p-2 border rounded"
-					type="text"
-					bind:value={systemPrompt}
-					placeholder="Enter System Prompt"
-				/>
-			</div>
-
-			<div>
-				<label class="block mb-2 font-bold text-gray-700">Secret Key:</label>
+				<label class="hidden block mb-2 font-bold text-gray-700">Secret Key:</label>
 				<input
 					class="w-full p-2 border rounded"
 					type="text"
@@ -137,6 +127,15 @@
 				{#if saveError}
 					<p class="mt-1 text-sm text-red-500">{saveError}</p>
 				{/if}
+			</div>
+			<div>
+				<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
+				<textarea
+					class="w-full p-2 border rounded h-36"
+					type="text"
+					bind:value={systemPrompt}
+					placeholder="Enter System Prompt"
+				/>
 			</div>
 		</div>
 

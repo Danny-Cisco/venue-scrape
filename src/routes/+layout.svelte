@@ -198,8 +198,8 @@
 		context,
 		width,
 		height,
-		saturationThreshold = 0.99,
-		lightnessThreshold = 0.85
+		saturationThreshold = 0.4,
+		lightnessThreshold = 0.8
 	) {
 		// Get the pixel data from the canvas
 		const imageData = context.getImageData(0, 0, width, height);
@@ -400,7 +400,7 @@
 		quantizeToBasicColors(context, width, height);
 	}
 
-	function adjustSaturation(context, width, height, saturationFactor = 1.5) {
+	function adjustSaturation(context, width, height, saturationFactor = 5) {
 		// Get the pixel data from the canvas
 		const imageData = context.getImageData(0, 0, width, height);
 		const data = imageData.data;
