@@ -793,7 +793,7 @@
 
 		<!-- Button to toggle left sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-[magenta] shadow left-0 top-[10vh]"
+			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-[magenta] shadow left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showLeftSidebar.update((v) => !v)}
 		>
 			<svg
@@ -876,7 +876,7 @@
 
 		<!-- Button to toggle right sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow right-0 top-[10vh]"
+			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showRightSidebar.update((v) => !v)}
 		>
 			<svg

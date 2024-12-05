@@ -130,7 +130,7 @@
 			</div>
 			<div>
 				<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>
-				mu<textarea
+				<textarea
 					class="w-full p-2 border rounded h-36"
 					type="text"
 					bind:value={systemPrompt}
