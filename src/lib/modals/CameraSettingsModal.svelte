@@ -1,7 +1,7 @@
 <script>
-	export let devices;
-	export let showCameraSettingsModal = false;
-	import { selectedDevice } from '$lib/stores/deviceStore';
+	import { devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
+	import { showLeftSidebar, showRightSidebar, showCameraSettingsModal } from '$lib/stores/ui';
+	// import { selectedDevice } from '$lib/stores/camera';
 
 	import { createEventDispatcher } from 'svelte';
 
@@ -30,7 +30,7 @@
 	}
 
 	function handleCloseModal() {
-		showCameraSettingsModal = false;
+		showCameraSettingsModal.set(false);
 	}
 
 	function handleClickOutside(event) {
@@ -41,7 +41,7 @@
 </script>
 
 <!-- Camera Selector -->
-{#if showCameraSettingsModal}
+{#if $showCameraSettingsModal}
 	<div
 		on:click={handleClickOutside}
 		class="absolute inset-0 flex flex-col items-center justify-center text-gray-700 h-full mx-auto z-[99] bg-black/50"

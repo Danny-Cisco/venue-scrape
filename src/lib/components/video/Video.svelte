@@ -1,10 +1,10 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	export let videoElement;
-	export let triggerStartStream = false;
-	export let triggerStopStream = false;
+	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
+
 	export let selectedDeviceId = '';
-	import { selectedDevice } from '$lib/stores/deviceStore';
+	import { selectedDevice } from '$lib/stores/camera';
 
 	let dispatch = createEventDispatcher();
 	let hover = false;
@@ -75,13 +75,13 @@
 	}
 
 	// Handle trigger reactivity
-	$: if (triggerStartStream && videoElement) {
-		triggerStartStream = false; // Reset the trigger
+	$: if ($triggerStartStream && videoElement) {
+		triggerStartStream.set(false); // Reset the trigger
 		startStream();
 	}
 
-	$: if (triggerStopStream) {
-		triggerStopStream = false; // Reset the trigger
+	$: if ($triggerStopStream) {
+		triggerStopStream.set(false); // Reset the trigger
 		stopStream();
 	}
 </script>

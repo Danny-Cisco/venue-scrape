@@ -1,5 +1,13 @@
 <script lang="ts">
 	import '../app.postcss';
+
+	// At the top of your layout.svelte
+	import { devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
+	import { showLeftSidebar, showRightSidebar, showCameraSettingsModal } from '$lib/stores/ui';
+	import { message, error, loading } from '$lib/stores/auth';
+	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
+	import { requestCameraPermission } from '$lib/utils/camera';
+
 	import GIF from 'gif.js'; // Ensure gif.js is installed: npm install gif.js
 
 	import CapturedImageFly from '$lib/components/video/CapturedImageFly.svelte';
@@ -7,15 +15,11 @@
 	import { slide, fly, fade } from 'svelte/transition';
 	import Video from '$lib/components/video/Video.svelte';
 	import CameraSettingsModal from '$lib/modals/CameraSettingsModal.svelte';
-	import { writable } from 'svelte/store';
-	import { enhance } from '$app/forms';
 
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
 
 	import type { ActionData, SubmitFunction } from './$types.js';
-
-	import { selectedDevice } from '$lib/stores/deviceStore';
 
 	import { invalidate } from '$app/navigation';
 
@@ -23,7 +27,6 @@
 	export let form;
 
 	import { handleMagicLink } from '$lib/utils/magicLink';
-	// import { supabase } from '$lib/supabaseClient';
 
 	// Set the device
 	function selectDevice(deviceId) {
@@ -33,8 +36,7 @@
 	$: $selectedDevice;
 
 	let email = '';
-	const message = writable('');
-	const error = writable('');
+
 	let isSubmitting = false;
 
 	async function submitMagicLink() {
@@ -52,8 +54,6 @@
 		isSubmitting = false;
 	}
 
-	let loading;
-
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
 	$: console.log('🚀 ~ profile:', profile);
@@ -62,34 +62,25 @@
 	const hotkeyEmitter = createHotkeyEmitter();
 
 	let videoElement;
-	let triggerStartStream = false;
-	let triggerStopStream = false;
-	let selectedDeviceId = '';
-	let devices = writable([]);
-	let permissionStatus = writable('pending');
-	let showCameraSettingsModal = false;
-
-	const showLeftSidebar = writable(true);
-	const showRightSidebar = writable(true);
 
 	function startStream() {
-		triggerStartStream = true;
+		triggerStartStream.set(true);
 	}
 	function stopStream() {
-		triggerStopStream = true;
+		triggerStopStream.set(true);
 	}
 
 	$: if ($selectedDevice) {
-		triggerStartStream = true;
+		triggerStartStream.set(true);
 	} else {
-		triggerStopStream = true;
+		triggerStopStream.set(true);
 	}
 
 	const handleSubmit: SubmitFunction = () => {
-		loading = true;
+		$loading = true;
 		return async ({ update }) => {
 			update();
-			loading = false;
+			$loading = false;
 		};
 	};
 
@@ -103,49 +94,8 @@
 		}
 	});
 
-	async function requestCameraPermission() {
-		try {
-			const result = await navigator.permissions.query({ name: 'camera' });
-			if (result.state === 'granted') {
-				permissionStatus.set('granted');
-				await getVideoDevices();
-			} else if (result.state === 'prompt') {
-				try {
-					await navigator.mediaDevices.getUserMedia({ video: true });
-					permissionStatus.set('granted');
-					await getVideoDevices();
-				} catch (error) {
-					console.error('Permission denied or error occurred:', error);
-					permissionStatus.set('denied');
-				}
-			} else {
-				permissionStatus.set('denied');
-				console.error('Camera permission denied');
-			}
-			result.addEventListener('change', (e) => {
-				permissionStatus.set(e.target.state);
-				if (e.target.state === 'granted') {
-					getVideoDevices();
-				}
-			});
-		} catch (error) {
-			console.error('Error checking camera permissions:', error);
-			permissionStatus.set('error');
-		}
-	}
-
-	async function getVideoDevices() {
-		try {
-			const allDevices = await navigator.mediaDevices.enumerateDevices();
-			const videoDevices = allDevices.filter((device) => device.kind === 'videoinput');
-			devices.set(videoDevices);
-		} catch (error) {
-			console.error('Error enumerating devices:', error);
-		}
-	}
-
 	function handleVideoClick() {
-		showCameraSettingsModal = true;
+		showCameraSettingsModal.set(true);
 	}
 
 	function captureImage() {
@@ -566,7 +516,7 @@
 		</strong>
 
 		<!-- User Authentication -->
-		{#if !loading}
+		{#if !$loading}
 			<div class="flex items-end h-full gap-4 mb-6">
 				{#if session}
 					<a href="/account" class="flex items-end gap-4"
@@ -642,7 +592,7 @@
 					</li>
 					<li class="mb-2">
 						<button
-							on:click={() => (showCameraSettingsModal = true)}
+							on:click={() => ($showCameraSettingsModal = true)}
 							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
 						>
 							<svg
@@ -858,8 +808,6 @@
 
 				<Video
 					bind:videoElement
-					bind:triggerStartStream
-					bind:triggerStopStream
 					selectedDeviceId={$selectedDevice}
 					on:openModal={handleVideoClick}
 					on:captureImage={captureImageAsGif}
@@ -899,12 +847,7 @@
 	</div>
 </div>
 
-<CameraSettingsModal
-	bind:showCameraSettingsModal
-	bind:devices
-	on:startStream={startStream}
-	on:stopStream={stopStream}
-/>
+<CameraSettingsModal on:startStream={startStream} on:stopStream={stopStream} />
 
 <style>
 	.size-5 {
