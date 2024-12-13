@@ -16,7 +16,15 @@
 		if (selectedValue === 'no-camera') {
 			clearDevice();
 		} else {
-			$selectedDevice = selectedValue;
+			$selectedDevice = null; // first clear the device selection
+			// then wait a moment before switching devices
+			setTimeout(
+				() => {
+					$selectedDevice = selectedValue;
+				},
+
+				100
+			);
 			dispatch('startStream');
 		}
 

@@ -63,7 +63,11 @@
 
 	// Explicitly handle stopping the video stream
 	function stopStream() {
-		if (!isStreamActive || !videoElement?.srcObject) {
+		// if (!isStreamActive || !videoElement?.srcObject) {
+		// 	console.log('No active stream to stop.');
+		// 	return;
+		// }
+		if (!isStreamActive) {
 			console.log('No active stream to stop.');
 			return;
 		}
