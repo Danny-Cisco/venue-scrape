@@ -21,22 +21,19 @@ export async function handleMagicLink(
 	}
 
 	try {
-		// Helper to get the base URL of your application
-		const getURL = () => {
-			const url = window.location.origin;
-			return url.endsWith('/') ? url : `${url}/`;
-		};
+		// Get the current URL origin
+		const baseUrl = window.location.origin;
+		const redirectUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
-		// Now using /auth/confirm as your callback route
 		const { error } = await supabase.auth.signInWithOtp({
 			email,
 			options: {
-				// The immediate redirect after clicking the email link
-				emailRedirectTo: `${getURL()}auth/confirm`,
-				// Where they should end up after authentication
-				redirectTo: `${getURL()}` // or whatever your final destination is
+				emailRedirectTo: `${redirectUrl}auth/confirm`,
+				redirectTo: redirectUrl
 			}
 		});
+
+		if (error) throw error;
 
 		return {
 			success: true,
