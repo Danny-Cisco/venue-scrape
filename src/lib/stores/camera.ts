@@ -25,6 +25,8 @@ const createPersistentDevice = () => {
 
 export const selectedDevice = createPersistentDevice();
 
+export const videoElement = writable();
+
 export interface VideoDevice {
 	deviceId: string;
 	label: string;

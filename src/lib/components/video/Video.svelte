@@ -1,10 +1,9 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-	export let videoElement;
+	import { videoElement, selectedDevice } from '$lib/stores/camera';
 	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
 
 	export let selectedDeviceId = '';
-	import { selectedDevice } from '$lib/stores/camera';
 
 	let dispatch = createEventDispatcher();
 	let hover = false;
@@ -33,7 +32,7 @@
 			return;
 		}
 
-		if (!selectedDeviceId || !videoElement) {
+		if (!selectedDeviceId || !$videoElement) {
 			console.error('No selected device or video element.');
 			return;
 		}
@@ -51,7 +50,7 @@
 
 		try {
 			const stream = await navigator.mediaDevices.getUserMedia(constraints);
-			videoElement.srcObject = stream;
+			$videoElement.srcObject = stream;
 			isStreamActive = true;
 
 			// Log actual resolution
@@ -69,13 +68,13 @@
 			return;
 		}
 
-		videoElement.srcObject.getTracks().forEach((track) => track.stop());
-		videoElement.srcObject = null;
+		$videoElement.srcObject.getTracks().forEach((track) => track.stop());
+		$videoElement.srcObject = null;
 		isStreamActive = false;
 	}
 
 	// Handle trigger reactivity
-	$: if ($triggerStartStream && videoElement) {
+	$: if ($triggerStartStream && $videoElement) {
 		triggerStartStream.set(false); // Reset the trigger
 		startStream();
 	}
@@ -88,7 +87,7 @@
 
 <div class="w-full max-w-[250px] h-[144px] bg-gray-100 border-2 border-[magenta] rounded-lg shadow">
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
-		<video bind:this={videoElement} autoplay playsinline></video>
+		<video bind:this={$videoElement} autoplay playsinline></video>
 		{#if !selectedDeviceId || hover}
 			<div class="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
 				click to select camera
