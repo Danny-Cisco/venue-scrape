@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
 
-	// At the top of your layout.svelte
 	import { videoElement, devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
 	import { showLeftSidebar, showRightSidebar, showCameraSettingsModal } from '$lib/stores/ui';
 	import { message, error, loading } from '$lib/stores/auth';
@@ -17,22 +16,13 @@
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
 
-	import {
-		captureImage,
-		quantizeToBlackAndWhite,
-		quantizeToBasicColors,
-		captureImageAsGif,
-		captureImageWithSaturationAndQuantization,
-		adjustSaturation,
-		resizeCanvas
-	} from '$lib/utils/imageProcessing';
+	import { captureImage, captureImageAsGif } from '$lib/utils/imageProcessing';
 
 	import type { ActionData, SubmitFunction } from './$types.js';
 
 	import { invalidate } from '$app/navigation';
 
 	export let data;
-	export let form;
 
 	import { handleMagicLink } from '$lib/utils/magicLink';
 
