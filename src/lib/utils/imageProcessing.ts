@@ -160,92 +160,102 @@ export function captureImageAsGif() {
 
 	console.log('Capturing GIF image...');
 
-	// Use tick() to ensure the DOM has updated before we proceed
-	tick().then(() => {
-		// Small delay to ensure the camera frame is ready
-		setTimeout(() => {
-			// Safety check for device selection
-			if (!get(selectedDevice)) {
-				console.error('No camera device selected');
-				return;
-			}
+	// Return a Promise to properly handle the async operations
+	return tick()
+		.then(() => {
+			return new Promise((resolve, reject) => {
+				// Small delay to ensure the camera frame is ready
+				setTimeout(() => {
+					try {
+						// Safety check for device selection
+						if (!get(selectedDevice)) {
+							throw new Error('No camera device selected');
+						}
 
-			// Create a canvas to capture the current video frame
-			const canvas = document.createElement('canvas');
+						// Create a canvas to capture the current video frame
+						const canvas = document.createElement('canvas');
+						const videoEl = get(videoElement);
 
-			// Safety checks for video element
-			if (!get(videoElement) || !get(videoElement).videoWidth) {
-				console.error('Video element not ready');
-				return;
-			}
+						// Safety checks for video element
+						if (!videoEl || !videoEl.videoWidth) {
+							throw new Error('Video element not ready');
+						}
 
-			// Set canvas dimensions to match video
-			canvas.width = get(videoElement).videoWidth;
-			canvas.height = get(videoElement).videoHeight;
+						// Set canvas dimensions to match video
+						canvas.width = videoEl.videoWidth;
+						canvas.height = videoEl.videoHeight;
 
-			// Get the drawing context and capture the current frame
-			const context = canvas.getContext('2d');
-			if (!context) {
-				console.error('Could not get canvas context');
-				return;
-			}
+						// Get the drawing context and capture the current frame
+						const context = canvas.getContext('2d');
+						if (!context) {
+							throw new Error('Could not get canvas context');
+						}
 
-			// Draw the current video frame onto the canvas
-			context.drawImage(get(videoElement), 0, 0, canvas.width, canvas.height);
+						// Draw the current video frame onto the canvas
+						context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
 
-			// Quantize the canvas to black and white
-			// quantizeToBlackAndWhite(context, canvas.width, canvas.height);
+						const saturationFactor = 2;
+						captureImageWithSaturationAndQuantization(
+							context,
+							canvas.width,
+							canvas.height,
+							saturationFactor
+						);
 
-			// Quantize the canvas to basic colors
-			// quantizeToBasicColors(context, canvas.width, canvas.height);
+						// Perform the resize operation while maintaining content
+						const finalCanvas = squish512x512 ? resizeCanvas(canvas, 512, 512) : canvas;
 
-			const saturationFactor = 2;
+						// Configure our GIF encoder with optimal settings
+						const gif = new GIF({
+							workers: 2,
+							quality: 10,
+							workerScript: '/gif.worker.js',
+							width: finalCanvas.width,
+							height: finalCanvas.height
+						});
 
-			captureImageWithSaturationAndQuantization(
-				context,
-				canvas.width,
-				canvas.height,
-				saturationFactor
-			);
+						// Add the single frame to our GIF
+						gif.addFrame(finalCanvas, {
+							delay: 100,
+							copy: true
+						});
 
-			// Perform the resize operation while maintaining content
-			const finalCanvas = squish512x512 ? resizeCanvas(canvas, 512, 512) : canvas;
+						// Handle successful GIF creation
+						gif.on('finished', (blob) => {
+							const reader = new FileReader();
+							reader.onload = () => {
+								const base64String = reader.result.split(',')[1];
+								const fileSizeKB = (blob.size / 1024).toFixed(2);
+								console.log(`GIF file size: ${fileSizeKB} KB`);
+								// In your GIF capture function, right before setting the store:
+								console.log(
+									'Setting store with data URL length:',
+									`data:image/gif;base64,${base64String}`.length
+								);
+								capturedImage.set(`data:image/gif;base64,${base64String}`);
+								resolve(); // Resolve the promise when everything is done
+							};
+							reader.onerror = reject; // Handle FileReader errors
+							reader.readAsDataURL(blob);
+						});
 
-			// Configure our GIF encoder with optimal settings
-			const gif = new GIF({
-				workers: 2, // Use 2 worker threads for better performance
-				quality: 10, // Lower number means better compression
-				workerScript: '/gif.worker.js', // Path to worker script in public directory
-				width: finalCanvas.width,
-				height: finalCanvas.height
+						gif.on('error', (error) => {
+							reject(error);
+							capturedImage.set('');
+						});
+
+						gif.render();
+					} catch (error) {
+						reject(error);
+						capturedImage.set('');
+					}
+				}, 10);
 			});
-
-			// Add the single frame to our GIF
-			gif.addFrame(finalCanvas, {
-				delay: 100, // Frame delay in milliseconds
-				copy: true // Make a copy of the canvas data for safety
-			});
-
-			// Handle successful GIF creation
-			gif.on('finished', (blob) => {
-				const reader = new FileReader();
-				reader.onload = function () {
-					const base64String = reader.result.split(',')[1];
-					const fileSizeKB = (blob.size / 1024).toFixed(2);
-					console.log(`GIF file size: ${fileSizeKB} KB`);
-					capturedImage.set(`data:image/gif;base64,${base64String}`);
-				};
-				reader.readAsDataURL(blob);
-			});
-
-			gif.on('error', (error) => {
-				console.error('Error creating GIF:', error);
-				capturedImage.set('');
-			});
-
-			gif.render();
-		}, 10);
-	});
+		})
+		.catch((error) => {
+			console.error('Error in captureImageAsGif:', error);
+			capturedImage.set('');
+		});
 }
 
 export function captureImageWithSaturationAndQuantization(

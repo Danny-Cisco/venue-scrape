@@ -11,7 +11,8 @@ export async function POST({ request }) {
 		const { messages } = await request.json();
 
 		// Log the incoming messages
-		console.log('🚀 ~ Received messages:', JSON.stringify(messages, null, 2));
+		// console.log('🚀 ~ Received messages:', JSON.stringify(messages, null, 2));
+		// console.log('🚀 ~ Received messages:';
 
 		// Send the messages to OpenAI API as-is
 		const response = await openai.chat.completions.create({
@@ -21,7 +22,8 @@ export async function POST({ request }) {
 
 		// Extract and log the assistant's reply
 		const reply = response.choices[0]?.message || {};
-		console.log('✅ ~ Assistant reply:', JSON.stringify(reply, null, 2));
+		// console.log('✅ ~ Assistant reply:', JSON.stringify(reply, null, 2));
+		// console.log('✅ ~ Assistant reply:');
 
 		// Return the assistant's reply
 		return new Response(JSON.stringify({ reply }), {
