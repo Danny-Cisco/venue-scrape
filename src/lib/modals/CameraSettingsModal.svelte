@@ -16,6 +16,11 @@
 		if (selectedValue === 'no-camera') {
 			clearDevice();
 		} else {
+			if (selectedValue === $selectedDevice) {
+				handleCloseModal();
+				return;
+			}
+
 			$selectedDevice = null; // first clear the device selection
 			// then wait a moment before switching devices
 			setTimeout(
