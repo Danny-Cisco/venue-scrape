@@ -1,11 +1,14 @@
 <script>
 	import { devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
-	import { showLeftSidebar, showRightSidebar, showCameraSettingsModal } from '$lib/stores/ui';
-	// import { selectedDevice } from '$lib/stores/camera';
+	import { showCameraSettingsModal } from '$lib/stores/ui';
+	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
 
-	import { createEventDispatcher } from 'svelte';
-
-	let dispatch = createEventDispatcher();
+	function startStream() {
+		triggerStartStream.set(true);
+	}
+	function stopStream() {
+		triggerStopStream.set(true);
+	}
 
 	let modalBox;
 
@@ -30,7 +33,7 @@
 
 				100
 			);
-			dispatch('startStream');
+			startStream();
 		}
 
 		handleCloseModal();
@@ -39,7 +42,7 @@
 	// Clear the selection
 	function clearDevice() {
 		$selectedDevice = null;
-		dispatch('stopStream');
+		stopStream();
 	}
 
 	function handleCloseModal() {

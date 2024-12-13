@@ -69,15 +69,6 @@
 
 	const hotkeyEmitter = createHotkeyEmitter();
 
-	// let videoElement;
-
-	function startStream() {
-		triggerStartStream.set(true);
-	}
-	function stopStream() {
-		triggerStopStream.set(true);
-	}
-
 	$: if ($selectedDevice) {
 		triggerStartStream.set(true);
 	} else {
@@ -420,24 +411,7 @@
 		<!-- Right Sidebar -->
 		{#if $showRightSidebar}
 			<aside transition:slide={{ axis: 'x' }} class="w-[300px] p-4 pt-16 bg-gray-200">
-				<div class="w-[250px] mx-auto">
-					<!-- <h2 class="mb-2 text-lg font-semibold">INPUTS</h2>
-
-					<Video
-						bind:videoElement
-						bind:triggerStartStream
-						{selectedDeviceId}
-						on:openModal={handleVideoClick}
-						on:captureImage={captureImage}
-					/>
-
-					<div
-						class="bg-gray-100 text-gray-500 border-[magenta] relative border-2 shadow rounded-lg h-[144px] w-[250px] flex flex-col items-center justify-center"
-					>
-						captured image
-						<CapturedImageFly />
-					</div> -->
-				</div>
+				<div class="w-[250px] mx-auto"></div>
 			</aside>
 		{/if}
 
@@ -486,7 +460,7 @@
 	</div>
 </div>
 
-<CameraSettingsModal on:startStream={startStream} on:stopStream={stopStream} />
+<CameraSettingsModal />
 
 <style>
 	.size-5 {
