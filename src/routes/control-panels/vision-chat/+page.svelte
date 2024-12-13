@@ -74,7 +74,7 @@
 		}
 
 		userInput = '';
-		capturedImage.set(null);
+		// capturedImage.set(null);
 
 		try {
 			const response = await fetch('/api/openai/chat', {
@@ -171,9 +171,7 @@
 
 		<!-- Input and actions -->
 		<input class="w-full" bind:value={userInput} placeholder="Type a message" />
-		{#if $capturedImage}
-			<img src={$capturedImage} alt="preview" />
-		{/if}
+
 		<button
 			class="btn rounded-full bg-white text-[magenta] mt-4 shadow"
 			on:click={sendMessage}

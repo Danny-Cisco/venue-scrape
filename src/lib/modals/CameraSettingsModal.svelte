@@ -1,11 +1,14 @@
 <script>
-	export let devices;
-	export let showCameraSettingsModal = false;
-	import { selectedDevice } from '$lib/stores/deviceStore';
+	import { devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
+	import { showCameraSettingsModal } from '$lib/stores/ui';
+	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
 
-	import { createEventDispatcher } from 'svelte';
-
-	let dispatch = createEventDispatcher();
+	function startStream() {
+		triggerStartStream.set(true);
+	}
+	function stopStream() {
+		triggerStopStream.set(true);
+	}
 
 	let modalBox;
 
@@ -16,8 +19,21 @@
 		if (selectedValue === 'no-camera') {
 			clearDevice();
 		} else {
-			$selectedDevice = selectedValue;
-			dispatch('startStream');
+			if (selectedValue === $selectedDevice) {
+				handleCloseModal();
+				return;
+			}
+
+			$selectedDevice = null; // first clear the device selection
+			// then wait a moment before switching devices
+			setTimeout(
+				() => {
+					$selectedDevice = selectedValue;
+				},
+
+				100
+			);
+			startStream();
 		}
 
 		handleCloseModal();
@@ -26,11 +42,11 @@
 	// Clear the selection
 	function clearDevice() {
 		$selectedDevice = null;
-		dispatch('stopStream');
+		stopStream();
 	}
 
 	function handleCloseModal() {
-		showCameraSettingsModal = false;
+		showCameraSettingsModal.set(false);
 	}
 
 	function handleClickOutside(event) {
@@ -41,7 +57,7 @@
 </script>
 
 <!-- Camera Selector -->
-{#if showCameraSettingsModal}
+{#if $showCameraSettingsModal}
 	<div
 		on:click={handleClickOutside}
 		class="absolute inset-0 flex flex-col items-center justify-center text-gray-700 h-full mx-auto z-[99] bg-black/50"
