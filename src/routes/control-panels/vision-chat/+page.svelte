@@ -149,7 +149,9 @@
 							{#if content.type === 'text'}
 								<p>{content.text}</p>
 							{:else if content.type === 'image_url'}
-								<img src={content.image_url.url} alt="image" />
+								<div class="overflow-hidden rounded-xl">
+									<img src={content.image_url.url} alt="image" />
+								</div>
 							{:else}
 								{content}
 							{/if}
