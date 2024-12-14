@@ -1,11 +1,15 @@
 <script>
-	export let devices;
-	export let showCameraSettingsModal = false;
-	import { selectedDevice } from '$lib/stores/deviceStore';
+	import { devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
+	import { showCameraSettingsModal } from '$lib/stores/ui';
+	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
+	import { fade } from 'svelte/transition';
 
-	import { createEventDispatcher } from 'svelte';
-
-	let dispatch = createEventDispatcher();
+	function startStream() {
+		triggerStartStream.set(true);
+	}
+	function stopStream() {
+		triggerStopStream.set(true);
+	}
 
 	let modalBox;
 
@@ -44,9 +48,13 @@
 {#if showCameraSettingsModal}
 	<div
 		on:click={handleClickOutside}
-		class="absolute inset-0 flex flex-col items-center justify-center text-gray-700 h-full mx-auto z-[99] bg-black/50"
+		transition:fade
+		class="absolute inset-0 flex flex-col items-center justify-center text-gray-700 h-full mx-auto z-[99] bg-gray-600/80"
 	>
-		<div bind:this={modalBox} class="w-full max-w-md p-4 pb-6 bg-white rounded-xl">
+		<div
+			bind:this={modalBox}
+			class="w-full max-w-md p-4 pb-6 relative shadow-md bg-white z-[20] rounded-xl"
+		>
 			<h2 class="mb-2 text-center">Camera Settings</h2>
 			<select
 				id="camera-select"

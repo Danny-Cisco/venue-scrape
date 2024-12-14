@@ -535,7 +535,7 @@
 	});
 </script>
 
-<div class="relative flex flex-col min-h-screen text-gray-800 bg-gray-200">
+<body class="relative flex flex-col min-h-screen text-gray-800">
 	<!-- Header -->
 	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-white">
 		<!-- Logo -->
@@ -566,11 +566,11 @@
 		</strong>
 
 		<!-- User Authentication -->
-		{#if !loading}
-			<div class="flex items-end h-full gap-4 mb-6">
+		{#if !$loading}
+			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 bg-white rounded-md shadow-md">
 				{#if session}
-					<a href="/account" class="flex items-end gap-4"
-						><p class="font-light text-gray-500">
+					<a href="/account" class="flex items-center gap-4"
+						><p class="font-light">
 							{profile?.username || session.user.email || session.user.displayName}
 						</p>
 
@@ -793,7 +793,7 @@
 
 		<!-- Button to toggle left sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-[magenta] shadow left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-[magenta] shadow-md left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showLeftSidebar.update((v) => !v)}
 		>
 			<svg
@@ -876,7 +876,7 @@
 
 		<!-- Button to toggle right sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow-md right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showRightSidebar.update((v) => !v)}
 		>
 			<svg
@@ -914,5 +914,25 @@
 
 	.rotate-180 {
 		transform: rotate(180deg);
+	}
+	h2 {
+		color: black;
+	}
+	body {
+		color: black;
+		/*background-color: #f1f1f1; /* Base background color */
+		background-image:
+    /* Large squares (darker grid) */
+			linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+			/* Small squares (lighter grid) */
+				linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+		background-size:
+    /* Size for the grids */
+			100px 100px,
+			100px 100px,
+			/* Large grid size */ 20px 20px,
+			20px 20px; /* Small grid size */
 	}
 </style>

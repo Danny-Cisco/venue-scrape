@@ -2,6 +2,7 @@
 	import { messages, updateSystemPrompt } from '$lib/stores/messages.js';
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { get } from 'svelte/store';
+	import { fade } from 'svelte/transition';
 
 	let userInput = '';
 	let systemPrompt = '';
@@ -112,7 +113,7 @@
 	}
 </script>
 
-<div class="absolute inset-0">
+<div class="absolute inset-0" in:fade>
 	<div class="absolute top-0 flex flex-col w-full p-4 bottom-4">
 		<!-- System Prompt and Secret Key inputs -->
 		<div class="mb-4 space-y-4">

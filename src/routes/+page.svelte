@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 </script>
 
-<div class="flex flex-col justify-center h-full max-w-md gap-2 mx-auto">
+<div class="flex flex-col justify-center h-full max-w-md gap-2 mx-auto" in:fade>
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 424 424"

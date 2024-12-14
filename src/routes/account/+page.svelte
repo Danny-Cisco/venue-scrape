@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
+	import { fade } from 'svelte/transition';
 
 	export let data;
 	export let form;
@@ -74,7 +75,7 @@
 	};
 </script>
 
-<div class="max-w-xl mx-auto">
+<div class="max-w-xl mx-auto" in:fade>
 	<form
 		class="w-full"
 		method="post"

@@ -1,4 +1,5 @@
 <script>
+	import { fade } from 'svelte/transition';
 	import { supabaseGetOneMarkdown } from '$lib/supabase/supabaseHelpers.js';
 	import { onDestroy } from 'svelte';
 	import {
@@ -55,7 +56,7 @@
 	});
 </script>
 
-<main class="max-w-2xl p-4 mx-auto space-y-4">
+<main class="max-w-2xl p-4 mx-auto space-y-4" in:fade>
 	<!-- <input-section> -->
 	<SupabaseTextInput bind:value={secretKey} placeholder="Enter Secret Key..." />
 	<!-- </input-section> -->
