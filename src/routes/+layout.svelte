@@ -31,6 +31,21 @@
 		$selectedDevice = deviceId;
 	}
 
+	let zoomLevel = 1; // Default zoom level
+
+	function updateHeaderGrid() {
+		const largeSquareSize = 100 * zoomLevel; // Adjust large squares
+		const smallSquareSize = 20 * zoomLevel; // Adjust small squares
+
+		const body = document.querySelector('body');
+		body.style.backgroundSize = `
+      ${largeSquareSize}px ${largeSquareSize}px,
+      ${largeSquareSize}px ${largeSquareSize}px,
+      ${smallSquareSize}px ${smallSquareSize}px,
+      ${smallSquareSize}px ${smallSquareSize}px
+    `;
+	}
+
 	$: $selectedDevice;
 
 	let email = '';
@@ -87,6 +102,17 @@
 			showRightSidebar.set(false);
 		}
 
+		updateHeaderGrid();
+
+		window.addEventListener('wheel', (e) => {
+			if (e.deltaY < 0) {
+				zoomLevel = Math.min(zoomLevel * 1.1, 5); // Zoom in (limit max zoom)
+			} else {
+				zoomLevel = Math.max(zoomLevel / 1.1, 0.5); // Zoom out (limit min zoom)
+			}
+			updateHeaderGrid();
+		});
+
 		requestCameraPermission();
 		const unsubscribe = hotkeyEmitter.subscribe(captureImageAsGif);
 		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -105,11 +131,13 @@
 	});
 </script>
 
-<div class="relative flex flex-col min-h-screen text-gray-800 bg-gray-200">
+<body class="relative flex flex-col min-h-screen text-gray-800 bg-[#f1f1f1]">
 	<!-- Header -->
-	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-white">
+	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-[#f1f1f1]">
 		<!-- Logo -->
-		<strong class="flex items-end gap-1 text-3xl text-[magenta]">
+		<strong
+			class="flex items-end gap-1 text-3xl bg-white p-4 pt-0 shadow-md rounded-md text-[magenta]"
+		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 424 424"
@@ -188,11 +216,17 @@
 	<div class="flex flex-1">
 		<!-- Left Sidebar -->
 		{#if $showLeftSidebar}
-			<aside class="w-[300px] p-4 pt-16 bg-gray-200" transition:slide={{ axis: 'x' }}>
+			<aside
+				class="w-[300px] p-4 pt-16 rounded-md shadow-lg m-4 bg-white"
+				transition:slide={{ axis: 'x' }}
+			>
 				<h2 class="mb-2 text-lg font-semibold">MindMapr</h2>
 				<ul>
 					<li class="mb-2">
-						<a href="/" class="flex items-center gap-2 font-light text-gray-500 hover:underline">
+						<a
+							href="/"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -213,7 +247,7 @@
 					<li class="mb-2">
 						<button
 							on:click={() => ($showCameraSettingsModal = true)}
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +275,7 @@
 					<li class="mb-2">
 						<a
 							href="/account"
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -262,12 +296,14 @@
 					</li>
 				</ul>
 
-				<h2 class="mb-2 text-lg font-semibold">Control Panels</h2>
-				<ul>
+				<h2 class="justify-start mb-2 ml-0 text-lg font-semibold whitespace-nowrap">
+					Control Panels
+				</h2>
+				<ul class="justify-start ml-0 whitespace-nowrap">
 					<li class="mb-2">
 						<a
 							href="/control-panels/vision-chat"
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +325,7 @@
 					<li class="mb-2">
 						<a
 							href="/control-panels/conversation-to-d3-mindmap"
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -312,7 +348,7 @@
 					<li>
 						<a
 							href="/control-panels/post-it-to-miro"
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -337,7 +373,7 @@
 					<li class="mb-2">
 						<a
 							href="/displays/vision-chat-markdown"
-							class="flex items-center gap-2 font-light text-gray-500 hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -385,7 +421,7 @@
 		</button>
 
 		<!-- Main Content -->
-		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] max-w-3xl mx-auto bg-gray-100">
+		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] max-w-3xl mx-auto">
 			<slot />
 			{#if $permissionStatus === 'denied'}
 				<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
@@ -400,7 +436,7 @@
 
 		<!-- Right Sidebar -->
 		{#if $showRightSidebar}
-			<aside transition:slide={{ axis: 'x' }} class="w-[300px] p-4 pt-16 bg-gray-200">
+			<aside transition:slide={{ axis: 'x' }} class="w-[300px] p-4 pt-16 rounded-md m-4">
 				<div class="w-[250px] mx-auto"></div>
 			</aside>
 		{/if}
@@ -448,7 +484,7 @@
 			</svg>
 		</button>
 	</div>
-</div>
+</body>
 
 <CameraSettingsModal />
 
@@ -460,5 +496,25 @@
 
 	.rotate-180 {
 		transform: rotate(180deg);
+	}
+	h2 {
+		color: black;
+	}
+	body {
+		color: black;
+		background-color: #f1f1f1; /* Base background color */
+		background-image:
+    /* Large squares (darker grid) */
+			linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+			/* Small squares (lighter grid) */
+				linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+			linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+		background-size:
+    /* Size for the grids */
+			100px 100px,
+			100px 100px,
+			/* Large grid size */ 20px 20px,
+			20px 20px; /* Small grid size */
 	}
 </style>
