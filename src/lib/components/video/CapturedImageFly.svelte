@@ -1,7 +1,6 @@
 <script>
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { fly } from 'svelte/transition';
-	$: $capturedImage;
 </script>
 
 <!-- Display Captured Image -->

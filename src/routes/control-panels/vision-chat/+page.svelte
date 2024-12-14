@@ -75,7 +75,7 @@
 		}
 
 		userInput = '';
-		capturedImage.set(null);
+		// capturedImage.set(null);
 
 		try {
 			const response = await fetch('/api/openai/chat', {
@@ -150,7 +150,9 @@
 							{#if content.type === 'text'}
 								<p>{content.text}</p>
 							{:else if content.type === 'image_url'}
-								<img src={content.image_url.url} alt="image" />
+								<div class="overflow-hidden rounded-xl">
+									<img src={content.image_url.url} alt="image" />
+								</div>
 							{:else}
 								{content}
 							{/if}
@@ -172,9 +174,7 @@
 
 		<!-- Input and actions -->
 		<input class="w-full" bind:value={userInput} placeholder="Type a message" />
-		{#if $capturedImage}
-			<img src={$capturedImage} alt="preview" />
-		{/if}
+
 		<button
 			class="btn rounded-full bg-white text-[magenta] mt-4 shadow"
 			on:click={sendMessage}
