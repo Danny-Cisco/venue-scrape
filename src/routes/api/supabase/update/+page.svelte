@@ -20,7 +20,7 @@
 		}
 
 		try {
-			const response = await fetch(`/api/supabase/update?table=markdown`, {
+			const response = await fetch(`/api/supabase/update?table=lenses`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json'

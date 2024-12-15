@@ -1,6 +1,6 @@
 <script>
 	import { fade } from 'svelte/transition';
-	import { supabaseGetOneMarkdown } from '$lib/supabase/supabaseHelpers.js';
+	import { supabaseGetOneLens } from '$lib/supabase/supabaseHelpers.js';
 	import { onDestroy } from 'svelte';
 	import {
 		SupabaseHeading,
@@ -34,7 +34,7 @@
 			return;
 		}
 		isLoading = true;
-		result = await supabaseGetOneMarkdown(secretKey);
+		result = await supabaseGetOneLens(secretKey);
 		isLoading = false;
 	}
 
@@ -63,7 +63,7 @@
 
 	<!-- <output-section> -->
 	<!-- <SupabaseLoading {isLoading} /> -->
-	<div class="prose max-w-none">
+	<div class="p-4 prose bg-white shadow-md max-w-none rounded-xl">
 		{@html htmlContent}
 	</div>
 	<SupabaseError {error} />

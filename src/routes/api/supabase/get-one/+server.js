@@ -13,7 +13,7 @@ export async function GET({ locals, url }) {
 	try {
 		console.log(`👀👀 Attempting to fetch record with ID: ${recordId}`);
 		const { data, error: supaError } = await supabase
-			.from('markdown')
+			.from('lenses')
 			.select('*')
 			.eq('key', recordId)
 			.single();

@@ -51,10 +51,10 @@ export async function supabaseGetOne(recordId) {
 	}
 }
 
-export async function supabaseGetOneMarkdown(secretKey) {
+export async function supabaseGetOneLens(secretKey) {
 	secretKey = secretKey.trim();
 	try {
-		const response = await fetch(`/api/supabase/markdown/get-one?key=${secretKey}`);
+		const response = await fetch(`/api/supabase/lenses/get-one?key=${secretKey}`);
 		if (!response.ok) {
 			const errorResponse = await response.json();
 			if (response.status === 401) {

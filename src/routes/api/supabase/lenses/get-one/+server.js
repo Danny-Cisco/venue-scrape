@@ -10,7 +10,7 @@ export async function GET({ locals, url }) {
 
 	try {
 		const { data, error: supaError } = await supabase
-			.from('markdown')
+			.from('lenses')
 			.select('*')
 			.eq('key', secretKey)
 			.single();

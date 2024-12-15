@@ -13,7 +13,7 @@
 		success = false;
 
 		try {
-			const response = await fetch('/api/supabase/create?table=markdown', {
+			const response = await fetch('/api/supabase/create?table=lenses', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
