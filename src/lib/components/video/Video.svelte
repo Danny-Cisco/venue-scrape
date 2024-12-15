@@ -89,7 +89,9 @@
 	}
 </script>
 
-<div class="w-full max-w-[250px] h-[144px] bg-gray-100 border-2 border-[magenta] rounded-lg shadow">
+<div
+	class="w-full max-w-[266px] h-[143px] bg-gray-100 border-2 border-[magenta] overflow-hidden rounded-lg shadow"
+>
 	<div class="h-[144px] relative" on:click={dispatchOpen} on:hover={showTips}>
 		<video bind:this={$videoElement} autoplay playsinline></video>
 		{#if !selectedDeviceId || hover}
@@ -103,7 +105,7 @@
 <!-- Capture Button -->
 <button
 	on:click={dispatchCaptureImage}
-	class="flex w-full gap-1 items-center my-4 px-4 py-2 text-[magenta] bg-white rounded-full shadow btn hover:relative hover:top-[-1px] hover:shadow-md"
+	class="flex w-full gap-1 items-center my-4 px-4 py-2 overflow-hidden border-2 border-gray-300 rounded-md text-[magenta] bg-white rounded-full shadow-md btn hover:relative hover:top-[-1px] hover:shadow-md"
 >
 	<svg
 		xmlns="http://www.w3.org/2000/svg"

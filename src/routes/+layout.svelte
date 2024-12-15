@@ -451,7 +451,7 @@
 		{/if}
 
 		<div class="absolute top-[17vh] right-4" class:hidden={!$showRightSidebar}>
-			<div class="w-[250px] mx-auto">
+			<div class="w-[268px] mx-auto bg-white p-4 pr-0 -mr-4 rounded-xl shadow-md">
 				<h2 class="mb-2 text-lg font-semibold">INPUTS</h2>
 
 				<Video
