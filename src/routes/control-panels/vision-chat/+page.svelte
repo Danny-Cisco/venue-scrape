@@ -3,12 +3,48 @@
 	import { capturedImage } from '$lib/stores/capturedImage.js';
 	import { get } from 'svelte/store';
 	import { fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
 	let userInput = '';
 	let systemPrompt = '';
 	let lensName = '';
-	let secretKey = ''; // New secret key input
-	let saveError = ''; // For tracking save errors
+	let secretKey = '';
+	let saveError = '';
+	let availableLenses = [];
+
+	onMount(async () => {
+		await fetchLenses();
+	});
+
+	async function fetchLenses() {
+		try {
+			const response = await fetch('/api/supabase/get-all?table=lenses');
+			if (!response.ok) {
+				throw new Error('Failed to fetch lenses');
+			}
+			const data = await response.json();
+			availableLenses = data.records || [];
+		} catch (err) {
+			console.error('Error fetching lenses:', err);
+			saveError = 'Failed to load available lenses';
+		}
+	}
+
+	function handleLensSelect(event) {
+		const selectedLens = availableLenses.find((lens) => lens.key === event.target.value);
+		if (selectedLens) {
+			secretKey = selectedLens.key;
+			lensName = selectedLens.lens_name;
+			systemPrompt = selectedLens.system_prompt;
+			updateSystemPrompt(systemPrompt);
+		} else {
+			// Clear fields if "Create New" is selected
+			secretKey = '';
+			lensName = '';
+			systemPrompt = '';
+			updateSystemPrompt('');
+		}
+	}
 
 	$: if (systemPrompt.trim()) {
 		updateSystemPrompt(systemPrompt);
@@ -21,7 +57,6 @@
 	let isLoading = false;
 	let errorMessage = '';
 
-	// New function to save to Supabase
 	async function saveToSupabase(content) {
 		console.log('secret key:', secretKey);
 		if (!secretKey.trim()) {
@@ -50,7 +85,8 @@
 
 			const result = await response.json();
 			console.log('Saved to Supabase:', result.updated_data);
-			saveError = ''; // Clear any previous errors
+			saveError = '';
+			await fetchLenses(); // Refresh the lens list after saving
 		} catch (err) {
 			console.error('Error saving to Supabase:', err);
 			saveError = err.message;
@@ -58,7 +94,6 @@
 	}
 
 	async function createNewLens(content) {
-		console.log('BOOOOOP');
 		try {
 			const response = await fetch(`/api/supabase/create?table=lenses`, {
 				method: 'POST',
@@ -80,7 +115,8 @@
 
 			const result = await response.json();
 			console.log('Saved to Supabase:', result.updated_data);
-			saveError = ''; // Clear any previous errors
+			saveError = '';
+			await fetchLenses(); // Refresh the lens list after creating
 		} catch (err) {
 			console.error('Error saving to Supabase:', err);
 			saveError = err.message;
@@ -109,7 +145,6 @@
 		}
 
 		userInput = '';
-		// capturedImage.set(null);
 
 		try {
 			const response = await fetch('/api/openai/chat', {
@@ -122,7 +157,6 @@
 
 			if (data.reply && data.reply.content) {
 				messages.update((msgs) => [...msgs, { role: 'assistant', content: data.reply.content }]);
-
 				await saveToSupabase(data.reply.content);
 			} else {
 				errorMessage = 'No reply received from the assistant.';
@@ -146,9 +180,20 @@
 
 <div class="absolute inset-0" in:fade>
 	<div class="absolute top-0 flex flex-col w-full p-4 bottom-4">
+		<!-- Lens Selector Dropdown -->
+		<div class="mb-4">
+			<label class="block mb-2 font-bold text-gray-700">Select Lens:</label>
+			<select class="w-full p-2 border rounded" on:change={handleLensSelect} value={secretKey}>
+				<option value="">Create New</option>
+				{#each availableLenses as lens}
+					<option value={lens.key}>{lens.lens_name || 'Unnamed Lens'}</option>
+				{/each}
+			</select>
+		</div>
+
 		<!-- System Prompt and Secret Key inputs -->
 		<div class="mb-4 space-y-4">
-			<div>
+			<!-- <div>
 				<label class="hidden block mb-2 font-bold text-gray-700">Secret Key:</label>
 				<input
 					class="w-full p-2 border rounded"
@@ -159,7 +204,7 @@
 				{#if saveError}
 					<p class="mt-1 text-sm text-red-500">{saveError}</p>
 				{/if}
-			</div>
+			</div> -->
 			<div>
 				<label class="block mb-2 font-bold text-gray-700">Lens Name:</label>
 				<input
@@ -180,7 +225,7 @@
 			</div>
 		</div>
 
-		<!-- Chat display -->
+		<!-- Rest of the component remains the same -->
 		<div id="chat-container" class="flex-1 mb-4 overflow-y-auto pb-[100px]">
 			{#each $messages as message}
 				<div class="py-2">
@@ -202,17 +247,14 @@
 			{/each}
 		</div>
 
-		<!-- Error message -->
 		{#if errorMessage}
 			<p class="text-red-500">{errorMessage}</p>
 		{/if}
 
-		<!-- Loading indicator -->
 		{#if isLoading}
 			<p>Loading...</p>
 		{/if}
 
-		<!-- Input and actions -->
 		<input class="w-full" bind:value={userInput} placeholder="Type a message" />
 
 		<button
