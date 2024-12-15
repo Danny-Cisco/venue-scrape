@@ -14,9 +14,12 @@ export async function POST({ request, locals, url }) {
 			);
 		}
 
+		// Separate key from the data to update
+		const { key, ...dataWithoutKey } = data;
+
 		// Add user_id and timestamp to whatever the user sent
 		const dataToSave = {
-			...data,
+			...dataWithoutKey,
 			user_id: locals.user.id,
 			created_at: new Date().toISOString()
 		};

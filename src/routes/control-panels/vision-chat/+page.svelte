@@ -23,14 +23,45 @@
 
 	// New function to save to Supabase
 	async function saveToSupabase(content) {
+		console.log('secret key:', secretKey);
 		if (!secretKey.trim()) {
-			saveError = 'Secret key is required for saving updates';
+			createNewLens(content);
 			return;
 		}
 
 		try {
 			const response = await fetch(`/api/supabase/update?table=lenses`, {
 				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					key: secretKey,
+					lens_name: lensName,
+					content: content,
+					system_prompt: systemPrompt
+				})
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || 'Failed to save update');
+			}
+
+			const result = await response.json();
+			console.log('Saved to Supabase:', result.updated_data);
+			saveError = ''; // Clear any previous errors
+		} catch (err) {
+			console.error('Error saving to Supabase:', err);
+			saveError = err.message;
+		}
+	}
+
+	async function createNewLens(content) {
+		console.log('BOOOOOP');
+		try {
+			const response = await fetch(`/api/supabase/create?table=lenses`, {
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -92,10 +123,7 @@
 			if (data.reply && data.reply.content) {
 				messages.update((msgs) => [...msgs, { role: 'assistant', content: data.reply.content }]);
 
-				// Automatically save the assistant's reply to Supabase
-				if (secretKey.trim()) {
-					await saveToSupabase(data.reply.content);
-				}
+				await saveToSupabase(data.reply.content);
 			} else {
 				errorMessage = 'No reply received from the assistant.';
 			}
