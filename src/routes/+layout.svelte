@@ -32,17 +32,22 @@
 	}
 
 	let zoomLevel = 1; // Default zoom level
-
 	function updateHeaderGrid() {
-		const largeSquareSize = 100 * zoomLevel; // Adjust large squares
-		const smallSquareSize = 20 * zoomLevel; // Adjust small squares
+		const largeSquareSize = 100 * zoomLevel;
+		const smallSquareSize = largeSquareSize / 5;
 
 		const body = document.querySelector('body');
+		body.style.backgroundImage = `
+        linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px)
+    `;
 		body.style.backgroundSize = `
-      ${largeSquareSize}px ${largeSquareSize}px,
-      ${largeSquareSize}px ${largeSquareSize}px,
-      ${smallSquareSize}px ${smallSquareSize}px,
-      ${smallSquareSize}px ${smallSquareSize}px
+        ${largeSquareSize}px ${largeSquareSize}px,
+        ${largeSquareSize}px ${largeSquareSize}px,
+        ${smallSquareSize}px ${smallSquareSize}px,
+        ${smallSquareSize}px ${smallSquareSize}px
     `;
 	}
 
@@ -104,15 +109,6 @@
 
 		updateHeaderGrid();
 
-		window.addEventListener('wheel', (e) => {
-			if (e.deltaY < 0) {
-				zoomLevel = Math.min(zoomLevel * 1.1, 5); // Zoom in (limit max zoom)
-			} else {
-				zoomLevel = Math.max(zoomLevel / 1.1, 0.5); // Zoom out (limit min zoom)
-			}
-			updateHeaderGrid();
-		});
-
 		requestCameraPermission();
 		const unsubscribe = hotkeyEmitter.subscribe(captureImageAsGif);
 		const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -121,9 +117,22 @@
 			}
 		});
 
+		const handleWheel = (e) => {
+			return;
+			if (e.deltaY < 0) {
+				zoomLevel = Math.min(zoomLevel * 1.1, 5);
+			} else {
+				zoomLevel = Math.max(zoomLevel / 1.1, 0.5);
+			}
+			updateHeaderGrid();
+		};
+
+		window.addEventListener('wheel', handleWheel);
+
 		return () => {
 			unsubscribe();
 			data.subscription.unsubscribe();
+			window.removeEventListener('wheel', handleWheel); // Add this line
 			if ($videoElement?.srcObject) {
 				$videoElement.srcObject.getTracks().forEach((track) => track.stop());
 			}
@@ -502,19 +511,5 @@
 	}
 	body {
 		color: black;
-		/*background-color: #f1f1f1; /* Base background color */
-		background-image:
-    /* Large squares (darker grid) */
-			linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-			linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-			/* Small squares (lighter grid) */
-				linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-			linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-		background-size:
-    /* Size for the grids */
-			100px 100px,
-			100px 100px,
-			/* Large grid size */ 20px 20px,
-			20px 20px; /* Small grid size */
 	}
 </style>
