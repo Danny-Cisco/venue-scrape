@@ -63,9 +63,11 @@
 
 	<!-- <output-section> -->
 	<!-- <SupabaseLoading {isLoading} /> -->
-	<div class="p-4 prose bg-white shadow-md max-w-none rounded-xl">
-		{@html htmlContent}
-	</div>
+	{#if htmlContent}
+		<div class="p-4 prose bg-white shadow-md max-w-none rounded-xl" transition:fade>
+			{@html htmlContent}
+		</div>
+	{/if}
 	<SupabaseError {error} />
 	<!-- </output-section> -->
 </main>
