@@ -6,6 +6,7 @@
 
 	let userInput = '';
 	let systemPrompt = '';
+	let lensName = '';
 	let secretKey = ''; // New secret key input
 	let saveError = ''; // For tracking save errors
 
@@ -35,7 +36,9 @@
 				},
 				body: JSON.stringify({
 					key: secretKey,
-					content: content
+					lens_name: lensName,
+					content: content,
+					system_prompt: systemPrompt
 				})
 			});
 
@@ -128,6 +131,15 @@
 				{#if saveError}
 					<p class="mt-1 text-sm text-red-500">{saveError}</p>
 				{/if}
+			</div>
+			<div>
+				<label class="block mb-2 font-bold text-gray-700">Lens Name:</label>
+				<input
+					class="w-full p-2 border rounded"
+					type="text"
+					bind:value={lensName}
+					placeholder="Enter a name for this Lens"
+				/>
 			</div>
 			<div>
 				<label class="block mb-2 font-bold text-gray-700">Set System Prompt:</label>

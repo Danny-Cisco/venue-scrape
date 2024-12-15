@@ -256,7 +256,7 @@
 					<li class="mb-2">
 						<button
 							on:click={() => ($showCameraSettingsModal = true)}
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-bold text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -507,9 +507,6 @@
 		transform: rotate(180deg);
 	}
 	h2 {
-		color: black;
-	}
-	body {
 		color: black;
 	}
 </style>

@@ -66,9 +66,9 @@
 	>
 		<div
 			bind:this={modalBox}
-			class="w-full max-w-md p-4 pb-6 relative shadow-md bg-white z-[20] rounded-xl"
+			class="w-full max-w-md p-4 pb-6 relative shadow-md bg-white z-[20] h-1/4 rounded-xl"
 		>
-			<h2 class="mb-2 text-center">Camera Settings</h2>
+			<h2 class="mb-6 text-center">Camera Settings</h2>
 			<select
 				id="camera-select"
 				class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"

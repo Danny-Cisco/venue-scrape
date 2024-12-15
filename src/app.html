@@ -12,7 +12,33 @@
 </html>
 
 <style>
+	@font-face {
+		font-family: 'Quicksand';
+		src: url('/fonts/Quicksand.ttf') format('truetype');
+		font-display: swap;
+	}
 	:root {
-		background-color: #f1f1f1f1;
+		background-color: #f1f1f1f1 !important;
+		color: black;
+		font-family: 'Quicksand', sans-serif; /* Added fallback */
+	}
+
+	:root a,
+	h1,
+	h2 {
+		font-weight: bold;
+	}
+
+	:root ::placeholder {
+		color: #bbbbbb;
+	}
+	:root ::-webkit-input-placeholder {
+		color: #bbbbbb;
+	}
+	:root ::-moz-placeholder {
+		color: #bbbbbb;
+	}
+	:root :-ms-input-placeholder {
+		color: #bbbbbb;
 	}
 </style>
