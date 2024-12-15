@@ -177,7 +177,7 @@
 			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 bg-white rounded-md shadow-md">
 				{#if session}
 					<a href="/account" class="flex items-center gap-4"
-						><p class="font-light">
+						><p class="font-bold text-gray-500">
 							{profile?.username || session.user.email || session.user.displayName}
 						</p>
 
