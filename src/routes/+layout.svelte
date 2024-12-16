@@ -174,7 +174,7 @@
 
 		<!-- User Authentication -->
 		{#if !$loading}
-			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 bg-white rounded-md shadow-md">
+			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 bg-white rounded-md shadow-md">
 				{#if session}
 					<a href="/account" class="flex items-center gap-4"
 						><p class="font-bold text-gray-500">
