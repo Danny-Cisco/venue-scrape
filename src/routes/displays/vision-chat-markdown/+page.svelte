@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import DraggableLensViewer from '$lib/components/outputs/DraggableLensViewer.svelte';
+	import DraggableLensViewer from '$lib/components/outputs/draggableLensViewer.svelte';
 
 	let availableLenses = [];
 	let instances = [];
