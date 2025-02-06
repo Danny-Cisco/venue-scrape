@@ -1,28 +1,11 @@
 <script>
-	import { fade } from 'svelte/transition';
-	import { supabaseGetOneLens } from '$lib/supabase/supabaseHelpers.js';
-	import { onMount, onDestroy } from 'svelte';
-	import {
-		SupabaseHeading,
-		SupabaseError,
-		SupabaseLoading,
-		SupabaseTextInput
-	} from '$lib/components/supabase';
-	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
+	import { onMount } from 'svelte';
+	import DraggableLensViewer from '$lib/components/outputs/DraggableLensViewer.svelte';
 
-	let isLoading = false;
-	let secretKey = '';
-	let markdown = '';
-	let intervalId;
 	let availableLenses = [];
+	let instances = [];
+	let nextInstanceId = 0;
 
-	let result = { record: null, error: null };
-	let error = '';
-	let record = '';
-	let pollingInterval = 1000; // Polling interval in milliseconds
-
-	// Fetch available lenses on mount
 	onMount(async () => {
 		await fetchLenses();
 	});
@@ -37,69 +20,28 @@
 			availableLenses = data.records || [];
 		} catch (err) {
 			console.error('Error fetching lenses:', err);
-			error = 'Failed to load available lenses';
 		}
 	}
 
-	function handleLensSelect(event) {
-		secretKey = event.target.value;
+	function addNewInstance() {
+		instances = [...instances, nextInstanceId];
+		nextInstanceId++;
 	}
 
-	// Reactive statements
-	$: error = result.error;
-	$: record = result.record;
-	$: markdown = record?.record.content;
-	$: htmlContent = markdown ? DOMPurify.sanitize(marked(markdown)) : '';
-
-	// Function to fetch the record
-	async function fetchRecord() {
-		if (!secretKey) {
-			result = { record: null, error: 'Please select a lens to view.' };
-			return;
-		}
-		isLoading = true;
-		result = await supabaseGetOneLens(secretKey);
-		isLoading = false;
+	function removeInstance(id) {
+		instances = instances.filter((instanceId) => instanceId !== id);
 	}
-
-	// Start polling when the record ID is set
-	$: {
-		if (secretKey) {
-			clearInterval(intervalId); // Clear any existing interval
-			intervalId = setInterval(fetchRecord, pollingInterval); // Start polling
-			console.log('start polling...');
-		} else {
-			clearInterval(intervalId); // Stop polling if no record ID
-			console.log('end polling...');
-		}
-	}
-
-	// Cleanup polling on component destruction
-	onDestroy(() => {
-		clearInterval(intervalId);
-	});
 </script>
 
-<main class="max-w-2xl p-4 mx-auto space-y-4" in:fade>
-	<!-- Lens Selector Dropdown -->
-	<div class="w-full">
-		<select
-			class="w-full p-2 bg-white border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-			on:change={handleLensSelect}
-			value={secretKey}
-		>
-			<option value="">Select a lens to view...</option>
-			{#each availableLenses as lens}
-				<option value={lens.key}>{lens.lens_name || 'Unnamed Lens'}</option>
-			{/each}
-		</select>
-	</div>
+<div class="fixed bottom-4 right-4">
+	<button
+		class="px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600"
+		on:click={addNewInstance}
+	>
+		Add Lens Viewer
+	</button>
+</div>
 
-	<!-- Content Display -->
-	{#if htmlContent}
-		<div class="p-4 prose bg-white shadow-md max-w-none rounded-xl" transition:fade>
-			{@html htmlContent}
-		</div>
-	{/if}
-	<SupabaseError {error} />
-</main>
+{#each instances as instanceId (instanceId)}
+	<DraggableLensViewer {instanceId} {availableLenses} onClose={removeInstance} />
+{/each}
