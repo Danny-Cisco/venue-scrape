@@ -3,5 +3,5 @@
 </script>
 
 <div>
-	<DualRecorder />
+	<DualRecorder recordChunk="8" />
 </div>

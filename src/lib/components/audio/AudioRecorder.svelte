@@ -8,13 +8,16 @@
 	export let stream = null; // Shared audio stream passed from parent
 	export let isActive = false; // Whether this recorder should be recording
 	export let transcription = '';
+	export let duration = '10000';
+
+	let durationSeconds = duration / 1000;
 
 	// Local state
 	let mediaRecorder;
 	let audioChunks = [];
 	let isRecording = false;
 	let error = '';
-	let countdown = 10;
+	let countdown = durationSeconds;
 	let countdownInterval;
 
 	$: if (isActive && stream && !isRecording) {
@@ -37,35 +40,32 @@
 
 			mediaRecorder.ondataavailable = (event) => {
 				audioChunks.push(event.data);
-				console.log(`Recorder ${id}: Got data chunk of size ${event.data.size}`);
+				// console.log(`Recorder ${id}: Got data chunk of size ${event.data.size}`);
 			};
 
 			mediaRecorder.onstop = async () => {
-				console.log(`Recorder ${id}: Stopped recording, processing chunks...`);
+				// console.log(`Recorder ${id}: Stopped recording, processing chunks...`);
 				const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
 				await sendForTranscription(audioBlob);
 			};
 
-			console.log(`Recorder ${id}: Starting recording`);
+			// console.log(`Recorder ${id}: Starting recording`);
 			mediaRecorder.start();
 			isRecording = true;
-			countdown = 10;
+			countdown = durationSeconds;
 
 			countdownInterval = setInterval(() => {
 				countdown--;
-				if (countdown === 0) {
-					stopRecording();
-				}
 			}, 1000);
 		} catch (err) {
 			error = 'Error starting recorder: ' + err.message;
-			console.error(`Recorder ${id} error:`, err);
+			// console.error(`Recorder ${id} error:`, err);
 		}
 	}
 
 	function stopRecording() {
 		if (mediaRecorder && isRecording) {
-			console.log(`Recorder ${id}: Stopping recording`);
+			// console.log(`Recorder ${id}: Stopping recording`);
 			mediaRecorder.stop();
 			isRecording = false;
 			clearInterval(countdownInterval);
@@ -75,7 +75,7 @@
 
 	async function sendForTranscription(audioBlob) {
 		try {
-			console.log(`Recorder ${id}: Starting transcription...`);
+			// console.log(`Recorder ${id}: Starting transcription...`);
 
 			const buffer = await audioBlob.arrayBuffer();
 			const base64Audio = btoa(
@@ -101,10 +101,10 @@
 
 			// Only dispatch if we have actual transcription text
 			if (data.transcription?.trim()) {
-				console.log(
-					`Recorder ${id}: Dispatching transcription:`,
-					data.transcription.slice(0, 50) + '...'
-				);
+				// console.log(
+				// 	`Recorder ${id}: Dispatching transcription:`,
+				// 	data.transcription.slice(0, 50) + '...'
+				// );
 				dispatch('transcriptionComplete', {
 					transcription: data.transcription,
 					recorderId: id
@@ -112,7 +112,7 @@
 			}
 		} catch (err) {
 			error = 'Error during transcription: ' + err.message;
-			console.error(`Recorder ${id} transcription error:`, err);
+			// console.error(`Recorder ${id} transcription error:`, err);
 		}
 	}
 </script>
@@ -133,7 +133,7 @@
 			<div class="h-2 bg-blue-200 rounded-full">
 				<div
 					class="h-full transition-all duration-1000 bg-blue-500 rounded-full"
-					style="width: {((10 - countdown) / 10) * 100}%"
+					style="width: {((durationSeconds - countdown) / durationSeconds) * 100}%"
 				/>
 			</div>
 		{/if}
@@ -141,12 +141,6 @@
 		{#if error}
 			<div class="p-2 text-sm text-red-700 bg-red-100 rounded">
 				{error}
-			</div>
-		{/if}
-
-		{#if transcription}
-			<div class="p-2 text-sm bg-white rounded">
-				{transcription}
 			</div>
 		{/if}
 	</div>
