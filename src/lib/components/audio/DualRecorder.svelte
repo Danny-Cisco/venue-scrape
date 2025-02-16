@@ -159,22 +159,29 @@
 	}
 </script>
 
-<div class="p-4 mx-auto">
-	<h1 class="mb-4 text-2xl font-bold">Dual Audio Recorder with Overlap</h1>
-
+<div class="w-full p-4 mx-auto">
 	<div class="flex flex-col w-full mb-6">
 		{#if !isRecording}
 			<button
 				on:click={startRecording}
-				class="px-4 py-2 mr-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-48 h-48 px-4 mx-auto font-bold text-white bg-blue-400 rounded-3xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
 			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+					><path
+						d="M11.9998 3C10.3429 3 8.99976 4.34315 8.99976 6V10C8.99976 11.6569 10.3429 13 11.9998 13C13.6566 13 14.9998 11.6569 14.9998 10V6C14.9998 4.34315 13.6566 3 11.9998 3ZM11.9998 1C14.7612 1 16.9998 3.23858 16.9998 6V10C16.9998 12.7614 14.7612 15 11.9998 15C9.23833 15 6.99976 12.7614 6.99976 10V6C6.99976 3.23858 9.23833 1 11.9998 1ZM3.05469 11H5.07065C5.55588 14.3923 8.47329 17 11.9998 17C15.5262 17 18.4436 14.3923 18.9289 11H20.9448C20.4837 15.1716 17.1714 18.4839 12.9998 18.9451V23H10.9998V18.9451C6.82814 18.4839 3.51584 15.1716 3.05469 11Z"
+					></path></svg
+				>
 				Start Recording
 			</button>
 		{:else}
 			<button
 				on:click={stopRecording}
-				class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-			>
+				class="w-48 h-48 px-4 mx-auto font-bold text-white bg-blue-400 rounded-3xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+					><path
+						d="M16.4249 17.839L21.1925 22.6066L22.6068 21.1924L2.80777 1.3934L1.39355 2.80761L7.00016 8.41421V10C7.00016 12.7614 9.23873 15 12.0002 15C12.4825 15 12.9489 14.9317 13.3902 14.8042L14.9404 16.3544C14.0464 16.7688 13.0503 17 12.0002 17C8.47368 17 5.55627 14.3923 5.07105 11H3.05509C3.51623 15.1716 6.82854 18.4839 11.0002 18.9451V23H13.0002V18.9451C14.2341 18.8087 15.3929 18.4228 16.4249 17.839ZM11.5528 12.9669C10.2541 12.7727 9.22745 11.7461 9.03328 10.4473L11.5528 12.9669ZM19.3747 15.1604L17.9323 13.7179C18.4407 12.9084 18.788 11.9874 18.9293 11H20.9452C20.7754 12.5366 20.2187 13.9565 19.3747 15.1604ZM16.4658 12.2514L14.9173 10.703C14.9715 10.4775 15.0002 10.2421 15.0002 10V6C15.0002 4.34315 13.657 3 12.0002 3C10.7059 3 9.6031 3.81956 9.18237 4.96802L7.68575 3.47139C8.55427 1.99268 10.1613 1 12.0002 1C14.7616 1 17.0002 3.23858 17.0002 6V10C17.0002 10.8099 16.8076 11.5748 16.4658 12.2514Z"
+					></path></svg
+				>
 				Stop Recording
 			</button>
 		{/if}
@@ -187,20 +194,24 @@
 	{/if}
 
 	<div class="flex w-full gap-4 mb-4">
-		<AudioRecorder
-			id="1"
-			duration={RECORD_DURATION}
-			bind:stream
-			isActive={recorder1Active}
-			on:transcriptionComplete={handleTranscriptionComplete}
-		/>
-		<AudioRecorder
-			id="2"
-			duration={RECORD_DURATION}
-			bind:stream
-			isActive={recorder2Active}
-			on:transcriptionComplete={handleTranscriptionComplete}
-		/>
+		<div class="flex-1">
+			<AudioRecorder
+				id="1"
+				duration={RECORD_DURATION}
+				bind:stream
+				isActive={recorder1Active}
+				on:transcriptionComplete={handleTranscriptionComplete}
+			/>
+		</div>
+		<div class="flex-1">
+			<AudioRecorder
+				id="2"
+				duration={RECORD_DURATION}
+				bind:stream
+				isActive={recorder2Active}
+				on:transcriptionComplete={handleTranscriptionComplete}
+			/>
+		</div>
 	</div>
 
 	{#if transcriptions.length > 0}

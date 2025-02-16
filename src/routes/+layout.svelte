@@ -404,7 +404,7 @@
 					</li>
 					<li class="mb-2">
 						<a
-							href="/listener"
+							href="/topic-extractor"
 							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
 						>
 							<svg
@@ -422,7 +422,7 @@
 								/>
 							</svg>
 
-							Listener
+							Topic Extractor
 						</a>
 					</li>
 				</ul>
