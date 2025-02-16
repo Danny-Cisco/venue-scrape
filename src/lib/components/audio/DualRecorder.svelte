@@ -152,6 +152,11 @@
 	ideasStore.subscribe((value) => (ideas = value));
 	themesStore.subscribe((value) => (themes = value));
 	emotionsStore.subscribe((value) => (emotions = value));
+
+	// Add this helper function to flatten arrays while removing duplicates
+	function uniqueItems(arrays) {
+		return [...new Set(arrays.flatMap((arr) => arr.items))];
+	}
 </script>
 
 <div class="p-4 mx-auto">
@@ -200,104 +205,63 @@
 
 	{#if transcriptions.length > 0}
 		<div class="mt-6 space-y-8">
-			<!-- Original Transcriptions -->
-			<!-- <div>
-				<h2 class="mb-4 text-xl font-semibold">Transcriptions:</h2>
-				<div class="space-y-4">
-					{#each transcriptions as { text, timestamp }}
-						<div class="p-4 bg-gray-100 rounded-lg">
-							<div class="mb-2 text-sm font-semibold text-gray-600">
-								{new Date(timestamp).toLocaleTimeString()}
-							</div>
-							<div class="text-gray-800">{text}</div>
-						</div>
-					{/each}
-				</div>
-			</div> -->
-
 			<!-- Analysis Results -->
-			<div class="flex w-full gap-6">
-				<!-- Topics Section -->
-				<div class="p-6 rounded-lg bg-blue-50">
-					<h3 class="mb-4 text-lg font-semibold text-blue-600">All Topics</h3>
-					<div class="space-y-2">
-						{#each topics as { items, timestamp }}
-							{#if items.length > 0}
-								<div class="p-4 bg-white rounded-md">
-									<div class="mb-2 text-sm text-gray-600">
-										{new Date(timestamp).toLocaleTimeString()}
-									</div>
-									<ul class="pl-4 list-disc">
-										{#each items as topic}
-											<li>{topic}</li>
-										{/each}
-									</ul>
+			<div class="w-full p-6">
+				<div class="grid grid-cols-4 gap-6">
+					<!-- Topics -->
+					<div class="space-y-4">
+						<h3 class="text-lg font-semibold text-blue-600">Topics</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueItems(topics) as topic}
+								<div
+									class="px-4 py-2 text-sm text-blue-800 transition-transform bg-blue-100 border border-blue-200 rounded-full cursor-pointer hover:scale-105"
+								>
+									{topic}
 								</div>
-							{/if}
-						{/each}
+							{/each}
+						</div>
 					</div>
-				</div>
 
-				<!-- Ideas Section -->
-				<div class="p-6 rounded-lg bg-green-50">
-					<h3 class="mb-4 text-lg font-semibold text-green-600">All Ideas</h3>
-					<div class="space-y-2">
-						{#each ideas as { items, timestamp }}
-							{#if items.length > 0}
-								<div class="p-4 bg-white rounded-md">
-									<div class="mb-2 text-sm text-gray-600">
-										{new Date(timestamp).toLocaleTimeString()}
-									</div>
-									<ul class="pl-4 list-disc">
-										{#each items as idea}
-											<li>{idea}</li>
-										{/each}
-									</ul>
+					<!-- Ideas -->
+					<div class="space-y-4">
+						<h3 class="text-lg font-semibold text-green-600">Ideas</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueItems(ideas) as idea}
+								<div
+									class="px-4 py-2 text-sm text-green-800 transition-transform bg-green-100 border border-green-200 rounded-full cursor-pointer hover:scale-105"
+								>
+									{idea}
 								</div>
-							{/if}
-						{/each}
+							{/each}
+						</div>
 					</div>
-				</div>
 
-				<!-- Themes Section -->
-				<div class="p-6 rounded-lg bg-purple-50">
-					<h3 class="mb-4 text-lg font-semibold text-purple-600">All Themes</h3>
-					<div class="space-y-2">
-						{#each themes as { items, timestamp }}
-							{#if items.length > 0}
-								<div class="p-4 bg-white rounded-md">
-									<div class="mb-2 text-sm text-gray-600">
-										{new Date(timestamp).toLocaleTimeString()}
-									</div>
-									<ul class="pl-4 list-disc">
-										{#each items as theme}
-											<li>{theme}</li>
-										{/each}
-									</ul>
+					<!-- Themes -->
+					<div class="space-y-4">
+						<h3 class="text-lg font-semibold text-purple-600">Themes</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueItems(themes) as theme}
+								<div
+									class="px-4 py-2 text-sm text-purple-800 transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
+								>
+									{theme}
 								</div>
-							{/if}
-						{/each}
+							{/each}
+						</div>
 					</div>
-				</div>
 
-				<!-- Emotions Section -->
-				<div class="p-6 rounded-lg bg-red-50">
-					<h3 class="mb-4 text-lg font-semibold text-red-600">All Emotions</h3>
-					<div class="space-y-2">
-						{#each emotions as { items, timestamp }}
-							{#if items.length > 0}
-								<div class="p-4 bg-white rounded-md">
-									<div class="mb-2 text-sm text-gray-600">
-										{new Date(timestamp).toLocaleTimeString()}
-									</div>
-									<ul class="pl-4 list-disc">
-										{#each items as emotion}
-											<li>{emotion}</li>
-										{/each}
-									</ul>
+					<!-- Emotions -->
+					<div class="space-y-4">
+						<h3 class="text-lg font-semibold text-red-600">Emotions</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueItems(emotions) as emotion}
+								<div
+									class="px-4 py-2 text-sm text-red-800 transition-transform bg-red-100 border border-red-200 rounded-full cursor-pointer hover:scale-105"
+								>
+									{emotion}
 								</div>
-							{/if}
-						{/each}
+							{/each}
+						</div>
 					</div>
 				</div>
 			</div>
