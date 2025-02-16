@@ -1,6 +1,7 @@
 <!-- DualRecorder.svelte -->
 <script>
 	import AudioRecorder from './AudioRecorder.svelte';
+	import { writable, derived } from 'svelte/store';
 
 	export let recordChunk = 10;
 	export let recordOverlap = 2;
@@ -9,11 +10,27 @@
 	let recorder1Active = false;
 	let recorder2Active = false;
 	let transcriptions = [];
-	let analysisResults = []; // Store analysis results
 	let error = '';
-	let RECORD_DURATION = recordChunk * 1000; // milliseconds
-	let OVERLAP_DURATION = recordOverlap * 1000; // milliseconds
-	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION; // 8 seconds
+	let RECORD_DURATION = recordChunk * 1000;
+	let OVERLAP_DURATION = recordOverlap * 1000;
+	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
+
+	// Create stores for each category
+	const topicsStore = writable([]);
+	const ideasStore = writable([]);
+	const themesStore = writable([]);
+	const emotionsStore = writable([]);
+
+	// Helper function to add items to a store with timestamps
+	function addToStore(store, items, timestamp) {
+		store.update((currentItems) => [
+			...currentItems,
+			{
+				items,
+				timestamp
+			}
+		]);
+	}
 
 	async function startRecording() {
 		try {
@@ -83,7 +100,7 @@
 			}
 
 			const data = await response.json();
-			return JSON.parse(data.reply.content); // Parse the JSON string from the content
+			return JSON.parse(data.reply.content);
 		} catch (err) {
 			console.error('Error analyzing transcription:', err);
 			return null;
@@ -112,25 +129,32 @@
 			console.log(`Adding new transcription from recorder ${recorderId}`);
 			transcriptions = [...transcriptions, newTranscription];
 
-			// Get analysis for the new transcription
+			// Get analysis and update stores
 			const analysis = await analyzeTranscription(transcription);
 			if (analysis) {
-				analysisResults = [
-					...analysisResults,
-					{
-						...analysis,
-						timestamp,
-						transcription
-					}
-				];
+				addToStore(topicsStore, analysis.topics, timestamp);
+				addToStore(ideasStore, analysis.ideas, timestamp);
+				addToStore(themesStore, analysis.themes, timestamp);
+				addToStore(emotionsStore, analysis.emotions, timestamp);
 			}
 		} else {
 			console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
 		}
 	}
+
+	// Subscribe to stores to get latest values
+	let topics = [];
+	let ideas = [];
+	let themes = [];
+	let emotions = [];
+
+	topicsStore.subscribe((value) => (topics = value));
+	ideasStore.subscribe((value) => (ideas = value));
+	themesStore.subscribe((value) => (themes = value));
+	emotionsStore.subscribe((value) => (emotions = value));
 </script>
 
-<div class="container max-w-4xl p-4 mx-auto">
+<div class="p-4 mx-auto">
 	<h1 class="mb-4 text-2xl font-bold">Dual Audio Recorder with Overlap</h1>
 
 	<div class="flex flex-col w-full mb-6">
@@ -175,55 +199,107 @@
 	</div>
 
 	{#if transcriptions.length > 0}
-		<div class="mt-6">
-			<h2 class="mb-2 text-xl font-semibold">Transcriptions and Analysis:</h2>
-			<div class="space-y-6">
-				{#each analysisResults as { topics, ideas, themes, emotions, timestamp, transcription }}
-					<div class="p-6 bg-gray-100 rounded-lg">
-						<div class="mb-2 text-sm font-semibold text-gray-600">
-							{new Date(timestamp).toLocaleTimeString()}
+		<div class="mt-6 space-y-8">
+			<!-- Original Transcriptions -->
+			<!-- <div>
+				<h2 class="mb-4 text-xl font-semibold">Transcriptions:</h2>
+				<div class="space-y-4">
+					{#each transcriptions as { text, timestamp }}
+						<div class="p-4 bg-gray-100 rounded-lg">
+							<div class="mb-2 text-sm font-semibold text-gray-600">
+								{new Date(timestamp).toLocaleTimeString()}
+							</div>
+							<div class="text-gray-800">{text}</div>
 						</div>
-						<div class="mb-4 text-gray-800">{transcription}</div>
+					{/each}
+				</div>
+			</div> -->
 
-						<div class="grid grid-cols-2 gap-4">
-							<div class="p-4 bg-white rounded-md">
-								<h3 class="mb-2 font-semibold text-blue-600">Topics</h3>
-								<ul class="pl-4 list-disc">
-									{#each topics as topic}
-										<li>{topic}</li>
-									{/each}
-								</ul>
-							</div>
-
-							<div class="p-4 bg-white rounded-md">
-								<h3 class="mb-2 font-semibold text-green-600">Ideas</h3>
-								<ul class="pl-4 list-disc">
-									{#each ideas as idea}
-										<li>{idea}</li>
-									{/each}
-								</ul>
-							</div>
-
-							<div class="p-4 bg-white rounded-md">
-								<h3 class="mb-2 font-semibold text-purple-600">Themes</h3>
-								<ul class="pl-4 list-disc">
-									{#each themes as theme}
-										<li>{theme}</li>
-									{/each}
-								</ul>
-							</div>
-
-							<div class="p-4 bg-white rounded-md">
-								<h3 class="mb-2 font-semibold text-red-600">Emotions</h3>
-								<ul class="pl-4 list-disc">
-									{#each emotions as emotion}
-										<li>{emotion}</li>
-									{/each}
-								</ul>
-							</div>
-						</div>
+			<!-- Analysis Results -->
+			<div class="flex w-full gap-6">
+				<!-- Topics Section -->
+				<div class="p-6 rounded-lg bg-blue-50">
+					<h3 class="mb-4 text-lg font-semibold text-blue-600">All Topics</h3>
+					<div class="space-y-2">
+						{#each topics as { items, timestamp }}
+							{#if items.length > 0}
+								<div class="p-4 bg-white rounded-md">
+									<div class="mb-2 text-sm text-gray-600">
+										{new Date(timestamp).toLocaleTimeString()}
+									</div>
+									<ul class="pl-4 list-disc">
+										{#each items as topic}
+											<li>{topic}</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
+						{/each}
 					</div>
-				{/each}
+				</div>
+
+				<!-- Ideas Section -->
+				<div class="p-6 rounded-lg bg-green-50">
+					<h3 class="mb-4 text-lg font-semibold text-green-600">All Ideas</h3>
+					<div class="space-y-2">
+						{#each ideas as { items, timestamp }}
+							{#if items.length > 0}
+								<div class="p-4 bg-white rounded-md">
+									<div class="mb-2 text-sm text-gray-600">
+										{new Date(timestamp).toLocaleTimeString()}
+									</div>
+									<ul class="pl-4 list-disc">
+										{#each items as idea}
+											<li>{idea}</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				</div>
+
+				<!-- Themes Section -->
+				<div class="p-6 rounded-lg bg-purple-50">
+					<h3 class="mb-4 text-lg font-semibold text-purple-600">All Themes</h3>
+					<div class="space-y-2">
+						{#each themes as { items, timestamp }}
+							{#if items.length > 0}
+								<div class="p-4 bg-white rounded-md">
+									<div class="mb-2 text-sm text-gray-600">
+										{new Date(timestamp).toLocaleTimeString()}
+									</div>
+									<ul class="pl-4 list-disc">
+										{#each items as theme}
+											<li>{theme}</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				</div>
+
+				<!-- Emotions Section -->
+				<div class="p-6 rounded-lg bg-red-50">
+					<h3 class="mb-4 text-lg font-semibold text-red-600">All Emotions</h3>
+					<div class="space-y-2">
+						{#each emotions as { items, timestamp }}
+							{#if items.length > 0}
+								<div class="p-4 bg-white rounded-md">
+									<div class="mb-2 text-sm text-gray-600">
+										{new Date(timestamp).toLocaleTimeString()}
+									</div>
+									<ul class="pl-4 list-disc">
+										{#each items as emotion}
+											<li>{emotion}</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				</div>
 			</div>
 		</div>
 	{/if}
