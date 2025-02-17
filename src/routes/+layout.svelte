@@ -33,22 +33,21 @@
 
 	let zoomLevel = 1; // Default zoom level
 	function updateHeaderGrid() {
-		const largeSquareSize = 100 * zoomLevel;
-		const smallSquareSize = largeSquareSize / 5;
-
-		const body = document.querySelector('body');
-		body.style.backgroundImage = `
-        linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-        linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px)
-    `;
-		body.style.backgroundSize = `
-        ${largeSquareSize}px ${largeSquareSize}px,
-        ${largeSquareSize}px ${largeSquareSize}px,
-        ${smallSquareSize}px ${smallSquareSize}px,
-        ${smallSquareSize}px ${smallSquareSize}px
-    `;
+		// 	const largeSquareSize = 100 * zoomLevel;
+		// 	const smallSquareSize = largeSquareSize / 5;
+		// 	const body = document.querySelector('body');
+		// 	body.style.backgroundImage = `
+		//     linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+		//     linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+		//     linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+		//     linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px)
+		// `;
+		// 	body.style.backgroundSize = `
+		//     ${largeSquareSize}px ${largeSquareSize}px,
+		//     ${largeSquareSize}px ${largeSquareSize}px,
+		//     ${smallSquareSize}px ${smallSquareSize}px,
+		//     ${smallSquareSize}px ${smallSquareSize}px
+		// `;
 	}
 
 	$: $selectedDevice;
