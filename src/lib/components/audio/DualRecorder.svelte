@@ -75,8 +75,8 @@
 	const filteredWikis = derived(
 		[wikiEmotionsStore, selectedEmotions],
 		([$wikiEmotionsStore, $selectedEmotions]) => {
-			console.log('Store contents:', $wikiEmotionsStore);
-			console.log('Selected emotions:', $selectedEmotions);
+			// console.log('Store contents:', $wikiEmotionsStore);
+			// console.log('Selected emotions:', $selectedEmotions);
 
 			if ($selectedEmotions.size === 0) {
 				return [...new Set($wikiEmotionsStore.map((item) => item.wiki))];
@@ -87,7 +87,7 @@
 					$wikiEmotionsStore
 						.filter((item) => {
 							if (!Array.isArray(item.emotions)) {
-								console.warn('Item emotions is not an array:', item);
+								// console.warn('Item emotions is not an array:', item);
 								return false;
 							}
 							return item.emotions.some((emotion) => $selectedEmotions.has(emotion));
@@ -200,7 +200,7 @@
 
 	async function handleTranscriptionComplete(event) {
 		const { transcription, recorderId } = event.detail;
-		console.log(`Received transcription from recorder ${recorderId}`);
+		// console.log(`Received transcription from recorder ${recorderId}`);
 
 		const timestamp = new Date().toISOString();
 		const newTranscription = {
@@ -217,7 +217,7 @@
 		);
 
 		if (!isDuplicate) {
-			console.log(`Adding new transcription from recorder ${recorderId}`);
+			// console.log(`Adding new transcription from recorder ${recorderId}`);
 			transcriptions = [...transcriptions, newTranscription];
 
 			// Get analysis and update stores
@@ -237,7 +237,7 @@
 				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
 			}
 		} else {
-			console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
+			// console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
 		}
 	}
 
@@ -258,6 +258,13 @@
 
 	// Get all unique emotions from the store
 	$: uniqueEmotions = [...new Set(wikiEmotions.flatMap((item) => item.emotions))];
+
+	// Add this function after addWikiEmotions
+	function removeWikiEntry(wikiToRemove) {
+		wikiEmotionsStore.update((currentItems) =>
+			currentItems.filter((item) => item.wiki !== wikiToRemove)
+		);
+	}
 </script>
 
 <div class="w-full p-4 mx-auto">
@@ -345,21 +352,42 @@
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
-								<a
-									href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
-								>
-									<span
-										class="w-2 h-2 rounded-full {category === 'positive'
-											? 'bg-green-500'
-											: category === 'neutral'
-												? 'bg-amber-500'
-												: 'bg-red-500'}"
-									></span>
-									{wiki}
-								</a>
+								<div class="flex items-center gap-1">
+									<a
+										href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
+									>
+										<span
+											class="w-2 h-2 rounded-full {category === 'positive'
+												? 'bg-green-500'
+												: category === 'neutral'
+													? 'bg-amber-500'
+													: 'bg-red-500'}"
+										></span>
+										{wiki}
+									</a>
+									<button
+										on:click={() => removeWikiEntry(wiki)}
+										class="flex items-center justify-center w-6 h-6 text-gray-500 transition-colors rounded-full hover:bg-red-100 hover:text-red-500"
+										aria-label="Remove {wiki}"
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											class="w-4 h-4"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										>
+											<line x1="18" y1="6" x2="6" y2="18"></line>
+											<line x1="6" y1="6" x2="18" y2="18"></line>
+										</svg>
+									</button>
+								</div>
 							{/each}
 						</div>
 					</div>
