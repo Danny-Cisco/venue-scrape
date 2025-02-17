@@ -1,4 +1,5 @@
 <script>
+	import { slide, fade } from 'svelte/transition';
 	import DualRecorder from '$lib/components/audio/DualRecorder.svelte';
 	let length = 12;
 	let overlap = 2;
@@ -11,7 +12,7 @@
 	}
 </script>
 
-<div class="space-y-4">
+<div class="space-y-4" in:fade>
 	<div class="flex items-start w-full">
 		<h1 class="mb-4 text-2xl font-bold">Topic Extractor</h1>
 		<div class="flex-1"></div>
@@ -43,7 +44,7 @@
 	</div>
 
 	{#if showSettings}
-		<div class="flex w-full gap-4">
+		<div class="flex w-full gap-4" transition:slide>
 			<div class="flex-1">
 				<label for="length-input" class="block mb-1 whitespace-nowrap">Chunk (Seconds)</label>
 				<input

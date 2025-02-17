@@ -2,6 +2,7 @@
 <script>
 	import AudioRecorder from './AudioRecorder.svelte';
 	import { writable, derived } from 'svelte/store';
+	import { fly } from 'svelte/transition';
 
 	export let recordChunk = 10;
 	export let recordOverlap = 2;
@@ -433,6 +434,7 @@
 										? 'ring-2 ring-offset-2'
 										: ''}"
 									on:click={() => toggleEmotion(emotion)}
+									transition:fly
 								>
 									{emotion}
 								</button>
@@ -446,7 +448,7 @@
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
-								<div class="flex items-center gap-1">
+								<div class="flex items-center gap-1" transition:fly>
 									<a
 										href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
 										target="_blank"
