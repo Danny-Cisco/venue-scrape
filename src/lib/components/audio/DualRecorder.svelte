@@ -47,6 +47,23 @@
 		}
 	}
 
+	// Helper function to get the dominant emotion category for a wiki entry
+	function getWikiEmotionCategory(wiki, wikiEmotions) {
+		const entry = wikiEmotions.find((item) => item.wiki === wiki);
+		if (!entry || !entry.emotions) return 'neutral';
+
+		const categories = entry.emotions.map((emotion) => {
+			if (emotionCategories.positive.includes(emotion)) return 'positive';
+			if (emotionCategories.neutral.includes(emotion)) return 'neutral';
+			return 'negative';
+		});
+
+		// Return most frequent category
+		return categories.reduce((a, b) =>
+			categories.filter((v) => v === a).length >= categories.filter((v) => v === b).length ? a : b
+		);
+	}
+
 	// Create stores
 	const topicsStore = writable([]);
 	const ideasStore = writable([]);
@@ -271,7 +288,7 @@
 		</div>
 	{/if}
 
-	<div class="flex w-full gap-4 mb-4">
+	<div class="flex hidden w-full gap-4 mb-4">
 		<div class="flex-1">
 			<AudioRecorder
 				id="1"
@@ -321,12 +338,20 @@
 						<h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3>
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
+								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
 								<a
 									href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
+									class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 								>
+									<span
+										class="w-2 h-2 rounded-full {category === 'positive'
+											? 'bg-green-500'
+											: category === 'neutral'
+												? 'bg-amber-500'
+												: 'bg-red-500'}"
+									></span>
 									{wiki}
 								</a>
 							{/each}
