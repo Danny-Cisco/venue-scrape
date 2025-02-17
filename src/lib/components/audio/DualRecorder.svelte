@@ -272,25 +272,119 @@
 		{#if !isRecording}
 			<button
 				on:click={startRecording}
-				class="w-48 h-48 px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-					><path
-						d="M11.9998 3C10.3429 3 8.99976 4.34315 8.99976 6V10C8.99976 11.6569 10.3429 13 11.9998 13C13.6566 13 14.9998 11.6569 14.9998 10V6C14.9998 4.34315 13.6566 3 11.9998 3ZM11.9998 1C14.7612 1 16.9998 3.23858 16.9998 6V10C16.9998 12.7614 14.7612 15 11.9998 15C9.23833 15 6.99976 12.7614 6.99976 10V6C6.99976 3.23858 9.23833 1 11.9998 1ZM3.05469 11H5.07065C5.55588 14.3923 8.47329 17 11.9998 17C15.5262 17 18.4436 14.3923 18.9289 11H20.9448C20.4837 15.1716 17.1714 18.4839 12.9998 18.9451V23H10.9998V18.9451C6.82814 18.4839 3.51584 15.1716 3.05469 11Z"
-					></path></svg
-				>
-				Start Recording
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+					<defs>
+						<path
+							id="wave1"
+							d="M0,160 C180,100 360,220 540,160 C720,100 900,220 1080,160 C1260,100 1440,220 1620,160"
+						>
+							<animate
+								attributeName="d"
+								dur="7.3s"
+								repeatCount="indefinite"
+								values="
+          M0,160 C180,100 360,220 540,160 C720,100 900,220 1080,160 C1260,100 1440,220 1620,160;
+          M0,160 C180,220 360,100 540,160 C720,220 900,100 1080,160 C1260,220 1440,100 1620,160;
+          M0,160 C180,100 360,220 540,160 C720,100 900,220 1080,160 C1260,100 1440,220 1620,160"
+							/>
+						</path>
+
+						<path
+							id="wave2"
+							d="M-120,160 C120,60 360,260 600,160 C840,60 1080,260 1320,160 C1560,60 1800,260 2040,160"
+						>
+							<animate
+								attributeName="d"
+								dur="8.7s"
+								repeatCount="indefinite"
+								values="
+          M-120,160 C120,60 360,260 600,160 C840,60 1080,260 1320,160 C1560,60 1800,260 2040,160;
+          M-120,160 C120,260 360,60 600,160 C840,260 1080,60 1320,160 C1560,260 1800,60 2040,160;
+          M-120,160 C120,60 360,260 600,160 C840,60 1080,260 1320,160 C1560,60 1800,260 2040,160"
+							/>
+						</path>
+
+						<path
+							id="wave3"
+							d="M-240,160 C60,140 360,180 660,160 C960,140 1260,180 1560,160 C1860,140 2160,180 2460,160"
+						>
+							<animate
+								attributeName="d"
+								dur="11.5s"
+								repeatCount="indefinite"
+								values="
+          M-240,160 C60,140 360,180 660,160 C960,140 1260,180 1560,160 C1860,140 2160,180 2460,160;
+          M-240,160 C60,180 360,140 660,160 C960,180 1260,140 1560,160 C1860,180 2160,140 2460,160;
+          M-240,160 C60,140 360,180 660,160 C960,140 1260,180 1560,160 C1860,140 2160,180 2460,160"
+							/>
+						</path>
+					</defs>
+
+					<use href="#wave1" stroke="#4287f5" fill="none" stroke-width="2" />
+					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
+					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
+				</svg>
+				<div class="border rounded-full btn">Start</div>
 			</button>
 		{:else}
 			<button
 				on:click={stopRecording}
-				class="w-48 h-48 px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
-				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-					><path
-						d="M16.4249 17.839L21.1925 22.6066L22.6068 21.1924L2.80777 1.3934L1.39355 2.80761L7.00016 8.41421V10C7.00016 12.7614 9.23873 15 12.0002 15C12.4825 15 12.9489 14.9317 13.3902 14.8042L14.9404 16.3544C14.0464 16.7688 13.0503 17 12.0002 17C8.47368 17 5.55627 14.3923 5.07105 11H3.05509C3.51623 15.1716 6.82854 18.4839 11.0002 18.9451V23H13.0002V18.9451C14.2341 18.8087 15.3929 18.4228 16.4249 17.839ZM11.5528 12.9669C10.2541 12.7727 9.22745 11.7461 9.03328 10.4473L11.5528 12.9669ZM19.3747 15.1604L17.9323 13.7179C18.4407 12.9084 18.788 11.9874 18.9293 11H20.9452C20.7754 12.5366 20.2187 13.9565 19.3747 15.1604ZM16.4658 12.2514L14.9173 10.703C14.9715 10.4775 15.0002 10.2421 15.0002 10V6C15.0002 4.34315 13.657 3 12.0002 3C10.7059 3 9.6031 3.81956 9.18237 4.96802L7.68575 3.47139C8.55427 1.99268 10.1613 1 12.0002 1C14.7616 1 17.0002 3.23858 17.0002 6V10C17.0002 10.8099 16.8076 11.5748 16.4658 12.2514Z"
-					></path></svg
-				>
-				Stop Recording
+				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+					<defs>
+						<path
+							id="wave1"
+							d="M0,160 C180,40 360,280 540,160 C720,40 900,280 1080,160 C1260,40 1440,280 1620,160"
+						>
+							<animate
+								attributeName="d"
+								dur="3.1s"
+								repeatCount="indefinite"
+								values="
+          M0,160 C180,40 360,280 540,160 C720,40 900,280 1080,160 C1260,40 1440,280 1620,160;
+          M0,160 C180,280 360,40 540,160 C720,280 900,40 1080,160 C1260,280 1440,40 1620,160;
+          M0,160 C180,40 360,280 540,160 C720,40 900,280 1080,160 C1260,40 1440,280 1620,160"
+							/>
+						</path>
+
+						<path
+							id="wave2"
+							d="M-120,160 C120,20 360,300 600,160 C840,20 1080,300 1320,160 C1560,20 1800,300 2040,160"
+						>
+							<animate
+								attributeName="d"
+								dur="2.7s"
+								repeatCount="indefinite"
+								values="
+          M-120,160 C120,20 360,300 600,160 C840,20 1080,300 1320,160 C1560,20 1800,300 2040,160;
+          M-120,160 C120,300 360,20 600,160 C840,300 1080,20 1320,160 C1560,300 1800,20 2040,160;
+          M-120,160 C120,20 360,300 600,160 C840,20 1080,300 1320,160 C1560,20 1800,300 2040,160"
+							/>
+						</path>
+
+						<path
+							id="wave3"
+							d="M-240,160 C60,60 360,260 660,160 C960,60 1260,260 1560,160 C1860,60 2160,260 2460,160"
+						>
+							<animate
+								attributeName="d"
+								dur="3.9s"
+								repeatCount="indefinite"
+								values="
+          M-240,160 C60,60 360,260 660,160 C960,60 1260,260 1560,160 C1860,60 2160,260 2460,160;
+          M-240,160 C60,260 360,60 660,160 C960,260 1260,60 1560,160 C1860,260 2160,60 2460,160;
+          M-240,160 C60,60 360,260 660,160 C960,60 1260,260 1560,160 C1860,60 2160,260 2460,160"
+							/>
+						</path>
+					</defs>
+
+					<use href="#wave1" stroke="#4287f5" fill="none" stroke-width="2" />
+					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
+					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
+				</svg>
+				<div class="border rounded-full btn">Stop</div>
 			</button>
 		{/if}
 	</div>
@@ -328,7 +422,7 @@
 				<div class="flex gap-6">
 					<!-- Emotions -->
 					<div class="flex-1 space-y-4">
-						<h3 class="text-lg font-semibold">Emotions</h3>
+						<!-- <h3 class="text-lg font-semibold">Emotions</h3> -->
 						<div class="flex flex-wrap gap-2">
 							{#each uniqueEmotions as emotion}
 								{@const style = getEmotionStyle(emotion)}
@@ -348,7 +442,7 @@
 
 					<!-- Wikipedia -->
 					<div class="flex-1 space-y-4">
-						<h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3>
+						<!-- <h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3> -->
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
