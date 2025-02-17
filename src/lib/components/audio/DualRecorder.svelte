@@ -225,7 +225,13 @@
 			if (analysis) {
 				// Ensure emotions is an array
 				const emotions = Array.isArray(analysis.emotions) ? analysis.emotions : [analysis.emotions];
-				addWikiEmotions(analysis.wikipedia, emotions, timestamp);
+
+				// Capitalize first letter of each Wikipedia entry
+				const capitalizedWikis = analysis.wikipedia.map(
+					(wiki) => wiki.charAt(0).toUpperCase() + wiki.slice(1)
+				);
+
+				addWikiEmotions(capitalizedWikis, emotions, timestamp);
 				topicsStore.update((current) => [...current, { items: analysis.topics, timestamp }]);
 				ideasStore.update((current) => [...current, { items: analysis.ideas, timestamp }]);
 				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
