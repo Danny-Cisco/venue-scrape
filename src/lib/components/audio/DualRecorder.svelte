@@ -20,6 +20,7 @@
 	const ideasStore = writable([]);
 	const themesStore = writable([]);
 	const emotionsStore = writable([]);
+	const wikipediaStore = writable([]);
 
 	// Helper function to add items to a store with timestamps
 	function addToStore(store, items, timestamp) {
@@ -136,6 +137,7 @@
 				addToStore(ideasStore, analysis.ideas, timestamp);
 				addToStore(themesStore, analysis.themes, timestamp);
 				addToStore(emotionsStore, analysis.emotions, timestamp);
+				addToStore(wikipediaStore, analysis.wikipedia, timestamp);
 			}
 		} else {
 			console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
@@ -147,11 +149,13 @@
 	let ideas = [];
 	let themes = [];
 	let emotions = [];
+	let wikipedia = [];
 
 	topicsStore.subscribe((value) => (topics = value));
 	ideasStore.subscribe((value) => (ideas = value));
 	themesStore.subscribe((value) => (themes = value));
 	emotionsStore.subscribe((value) => (emotions = value));
+	wikipediaStore.subscribe((value) => (wikipedia = value));
 
 	// Add this helper function to flatten arrays while removing duplicates
 	function uniqueItems(arrays) {
@@ -256,6 +260,20 @@
 									class="px-4 py-2 text-sm text-purple-800 transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 								>
 									{theme}
+								</div>
+							{/each}
+						</div>
+					</div>
+
+					<!-- Wikipedia -->
+					<div class="space-y-4">
+						<h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueItems(wikipedia) as wiki}
+								<div
+									class="px-4 py-2 text-sm text-purple-800 transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
+								>
+									{wiki}
 								</div>
 							{/each}
 						</div>
