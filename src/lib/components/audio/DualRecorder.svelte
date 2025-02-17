@@ -15,22 +15,95 @@
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
 
-	// Create stores for each category
+	// Emotion categorization
+	const emotionCategories = {
+		positive: ['Adoration/Joy', 'Amusement', 'Awe/Surprise', 'Desire/Love', 'Interest', 'Joy'],
+		neutral: ['Neutral', 'Contentment', 'Calmness', 'Confusion', 'Contempt/Pride', 'Craving'],
+		negative: ['Anger', 'Disappointment/Shame', 'Distress/Disgust', 'Fear', 'Pain/Sadness']
+	};
+
+	function getEmotionStyle(emotion) {
+		if (emotionCategories.positive.includes(emotion)) {
+			return {
+				category: 'positive',
+				bgColor: 'bg-green-100',
+				textColor: 'text-green-800',
+				borderColor: 'border-green-200'
+			};
+		} else if (emotionCategories.neutral.includes(emotion)) {
+			return {
+				category: 'neutral',
+				bgColor: 'bg-amber-100',
+				textColor: 'text-amber-800',
+				borderColor: 'border-amber-200'
+			};
+		} else {
+			return {
+				category: 'negative',
+				bgColor: 'bg-red-100',
+				textColor: 'text-red-800',
+				borderColor: 'border-red-200'
+			};
+		}
+	}
+
+	// Create stores
 	const topicsStore = writable([]);
 	const ideasStore = writable([]);
 	const themesStore = writable([]);
-	const emotionsStore = writable([]);
-	const wikipediaStore = writable([]);
+	const wikiEmotionsStore = writable([]);
+	const selectedEmotions = writable(new Set());
 
-	// Helper function to add items to a store with timestamps
-	function addToStore(store, items, timestamp) {
-		store.update((currentItems) => [
-			...currentItems,
-			{
-				items,
-				timestamp
+	// Filtered Wikipedia entries based on selected emotions
+	const filteredWikis = derived(
+		[wikiEmotionsStore, selectedEmotions],
+		([$wikiEmotionsStore, $selectedEmotions]) => {
+			console.log('Store contents:', $wikiEmotionsStore);
+			console.log('Selected emotions:', $selectedEmotions);
+
+			if ($selectedEmotions.size === 0) {
+				return [...new Set($wikiEmotionsStore.map((item) => item.wiki))];
 			}
-		]);
+
+			return [
+				...new Set(
+					$wikiEmotionsStore
+						.filter((item) => {
+							if (!Array.isArray(item.emotions)) {
+								console.warn('Item emotions is not an array:', item);
+								return false;
+							}
+							return item.emotions.some((emotion) => $selectedEmotions.has(emotion));
+						})
+						.map((item) => item.wiki)
+				)
+			];
+		}
+	);
+
+	// Toggle emotion selection
+	function toggleEmotion(emotion) {
+		selectedEmotions.update((current) => {
+			const updated = new Set(current);
+			if (updated.has(emotion)) {
+				updated.delete(emotion);
+			} else {
+				updated.add(emotion);
+			}
+			return updated;
+		});
+	}
+
+	// Helper function to add wiki entries with emotions
+	function addWikiEmotions(wikiItems, emotions, timestamp) {
+		wikiEmotionsStore.update((currentItems) => {
+			const newEntries = wikiItems.map((wiki) => ({
+				wiki,
+				emotions: Array.isArray(emotions) ? emotions : [emotions],
+				timestamp
+			}));
+			return [...currentItems, ...newEntries];
+		});
 	}
 
 	async function startRecording() {
@@ -133,34 +206,35 @@
 			// Get analysis and update stores
 			const analysis = await analyzeTranscription(transcription);
 			if (analysis) {
-				addToStore(topicsStore, analysis.topics, timestamp);
-				addToStore(ideasStore, analysis.ideas, timestamp);
-				addToStore(themesStore, analysis.themes, timestamp);
-				addToStore(emotionsStore, analysis.emotions, timestamp);
-				addToStore(wikipediaStore, analysis.wikipedia, timestamp);
+				// Ensure emotions is an array
+				const emotions = Array.isArray(analysis.emotions) ? analysis.emotions : [analysis.emotions];
+				addWikiEmotions(analysis.wikipedia, emotions, timestamp);
+				topicsStore.update((current) => [...current, { items: analysis.topics, timestamp }]);
+				ideasStore.update((current) => [...current, { items: analysis.ideas, timestamp }]);
+				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
 			}
 		} else {
 			console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
 		}
 	}
 
-	// Subscribe to stores to get latest values
+	// Subscribe to stores
 	let topics = [];
 	let ideas = [];
 	let themes = [];
-	let emotions = [];
-	let wikipedia = [];
+	let wikiEmotions = [];
+	let filteredWikisList = [];
+	let selectedEmotionsList = new Set();
 
 	topicsStore.subscribe((value) => (topics = value));
 	ideasStore.subscribe((value) => (ideas = value));
 	themesStore.subscribe((value) => (themes = value));
-	emotionsStore.subscribe((value) => (emotions = value));
-	wikipediaStore.subscribe((value) => (wikipedia = value));
+	wikiEmotionsStore.subscribe((value) => (wikiEmotions = value));
+	filteredWikis.subscribe((value) => (filteredWikisList = value));
+	selectedEmotions.subscribe((value) => (selectedEmotionsList = value));
 
-	// Add this helper function to flatten arrays while removing duplicates
-	function uniqueItems(arrays) {
-		return [...new Set(arrays.flatMap((arr) => arr.items))];
-	}
+	// Get all unique emotions from the store
+	$: uniqueEmotions = [...new Set(wikiEmotions.flatMap((item) => item.emotions))];
 </script>
 
 <div class="w-full p-4 mx-auto">
@@ -220,75 +294,41 @@
 
 	{#if transcriptions.length > 0}
 		<div class="mt-6 space-y-8">
-			<!-- Analysis Results -->
 			<div class="w-full p-6">
-				<div class="grid grid-cols-4 gap-6">
-					<!-- Topics -->
-					<div class="space-y-4">
-						<h3 class="text-lg font-semibold text-blue-600">Topics</h3>
+				<div class="flex gap-6">
+					<!-- Emotions -->
+					<div class="flex-1 space-y-4">
+						<h3 class="text-lg font-semibold">Emotions</h3>
 						<div class="flex flex-wrap gap-2">
-							{#each uniqueItems(topics) as topic}
-								<div
-									class="px-4 py-2 text-sm text-blue-800 transition-transform bg-blue-100 border border-blue-200 rounded-full cursor-pointer hover:scale-105"
+							{#each uniqueEmotions as emotion}
+								{@const style = getEmotionStyle(emotion)}
+								<button
+									class="px-4 py-2 text-sm transition-transform border rounded-full cursor-pointer hover:scale-105 {style.bgColor} {style.textColor} {style.borderColor} {selectedEmotionsList.has(
+										emotion
+									)
+										? 'ring-2 ring-offset-2'
+										: ''}"
+									on:click={() => toggleEmotion(emotion)}
 								>
-									{topic}
-								</div>
-							{/each}
-						</div>
-					</div>
-
-					<!-- Ideas -->
-					<div class="space-y-4">
-						<h3 class="text-lg font-semibold text-green-600">Ideas</h3>
-						<div class="flex flex-wrap gap-2">
-							{#each uniqueItems(ideas) as idea}
-								<div
-									class="px-4 py-2 text-sm text-green-800 transition-transform bg-green-100 border border-green-200 rounded-full cursor-pointer hover:scale-105"
-								>
-									{idea}
-								</div>
-							{/each}
-						</div>
-					</div>
-
-					<!-- Themes -->
-					<div class="space-y-4">
-						<h3 class="text-lg font-semibold text-purple-600">Themes</h3>
-						<div class="flex flex-wrap gap-2">
-							{#each uniqueItems(themes) as theme}
-								<div
-									class="px-4 py-2 text-sm text-purple-800 transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
-								>
-									{theme}
-								</div>
+									{emotion}
+								</button>
 							{/each}
 						</div>
 					</div>
 
 					<!-- Wikipedia -->
-					<div class="space-y-4">
+					<div class="flex-1 space-y-4">
 						<h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3>
 						<div class="flex flex-wrap gap-2">
-							{#each uniqueItems(wikipedia) as wiki}
-								<div
-									class="px-4 py-2 text-sm text-purple-800 transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
+							{#each filteredWikisList as wiki}
+								<a
+									href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 								>
 									{wiki}
-								</div>
-							{/each}
-						</div>
-					</div>
-
-					<!-- Emotions -->
-					<div class="space-y-4">
-						<h3 class="text-lg font-semibold text-red-600">Emotions</h3>
-						<div class="flex flex-wrap gap-2">
-							{#each uniqueItems(emotions) as emotion}
-								<div
-									class="px-4 py-2 text-sm text-red-800 transition-transform bg-red-100 border border-red-200 rounded-full cursor-pointer hover:scale-105"
-								>
-									{emotion}
-								</div>
+								</a>
 							{/each}
 						</div>
 					</div>

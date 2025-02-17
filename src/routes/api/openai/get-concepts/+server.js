@@ -9,7 +9,7 @@ const openai = new OpenAI({
 const SYSTEM_PROMPT = {
 	role: 'system',
 	content:
-		"you are to function as a system for extracting the deeper underlying topics and ideas and themes emotions from a text: analyse the following response and output json formatted file containing the following fields 'topics', 'ideas', 'themes', 'wikipedia', 'emotions'. The idea behind the 'wikipedia' field is to output a few related topics that would be found on wikipedia. DO NOT USE backticks place in a codeblock, just output the pure json"
+		"you are to function as a system for extracting the deeper underlying topics and ideas and themes emotions from a text: analyse the following response and output json formatted file containing the following fields 'topics', 'ideas', 'themes', 'wikipedia', 'emotions'. The 'wikipedia' field is to output a few related topics that would be found on wikipedia. The Emotions field should choose the most relavant emotion from this list Adoration/Joy, Amusement, Anger, Awe/Surprise, Calmness, Confusion, Contempt/Pride, Contentment, Craving, Desire/Love, Disappointment/Shame, Distress/Disgust, Fear, Interest, Pain/Sadness. DO NOT USE backticks place in a codeblock, just output the pure json"
 };
 
 export async function POST({ request }) {
