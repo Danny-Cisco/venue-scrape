@@ -16,6 +16,11 @@
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
 
+	import { categoryStore } from '$lib/stores/categoryStore.js'; // adjust the path as needed
+
+	// Subscribe to the store
+	$: categories = $categoryStore;
+
 	// Emotion categorization
 	const emotionCategories = {
 		positive: ['Adoration/Joy', 'Amusement', 'Awe/Surprise', 'Desire/Love', 'Interest', 'Joy'],
@@ -195,6 +200,46 @@
 			return JSON.parse(data.reply.content);
 		} catch (err) {
 			console.error('Error analyzing transcription:', err);
+			return null;
+		}
+	}
+
+	$: if ($wikiEmotionsStore.length > 0) getCategories($wikiEmotionsStore);
+	$: console.log('wikiStore', $wikiEmotionsStore);
+
+	async function getCategories(topics) {
+		try {
+			const messages = [
+				{
+					role: 'user',
+					content: `The wiki topics are as follows: ${JSON.stringify(topics, null, 2)}`
+				}
+			];
+
+			const response = await fetch('api/openai/get-categories', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ messages })
+			});
+
+			if (!response.ok) {
+				throw new Error('Get category request failed');
+			}
+
+			const data = await response.json();
+			const categories = JSON.parse(data.reply.content);
+			console.log('🚀 ~ getCategories ~ categories:', categories);
+
+			// Update the store with the new categories
+			categoryStore.set(categories);
+
+			return categories;
+		} catch (err) {
+			console.error('Error getting categories:', err);
+			// You might want to set the store to an empty array or null in case of error
+			categoryStore.set([]);
 			return null;
 		}
 	}
