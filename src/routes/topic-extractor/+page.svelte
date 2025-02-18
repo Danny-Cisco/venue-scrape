@@ -1,19 +1,38 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
+	import { categoryStore } from '$lib/stores/categoryStore.js'; // Adjust path as needed
 	import DualRecorder from '$lib/components/audio/DualRecorder.svelte';
+	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
+
 	let length = 12;
 	let overlap = 2;
-	let key = 1; // for re rendereing
-
+	let key = 1; // for re-rendering
 	let showSettings = false;
 
 	function forceUpdate() {
 		key += 1;
 	}
+
+	let donutData = [
+		{ category: 'Topic A', value: 30 },
+		{ category: 'Topic B', value: 20 },
+		{ category: 'Topic C', value: 50 }
+	];
+	// Transform the category data for the donut chart
+	$: if ($categoryStore.CategoryNames.length > 0) {
+		console.log('BOOOOP');
+		donutData =
+			$categoryStore?.CategoryNames?.map((categoryName) => ({
+				category: categoryName,
+				value: $categoryStore[categoryName]?.length || 0
+			})) || [];
+	}
+	$: console.log('donutData: ', donutData);
+	$: console.log('🚀 ~ $categoryStore?.CategoryNames?.map ~ categoryStore:', $categoryStore);
 </script>
 
-<div class="space-y-4" in:fade>
-	<div class="flex items-start w-full">
+<div class="space-y-4 font-mono" in:fade>
+	<div class="flex items-start w-full text-black/50">
 		<h1 class="mb-4 text-2xl font-bold">Topic Extractor</h1>
 		<div class="flex-1"></div>
 		<button
@@ -21,7 +40,8 @@
 			on:click={() => {
 				showSettings = !showSettings;
 			}}
-			><svg
+		>
+			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
@@ -41,6 +61,10 @@
 				/>
 			</svg>
 		</button>
+	</div>
+
+	<div class="max-w-3xl mx-auto">
+		<D3Donut data={donutData} valueKey="value" />
 	</div>
 
 	{#if showSettings}
@@ -71,6 +95,7 @@
 			</div>
 		</div>
 	{/if}
+
 	<div class="w-full">
 		{#key key}
 			<DualRecorder recordChunk={length} recordOverlap={overlap} />

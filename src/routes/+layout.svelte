@@ -143,9 +143,7 @@
 	<!-- Header -->
 	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-[#f1f1f1]">
 		<!-- Logo -->
-		<strong
-			class="flex items-end gap-1 text-3xl bg-white p-4 pt-0 shadow-md rounded-md text-[magenta]"
-		>
+		<strong class="flex items-end gap-1 text-3xl p-4 pt-0 text-[magenta]">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 424 424"
@@ -173,7 +171,7 @@
 
 		<!-- User Authentication -->
 		{#if !$loading}
-			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 bg-white rounded-md shadow-md">
+			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
 				{#if session}
 					<a href="/account" class="flex items-center gap-4"
 						><p class="font-bold text-gray-500">
@@ -452,7 +450,7 @@
 		</button>
 
 		<!-- Main Content -->
-		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] max-w-3xl mx-auto">
+		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] w-full">
 			<slot />
 			{#if $permissionStatus === 'denied'}
 				<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">

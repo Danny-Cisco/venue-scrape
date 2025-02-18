@@ -16,6 +16,11 @@
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
 
+	import { categoryStore } from '$lib/stores/categoryStore.js'; // adjust the path as needed
+
+	// Subscribe to the store
+	$: categories = $categoryStore;
+
 	// Emotion categorization
 	const emotionCategories = {
 		positive: ['Adoration/Joy', 'Amusement', 'Awe/Surprise', 'Desire/Love', 'Interest', 'Joy'],
@@ -199,6 +204,46 @@
 		}
 	}
 
+	$: if ($wikiEmotionsStore.length > 0) getCategories($wikiEmotionsStore);
+	$: console.log('wikiStore', $wikiEmotionsStore);
+
+	async function getCategories(topics) {
+		try {
+			const messages = [
+				{
+					role: 'user',
+					content: `The wiki topics are as follows: ${JSON.stringify(topics, null, 2)}`
+				}
+			];
+
+			const response = await fetch('api/openai/get-categories', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ messages })
+			});
+
+			if (!response.ok) {
+				throw new Error('Get category request failed');
+			}
+
+			const data = await response.json();
+			const categories = JSON.parse(data.reply.content);
+			console.log('🚀 ~ getCategories ~ categories:', categories);
+
+			// Update the store with the new categories
+			categoryStore.set(categories);
+
+			return categories;
+		} catch (err) {
+			console.error('Error getting categories:', err);
+			// You might want to set the store to an empty array or null in case of error
+			categoryStore.set([]);
+			return null;
+		}
+	}
+
 	async function handleTranscriptionComplete(event) {
 		const { transcription, recorderId } = event.detail;
 		// console.log(`Received transcription from recorder ${recorderId}`);
@@ -268,12 +313,12 @@
 	}
 </script>
 
-<div class="w-full p-4 mx-auto">
+<div class="w-full mx-auto">
 	<div class="flex flex-col w-full mb-6">
 		{#if !isRecording}
 			<button
 				on:click={startRecording}
-				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="relative w-full mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>
@@ -327,12 +372,16 @@
 					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
-				<div class="border rounded-full btn">Start</div>
+				<div
+					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+				>
+					Start
+				</div>
 			</button>
 		{:else}
 			<button
 				on:click={stopRecording}
-				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="relative w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>
 						<path
@@ -385,7 +434,11 @@
 					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
-				<div class="border rounded-full btn">Stop</div>
+				<div
+					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+				>
+					Stop
+				</div>
 			</button>
 		{/if}
 	</div>
