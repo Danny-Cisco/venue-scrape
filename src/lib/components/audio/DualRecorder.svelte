@@ -373,15 +373,15 @@
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
 				<div
-					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+					class="absolute inset-0 flex bg-white w-[200px] mx-auto hover:bg-gray-500 my-auto h-[60px] flex-col hover:text-white items-center justify-center rounded-full btn"
 				>
-					Start
+					START
 				</div>
 			</button>
 		{:else}
 			<button
 				on:click={stopRecording}
-				class="relative w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="relative w-full mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>
 						<path
@@ -435,9 +435,9 @@
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
 				<div
-					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+					class="absolute inset-0 flex bg-white w-[200px] mx-auto hover:bg-gray-500 my-auto h-[60px] flex-col hover:text-white items-center justify-center rounded-full btn"
 				>
-					Stop
+					STOP
 				</div>
 			</button>
 		{/if}

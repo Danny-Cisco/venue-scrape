@@ -84,15 +84,54 @@
 		// Exit paths
 		paths.exit().remove();
 
+		// Labels section only - replace the existing labels code with this:
+
 		// Labels
-		const labels = svg.selectAll('text').data(pieData);
+		const labels = svg.selectAll('text.label').data(pieData);
+
+		// Function to create/update tspans
+		function createTspans(selection) {
+			selection.each(function (d) {
+				const text = d.data.category;
+				const words = text.split(/\s+/);
+				const lineHeight = 1.1;
+				const node = d3.select(this);
+
+				// Clear existing tspans
+				node.selectAll('tspan').remove();
+
+				let line = [];
+				let lineNumber = 0;
+				let tspan = node.append('tspan').attr('x', 0).attr('dy', 0);
+
+				words.forEach((word) => {
+					line.push(word);
+					tspan.text(line.join(' '));
+
+					if (line.join(' ').length > 15 && line.length > 1) {
+						line.pop();
+						tspan.text(line.join(' '));
+						line = [word];
+						tspan = node.append('tspan').attr('x', 0).attr('dy', `${lineHeight}em`).text(word);
+						lineNumber++;
+					}
+				});
+
+				// Add any remaining words
+				if (line.length > 0) {
+					tspan.text(line.join(' '));
+				}
+
+				d.lineCount = lineNumber + 1;
+			});
+		}
 
 		// Enter labels
 		const enterLabels = labels
 			.enter()
 			.append('text')
 			.attr('class', 'label')
-			.style('font-size', '12px')
+			.style('font-size', '14px')
 			.style('font-family', 'Monospace')
 			.style('fill', '#000')
 			.style('text-anchor', (d) => {
@@ -100,26 +139,34 @@
 				return angle < Math.PI ? 'start' : 'end';
 			})
 			.style('pointer-events', 'none')
-			.attr('opacity', 0);
+			.attr('opacity', 0)
+			.call(createTspans);
 
-		// Update labels
+		// Update existing labels
+		labels
+			.style('text-anchor', (d) => {
+				const angle = midAngle(d);
+				return angle < Math.PI ? 'start' : 'end';
+			})
+			.call(createTspans);
+
+		// Merge and transition all labels
 		labels
 			.merge(enterLabels)
-			.text((d) => d.data.category)
 			.transition()
 			.duration(750)
 			.attr('transform', (d) => {
 				const pos = labelArc.centroid(d);
 				const angle = midAngle(d);
-				// Adjust x position based on text anchor
 				pos[0] = pos[0] + (angle < Math.PI ? 5 : -5);
+				const lineCount = d.lineCount || 1;
+				pos[1] = pos[1] - (lineCount - 1) * 6;
 				return `translate(${pos})`;
 			})
 			.attr('opacity', 1);
 
 		// Exit labels
 		labels.exit().transition().duration(750).attr('opacity', 0).remove();
-
 		// Add connecting lines
 		const polylines = svg.selectAll('polyline').data(pieData);
 
@@ -128,15 +175,15 @@
 			.enter()
 			.append('polyline')
 			.style('fill', 'none')
-			.style('stroke', '#999')
+			.style('stroke', '#000')
 			.style('stroke-width', '1px')
-			.style('opacity', 0.5);
+			.style('opacity', 0.0);
 
 		// Update polylines
 		polylines
 			.merge(enterPolylines)
 			.transition()
-			.duration(750)
+			.duration(150)
 			.attr('points', (d) => {
 				const pos = labelArc.centroid(d);
 				const angle = midAngle(d);
