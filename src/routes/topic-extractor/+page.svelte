@@ -49,8 +49,9 @@
 			</svg>
 		</button>
 	</div>
-
-	<D3Donut data={fruitData} valueKey="value" />
+	<div class="max-w-3xl mx-auto">
+		<D3Donut data={fruitData} valueKey="value" />
+	</div>
 
 	{#if showSettings}
 		<div class="flex w-full gap-4" transition:slide>

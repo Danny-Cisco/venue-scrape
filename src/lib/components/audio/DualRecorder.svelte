@@ -273,7 +273,7 @@
 		{#if !isRecording}
 			<button
 				on:click={startRecording}
-				class="w-full mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="relative w-full mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>
@@ -327,12 +327,16 @@
 					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
-				<div class="border rounded-full btn">Start</div>
+				<div
+					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+				>
+					Start
+				</div>
 			</button>
 		{:else}
 			<button
 				on:click={stopRecording}
-				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="relative w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 				><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>
 						<path
@@ -385,7 +389,11 @@
 					<use href="#wave2" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.7" />
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
-				<div class="border rounded-full btn">Stop</div>
+				<div
+					class="absolute inset-0 flex bg-white/50 w-[200px] mx-auto my-auto h-[60px] flex-col items-center justify-center border rounded-full btn"
+				>
+					Stop
+				</div>
 			</button>
 		{/if}
 	</div>
