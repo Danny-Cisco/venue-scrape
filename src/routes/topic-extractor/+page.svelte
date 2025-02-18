@@ -15,16 +15,17 @@
 	}
 
 	let donutData = [
-		{ category: 'ONE', value: 1 },
-		{ category: 'TWO', value: 1 },
-		{ category: 'THREE', value: 1 }
+		{ category: 'A', value: 30 },
+		{ category: 'B', value: 20 },
+		{ category: 'C', value: 50 }
 	];
 	// Transform the category data for the donut chart
-	$: donutData =
-		$categoryStore?.CategoryNames?.map((categoryName) => ({
-			category: categoryName,
-			value: $categoryStore[categoryName]?.length || 0
-		})) || [];
+	$: if ($categoryStore.length > 0)
+		donutData =
+			$categoryStore?.CategoryNames?.map((categoryName) => ({
+				category: categoryName,
+				value: $categoryStore[categoryName]?.length || 0
+			})) || [];
 	$: console.log('donutData: ', donutData);
 	$: console.log('🚀 ~ $categoryStore?.CategoryNames?.map ~ categoryStore:', $categoryStore);
 </script>

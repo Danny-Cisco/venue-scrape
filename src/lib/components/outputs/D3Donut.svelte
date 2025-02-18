@@ -4,7 +4,7 @@
 
 	export let data = [];
 	export let valueKey = 'value';
-	export let width = 500;
+	let width = innerWidth / 2;
 
 	let svg;
 	let path;
@@ -105,4 +105,4 @@
 	}
 </script>
 
-<svg id="donut-chart" {width}></svg>
+<svg id="donut-chart"></svg>
