@@ -3,6 +3,7 @@
 	import { categoryStore } from '$lib/stores/categoryStore.js'; // Adjust path as needed
 	import DualRecorder from '$lib/components/audio/DualRecorder.svelte';
 	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
+	import { thresholdFreedmanDiaconis } from 'd3';
 
 	let length = 12;
 	let overlap = 2;
@@ -13,6 +14,11 @@
 		key += 1;
 	}
 
+	let donutData = [
+		{ category: 'ONE', value: 1 },
+		{ category: 'TWO', value: 1 },
+		{ category: 'THREE', value: 1 }
+	];
 	// Transform the category data for the donut chart
 	$: donutData =
 		$categoryStore?.CategoryNames?.map((categoryName) => ({
@@ -56,9 +62,7 @@
 	</div>
 
 	<div class="max-w-3xl mx-auto">
-		{#key donutData}
-			<D3Donut data={donutData} valueKey="value" />
-		{/key}
+		<D3Donut data={donutData} valueKey="value" />
 	</div>
 
 	{#if showSettings}
