@@ -15,12 +15,19 @@
 	onMount(() => {
 		width = window.innerWidth / 2;
 		const height = Math.min(500, width * 0.614);
-		const outerRadius = height / 2;
+		// Reduce the outer radius to leave space for labels
+		const outerRadius = (height / 2) * 0.8;
 		const innerRadius = outerRadius * 0.667;
 
 		color = d3.scaleOrdinal(d3.schemeCategory10);
 
 		arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
+
+		// Create a larger arc for label positioning
+		const labelArc = d3
+			.arc()
+			.innerRadius(outerRadius * 1.1)
+			.outerRadius(outerRadius * 1.1);
 
 		pie = d3
 			.pie()
@@ -38,12 +45,21 @@
 		return (t) => arc(i(t));
 	}
 
+	function midAngle(d) {
+		return d.startAngle + (d.endAngle - d.startAngle) / 2;
+	}
+
 	function updateChart(newData) {
 		if (!svg || !mounted || !newData?.length) return;
 
-		console.log('Updating chart with data:', newData); // Debug log
+		console.log('Updating chart with data:', newData);
 
 		const pieData = pie(newData);
+		const outerRadius = (Math.min(500, width * 0.614) / 2) * 0.8;
+		const labelArc = d3
+			.arc()
+			.innerRadius(outerRadius * 1.1)
+			.outerRadius(outerRadius * 1.1);
 
 		// Paths
 		const paths = svg.selectAll('path').data(pieData);
@@ -75,13 +91,15 @@
 		const enterLabels = labels
 			.enter()
 			.append('text')
-			.attr('transform', (d) => `translate(${arc.centroid(d)})`)
-			.style('font-size', '12px') // Increased font size
+			.attr('class', 'label')
+			.style('font-size', '12px')
 			.style('font-family', 'Monospace')
-			.style('fill', '#fff')
-			.style('text-anchor', 'middle')
-			.style('alignment-baseline', 'middle')
-			.style('pointer-events', 'none') // Prevent labels from interfering with interactions
+			.style('fill', '#000')
+			.style('text-anchor', (d) => {
+				const angle = midAngle(d);
+				return angle < Math.PI ? 'start' : 'end';
+			})
+			.style('pointer-events', 'none')
 			.attr('opacity', 0);
 
 		// Update labels
@@ -90,16 +108,54 @@
 			.text((d) => d.data.category)
 			.transition()
 			.duration(750)
-			.attr('transform', (d) => `translate(${arc.centroid(d)})`)
+			.attr('transform', (d) => {
+				const pos = labelArc.centroid(d);
+				const angle = midAngle(d);
+				// Adjust x position based on text anchor
+				pos[0] = pos[0] + (angle < Math.PI ? 5 : -5);
+				return `translate(${pos})`;
+			})
 			.attr('opacity', 1);
 
 		// Exit labels
 		labels.exit().transition().duration(750).attr('opacity', 0).remove();
+
+		// Add connecting lines
+		const polylines = svg.selectAll('polyline').data(pieData);
+
+		// Enter polylines
+		const enterPolylines = polylines
+			.enter()
+			.append('polyline')
+			.style('fill', 'none')
+			.style('stroke', '#999')
+			.style('stroke-width', '1px')
+			.style('opacity', 0.5);
+
+		// Update polylines
+		polylines
+			.merge(enterPolylines)
+			.transition()
+			.duration(750)
+			.attr('points', (d) => {
+				const pos = labelArc.centroid(d);
+				const angle = midAngle(d);
+				pos[0] = pos[0] + (angle < Math.PI ? 2 : -2);
+				const midRadius = (arc.outerRadius()() + labelArc.outerRadius()()) / 2;
+				const midPoint = [
+					midRadius * Math.cos(midAngle(d) - Math.PI / 2),
+					midRadius * Math.sin(midAngle(d) - Math.PI / 2)
+				];
+				return [arc.centroid(d), midPoint, pos];
+			});
+
+		// Exit polylines
+		polylines.exit().remove();
 	}
 
 	// Watch for data changes
 	$: {
-		console.log('Data changed:', data); // Debug log
+		console.log('Data changed:', data);
 		if (mounted && data) {
 			updateChart(data);
 		}
