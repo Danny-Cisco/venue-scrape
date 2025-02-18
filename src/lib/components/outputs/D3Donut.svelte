@@ -4,17 +4,17 @@
 
 	export let data = [];
 	export let valueKey = 'value';
-	let width = innerWidth / 2;
+	export let width = 500;
 
 	let svg;
-	let path;
 	let pie;
 	let arc;
 	let color;
 	let mounted = false;
 
 	onMount(() => {
-		const height = Math.min(500, width);
+		width = window.innerWidth / 2;
+		const height = Math.min(500, width * 0.614);
 		const outerRadius = height / 2;
 		const innerRadius = outerRadius * 0.667;
 
@@ -30,7 +30,6 @@
 		svg = d3.select('#donut-chart').attr('viewBox', [-width / 2, -height / 2, width, height]);
 
 		mounted = true;
-		updateChart();
 	});
 
 	function arcTween(a) {
@@ -39,69 +38,71 @@
 		return (t) => arc(i(t));
 	}
 
-	function updateChart() {
-		if (!svg || !mounted || !data.length) return;
+	function updateChart(newData) {
+		if (!svg || !mounted || !newData?.length) return;
 
-		const pieData = pie(data);
+		console.log('Updating chart with data:', newData); // Debug log
 
-		// Update paths
-		path = svg.selectAll('path').data(pieData);
+		const pieData = pie(newData);
 
-		// Enter new paths
-		const enterPath = path
+		// Paths
+		const paths = svg.selectAll('path').data(pieData);
+
+		// Enter paths
+		const enterPaths = paths
 			.enter()
 			.append('path')
 			.attr('fill', (d, i) => color(i))
-			.attr('d', arc);
+			.attr('d', arc)
+			.each(function (d) {
+				this._current = d;
+			});
 
-		// Store the initial angles
-		enterPath.each(function (d) {
-			this._current = d;
-		});
-
-		// Update existing paths
-		path
+		// Update paths
+		paths
 			.attr('fill', (d, i) => color(i))
 			.transition()
 			.duration(750)
 			.attrTween('d', arcTween);
 
-		// Remove old paths
-		path.exit().remove();
+		// Exit paths
+		paths.exit().remove();
 
-		// Update labels
+		// Labels
 		const labels = svg.selectAll('text').data(pieData);
 
-		// Enter new labels
-		labels
+		// Enter labels
+		const enterLabels = labels
 			.enter()
 			.append('text')
 			.attr('transform', (d) => `translate(${arc.centroid(d)})`)
-			.attr('opacity', 0)
-			.style('font-size', '7px')
+			.style('font-size', '12px') // Increased font size
 			.style('font-family', 'Monospace')
 			.style('fill', '#fff')
 			.style('text-anchor', 'middle')
 			.style('alignment-baseline', 'middle')
+			.style('pointer-events', 'none') // Prevent labels from interfering with interactions
+			.attr('opacity', 0);
+
+		// Update labels
+		labels
+			.merge(enterLabels)
 			.text((d) => d.data.category)
 			.transition()
 			.duration(750)
+			.attr('transform', (d) => `translate(${arc.centroid(d)})`)
 			.attr('opacity', 1);
 
-		// Update existing labels
-		labels
-			.transition()
-			.duration(750)
-			.attr('transform', (d) => `translate(${arc.centroid(d)})`)
-			.text((d) => d.data.category);
-
-		// Remove old labels
+		// Exit labels
 		labels.exit().transition().duration(750).attr('opacity', 0).remove();
 	}
 
 	// Watch for data changes
-	$: if (mounted && data) {
-		updateChart();
+	$: {
+		console.log('Data changed:', data); // Debug log
+		if (mounted && data) {
+			updateChart(data);
+		}
 	}
 </script>
 
