@@ -268,12 +268,12 @@
 	}
 </script>
 
-<div class="w-full p-4 mx-auto">
+<div class="w-full mx-auto">
 	<div class="flex flex-col w-full mb-6">
 		{#if !isRecording}
 			<button
 				on:click={startRecording}
-				class="w-full px-4 mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+				class="w-full mx-auto font-bold text-black/50 rounded-3xl hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
 					<defs>

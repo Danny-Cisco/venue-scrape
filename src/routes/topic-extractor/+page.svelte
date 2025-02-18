@@ -1,6 +1,7 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
 	import DualRecorder from '$lib/components/audio/DualRecorder.svelte';
+	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
 	let length = 12;
 	let overlap = 2;
 	let key = 1; // for re rendereing
@@ -10,10 +11,16 @@
 	function forceUpdate() {
 		key += 1;
 	}
+	let fruitData = [
+		{ category: 'Apples', value: 100 },
+		{ category: 'Oranges', value: 20 },
+		{ category: 'Bananas', value: 30 },
+		{ category: 'Grapes', value: 40 }
+	];
 </script>
 
-<div class="space-y-4" in:fade>
-	<div class="flex items-start w-full">
+<div class="space-y-4 font-mono" in:fade>
+	<div class="flex items-start w-full text-black/50">
 		<h1 class="mb-4 text-2xl font-bold">Topic Extractor</h1>
 		<div class="flex-1"></div>
 		<button
@@ -42,6 +49,8 @@
 			</svg>
 		</button>
 	</div>
+
+	<D3Donut data={fruitData} valueKey="value" />
 
 	{#if showSettings}
 		<div class="flex w-full gap-4" transition:slide>
