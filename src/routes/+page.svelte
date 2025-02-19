@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		window.location.href = '/topic-extractor';
+	});
 </script>
 
 <div class="flex flex-col justify-center h-full max-w-md gap-2 mx-auto" in:fade>

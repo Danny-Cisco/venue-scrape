@@ -104,6 +104,10 @@
 			// hide the sidebars if page loaded on mobile
 			showLeftSidebar.set(false);
 			showRightSidebar.set(false);
+		} else {
+			// hide the sidebars on desktop as well
+			showLeftSidebar.set(false);
+			showRightSidebar.set(false);
 		}
 
 		updateHeaderGrid();
