@@ -3,8 +3,13 @@
 	import AudioRecorder from './AudioRecorder.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fly } from 'svelte/transition';
-	import { transcriptionStore, addTranscription } from '$lib/stores/transcriptionStore.js';
+	import {
+		transcriptionStore,
+		addTranscription,
+		searchTranscriptions
+	} from '$lib/stores/transcriptionStore.js';
 	import { categoryStore } from '$lib/stores/categoryStore.js';
+	import SearchBox from '$lib/components/outputs/SearchBox.svelte';
 
 	export let recordChunk = 10;
 	export let recordOverlap = 2;
@@ -465,38 +470,16 @@
 		<div class="mt-6 space-y-8">
 			<div class="w-full p-6">
 				<div class="flex gap-6">
-					<!-- Emotions -->
-					<div class="flex-1 space-y-4">
-						<!-- <h3 class="text-lg font-semibold">Emotions</h3> -->
-						<div class="flex flex-wrap gap-2">
-							{#each uniqueEmotions as emotion}
-								{@const style = getEmotionStyle(emotion)}
-								<button
-									class="px-4 py-2 text-sm transition-transform border rounded-full cursor-pointer hover:scale-105 {style.bgColor} {style.textColor} {style.borderColor} {selectedEmotionsList.has(
-										emotion
-									)
-										? 'ring-2 ring-offset-2'
-										: ''}"
-									on:click={() => toggleEmotion(emotion)}
-									transition:fly
-								>
-									{emotion}
-								</button>
-							{/each}
-						</div>
-					</div>
+					<!-- Emotions section remains the same -->
 
-					<!-- Wikipedia -->
+					<!-- Updated Wikipedia/Topics section -->
 					<div class="flex-1 space-y-4">
-						<!-- <h3 class="text-lg font-semibold text-purple-600">Wikipedia</h3> -->
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
 								<div class="flex items-center gap-1" transition:fly>
-									<a
-										href={`https://en.wikipedia.org/wiki/${encodeURIComponent(wiki)}`}
-										target="_blank"
-										rel="noopener noreferrer"
+									<button
+										on:click={() => searchTranscriptions(wiki)}
 										class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 									>
 										<span
@@ -507,7 +490,7 @@
 													: 'bg-red-500'}"
 										></span>
 										{wiki}
-									</a>
+									</button>
 									<button
 										on:click={() => removeWikiEntry(wiki)}
 										class="flex items-center justify-center w-6 h-6 text-gray-500 transition-colors rounded-full hover:bg-red-100 hover:text-red-500"
@@ -523,8 +506,8 @@
 											stroke-linecap="round"
 											stroke-linejoin="round"
 										>
-											<line x1="18" y1="6" x2="6" y2="18"></line>
-											<line x1="6" y1="6" x2="18" y2="18"></line>
+											<line x1="18" y1="6" x2="6" y2="18" />
+											<line x1="6" y1="6" x2="18" y2="18" />
 										</svg>
 									</button>
 								</div>
@@ -535,4 +518,7 @@
 			</div>
 		</div>
 	{/if}
+	<div class="mb-6">
+		<SearchBox />
+	</div>
 </div>

@@ -30,6 +30,28 @@ async function getEmbedding(text) {
 	}
 }
 
+// Function to search transcriptions by text
+export async function searchTranscriptions(searchText, limit = 5) {
+	const searchEmbedding = await getEmbedding(searchText);
+	if (!searchEmbedding) return [];
+
+	let transcriptions;
+	const unsubscribe = transcriptionStore.subscribe((value) => {
+		transcriptions = value;
+	});
+	unsubscribe();
+
+	const results = transcriptions
+		.map((t) => ({
+			...t,
+			similarity: cosineSimilarity(searchEmbedding, t.embedding)
+		}))
+		.sort((a, b) => b.similarity - a.similarity)
+		.slice(0, limit);
+
+	return results;
+}
+
 // Function to add a new transcription with embedding
 export async function addTranscription(transcription) {
 	const embedding = await getEmbedding(transcription.text);
