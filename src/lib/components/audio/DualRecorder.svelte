@@ -3,23 +3,21 @@
 	import AudioRecorder from './AudioRecorder.svelte';
 	import { writable, derived } from 'svelte/store';
 	import { fly } from 'svelte/transition';
+	import { transcriptionStore, addTranscription } from '$lib/stores/transcriptionStore.js';
+	import { categoryStore } from '$lib/stores/categoryStore.js';
 
 	export let recordChunk = 10;
 	export let recordOverlap = 2;
+
+	// Recording state variables
 	let stream = null;
 	let isRecording = false;
 	let recorder1Active = false;
 	let recorder2Active = false;
-	let transcriptions = [];
 	let error = '';
 	let RECORD_DURATION = recordChunk * 1000;
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
-
-	import { categoryStore } from '$lib/stores/categoryStore.js'; // adjust the path as needed
-
-	// Subscribe to the store
-	$: categories = $categoryStore;
 
 	// Emotion categorization
 	const emotionCategories = {
@@ -27,6 +25,60 @@
 		neutral: ['Neutral', 'Contentment', 'Calmness', 'Confusion', 'Contempt/Pride', 'Craving'],
 		negative: ['Anger', 'Disappointment/Shame', 'Distress/Disgust', 'Fear', 'Pain/Sadness']
 	};
+
+	// Create stores
+	const topicsStore = writable([]);
+	const ideasStore = writable([]);
+	const themesStore = writable([]);
+	const wikiEmotionsStore = writable([]);
+	const selectedEmotions = writable(new Set());
+
+	// Filtered Wikipedia entries based on selected emotions
+	const filteredWikis = derived(
+		[wikiEmotionsStore, selectedEmotions],
+		([$wikiEmotionsStore, $selectedEmotions]) => {
+			if ($selectedEmotions.size === 0) {
+				return [...new Set($wikiEmotionsStore.map((item) => item.wiki))];
+			}
+
+			return [
+				...new Set(
+					$wikiEmotionsStore
+						.filter((item) => {
+							if (!Array.isArray(item.emotions)) {
+								return false;
+							}
+							return item.emotions.some((emotion) => $selectedEmotions.has(emotion));
+						})
+						.map((item) => item.wiki)
+				)
+			];
+		}
+	);
+
+	// Store variables
+	let topics = [];
+	let ideas = [];
+	let themes = [];
+	let wikiEmotions = [];
+	let filteredWikisList = [];
+	let selectedEmotionsList = new Set();
+
+	// Subscribe to stores
+	topicsStore.subscribe((value) => (topics = value));
+	ideasStore.subscribe((value) => (ideas = value));
+	themesStore.subscribe((value) => (themes = value));
+	wikiEmotionsStore.subscribe((value) => (wikiEmotions = value));
+	filteredWikis.subscribe((value) => (filteredWikisList = value));
+	selectedEmotions.subscribe((value) => (selectedEmotionsList = value));
+
+	// Reactive declarations
+	$: categories = $categoryStore;
+	$: transcriptions = $transcriptionStore;
+	$: uniqueEmotions = [...new Set(wikiEmotions.flatMap((item) => item.emotions))];
+	$: if ($wikiEmotionsStore.length > 0) getCategories($wikiEmotionsStore);
+
+	$: console.log('transcriptionStore: ', transcriptions);
 
 	function getEmotionStyle(emotion) {
 		if (emotionCategories.positive.includes(emotion)) {
@@ -51,82 +103,6 @@
 				borderColor: 'border-red-200'
 			};
 		}
-	}
-
-	// Helper function to get the dominant emotion category for a wiki entry
-	function getWikiEmotionCategory(wiki, wikiEmotions) {
-		const entry = wikiEmotions.find((item) => item.wiki === wiki);
-		if (!entry || !entry.emotions) return 'neutral';
-
-		const categories = entry.emotions.map((emotion) => {
-			if (emotionCategories.positive.includes(emotion)) return 'positive';
-			if (emotionCategories.neutral.includes(emotion)) return 'neutral';
-			return 'negative';
-		});
-
-		// Return most frequent category
-		return categories.reduce((a, b) =>
-			categories.filter((v) => v === a).length >= categories.filter((v) => v === b).length ? a : b
-		);
-	}
-
-	// Create stores
-	const topicsStore = writable([]);
-	const ideasStore = writable([]);
-	const themesStore = writable([]);
-	const wikiEmotionsStore = writable([]);
-	const selectedEmotions = writable(new Set());
-
-	// Filtered Wikipedia entries based on selected emotions
-	const filteredWikis = derived(
-		[wikiEmotionsStore, selectedEmotions],
-		([$wikiEmotionsStore, $selectedEmotions]) => {
-			// console.log('Store contents:', $wikiEmotionsStore);
-			// console.log('Selected emotions:', $selectedEmotions);
-
-			if ($selectedEmotions.size === 0) {
-				return [...new Set($wikiEmotionsStore.map((item) => item.wiki))];
-			}
-
-			return [
-				...new Set(
-					$wikiEmotionsStore
-						.filter((item) => {
-							if (!Array.isArray(item.emotions)) {
-								// console.warn('Item emotions is not an array:', item);
-								return false;
-							}
-							return item.emotions.some((emotion) => $selectedEmotions.has(emotion));
-						})
-						.map((item) => item.wiki)
-				)
-			];
-		}
-	);
-
-	// Toggle emotion selection
-	function toggleEmotion(emotion) {
-		selectedEmotions.update((current) => {
-			const updated = new Set(current);
-			if (updated.has(emotion)) {
-				updated.delete(emotion);
-			} else {
-				updated.add(emotion);
-			}
-			return updated;
-		});
-	}
-
-	// Helper function to add wiki entries with emotions
-	function addWikiEmotions(wikiItems, emotions, timestamp) {
-		wikiEmotionsStore.update((currentItems) => {
-			const newEntries = wikiItems.map((wiki) => ({
-				wiki,
-				emotions: Array.isArray(emotions) ? emotions : [emotions],
-				timestamp
-			}));
-			return [...currentItems, ...newEntries];
-		});
 	}
 
 	async function startRecording() {
@@ -204,8 +180,42 @@
 		}
 	}
 
-	$: if ($wikiEmotionsStore.length > 0) getCategories($wikiEmotionsStore);
-	$: console.log('wikiStore', $wikiEmotionsStore);
+	async function handleTranscriptionComplete(event) {
+		const { transcription, recorderId } = event.detail;
+
+		const timestamp = new Date().toISOString();
+		const newTranscription = {
+			recorder: recorderId,
+			text: transcription,
+			timestamp: timestamp
+		};
+
+		const isDuplicate = transcriptions.some(
+			(t) =>
+				t.recorder === recorderId &&
+				t.text === transcription &&
+				Math.abs(new Date(t.timestamp) - new Date(timestamp)) < 1000
+		);
+
+		if (!isDuplicate) {
+			// Add transcription with embedding to the store
+			const transcriptionWithEmbedding = await addTranscription(newTranscription);
+
+			// Get analysis and update stores
+			const analysis = await analyzeTranscription(transcription);
+			if (analysis) {
+				const emotions = Array.isArray(analysis.emotions) ? analysis.emotions : [analysis.emotions];
+				const capitalizedWikis = analysis.wikipedia.map(
+					(wiki) => wiki.charAt(0).toUpperCase() + wiki.slice(1)
+				);
+
+				addWikiEmotions(capitalizedWikis, emotions, timestamp);
+				topicsStore.update((current) => [...current, { items: analysis.topics, timestamp }]);
+				ideasStore.update((current) => [...current, { items: analysis.ideas, timestamp }]);
+				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
+			}
+		}
+	}
 
 	async function getCategories(topics) {
 		try {
@@ -244,72 +254,53 @@
 		}
 	}
 
-	async function handleTranscriptionComplete(event) {
-		const { transcription, recorderId } = event.detail;
-		// console.log(`Received transcription from recorder ${recorderId}`);
-
-		const timestamp = new Date().toISOString();
-		const newTranscription = {
-			recorder: recorderId,
-			text: transcription,
-			timestamp: timestamp
-		};
-
-		const isDuplicate = transcriptions.some(
-			(t) =>
-				t.recorder === recorderId &&
-				t.text === transcription &&
-				Math.abs(new Date(t.timestamp) - new Date(timestamp)) < 1000
-		);
-
-		if (!isDuplicate) {
-			// console.log(`Adding new transcription from recorder ${recorderId}`);
-			transcriptions = [...transcriptions, newTranscription];
-
-			// Get analysis and update stores
-			const analysis = await analyzeTranscription(transcription);
-			if (analysis) {
-				// Ensure emotions is an array
-				const emotions = Array.isArray(analysis.emotions) ? analysis.emotions : [analysis.emotions];
-
-				// Capitalize first letter of each Wikipedia entry
-				const capitalizedWikis = analysis.wikipedia.map(
-					(wiki) => wiki.charAt(0).toUpperCase() + wiki.slice(1)
-				);
-
-				addWikiEmotions(capitalizedWikis, emotions, timestamp);
-				topicsStore.update((current) => [...current, { items: analysis.topics, timestamp }]);
-				ideasStore.update((current) => [...current, { items: analysis.ideas, timestamp }]);
-				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
-			}
-		} else {
-			// console.log(`Skipping duplicate transcription from recorder ${recorderId}`);
-		}
+	// Helper function to add wiki entries with emotions
+	function addWikiEmotions(wikiItems, emotions, timestamp) {
+		wikiEmotionsStore.update((currentItems) => {
+			const newEntries = wikiItems.map((wiki) => ({
+				wiki,
+				emotions: Array.isArray(emotions) ? emotions : [emotions],
+				timestamp
+			}));
+			return [...currentItems, ...newEntries];
+		});
 	}
-
-	// Subscribe to stores
-	let topics = [];
-	let ideas = [];
-	let themes = [];
-	let wikiEmotions = [];
-	let filteredWikisList = [];
-	let selectedEmotionsList = new Set();
-
-	topicsStore.subscribe((value) => (topics = value));
-	ideasStore.subscribe((value) => (ideas = value));
-	themesStore.subscribe((value) => (themes = value));
-	wikiEmotionsStore.subscribe((value) => (wikiEmotions = value));
-	filteredWikis.subscribe((value) => (filteredWikisList = value));
-	selectedEmotions.subscribe((value) => (selectedEmotionsList = value));
-
-	// Get all unique emotions from the store
-	$: uniqueEmotions = [...new Set(wikiEmotions.flatMap((item) => item.emotions))];
 
 	// Add this function after addWikiEmotions
 	function removeWikiEntry(wikiToRemove) {
 		wikiEmotionsStore.update((currentItems) =>
 			currentItems.filter((item) => item.wiki !== wikiToRemove)
 		);
+	}
+
+	// Helper function to get the dominant emotion category for a wiki entry
+	function getWikiEmotionCategory(wiki, wikiEmotions) {
+		const entry = wikiEmotions.find((item) => item.wiki === wiki);
+		if (!entry || !entry.emotions) return 'neutral';
+
+		const categories = entry.emotions.map((emotion) => {
+			if (emotionCategories.positive.includes(emotion)) return 'positive';
+			if (emotionCategories.neutral.includes(emotion)) return 'neutral';
+			return 'negative';
+		});
+
+		// Return most frequent category
+		return categories.reduce((a, b) =>
+			categories.filter((v) => v === a).length >= categories.filter((v) => v === b).length ? a : b
+		);
+	}
+
+	// Toggle emotion selection
+	function toggleEmotion(emotion) {
+		selectedEmotions.update((current) => {
+			const updated = new Set(current);
+			if (updated.has(emotion)) {
+				updated.delete(emotion);
+			} else {
+				updated.add(emotion);
+			}
+			return updated;
+		});
 	}
 </script>
 
