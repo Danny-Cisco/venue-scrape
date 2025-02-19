@@ -24,6 +24,8 @@
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
 
+	let searchTerm = '';
+
 	// Emotion categorization
 	const emotionCategories = {
 		positive: ['Adoration/Joy', 'Amusement', 'Awe/Surprise', 'Desire/Love', 'Interest', 'Joy'],
@@ -469,17 +471,38 @@
 	{#if transcriptions.length > 0}
 		<div class="mt-6 space-y-8">
 			<div class="w-full p-6">
-				<div class="flex gap-6">
-					<!-- Emotions section remains the same -->
+				<div class="flex flex-col gap-6">
+					<!-- Emotions -->
+					<div class="flex-1 space-y-4">
+						<!-- <h3 class="text-lg font-semibold">Emotions</h3> -->
+						<div class="flex flex-wrap gap-2">
+							{#each uniqueEmotions as emotion}
+								{@const style = getEmotionStyle(emotion)}
+								<button
+									class="px-4 py-2 text-sm transition-transform border rounded-full cursor-pointer hover:scale-105 {style.bgColor} {style.textColor} {style.borderColor} {selectedEmotionsList.has(
+										emotion
+									)
+										? 'ring-2 ring-offset-2'
+										: ''}"
+									on:click={() => toggleEmotion(emotion)}
+									transition:fly
+								>
+									{emotion}
+								</button>
+							{/each}
+						</div>
+					</div>
 
-					<!-- Updated Wikipedia/Topics section -->
+					<div class="border-t border-dashed border-black/10" />
+
+					<!-- Wikipedia -->
 					<div class="flex-1 space-y-4">
 						<div class="flex flex-wrap gap-2">
 							{#each filteredWikisList as wiki}
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
 								<div class="flex items-center gap-1" transition:fly>
 									<button
-										on:click={() => searchTranscriptions(wiki)}
+										on:click={() => (searchTerm = wiki)}
 										class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 									>
 										<span
@@ -519,6 +542,6 @@
 		</div>
 	{/if}
 	<div class="mb-6">
-		<SearchBox />
+		<SearchBox {searchTerm} />
 	</div>
 </div>

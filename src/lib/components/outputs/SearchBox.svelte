@@ -3,19 +3,21 @@
 	import { searchTranscriptions } from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
 
-	let searchQuery = '';
+	export let searchTerm = '';
 	let searchResults = [];
 	let isSearching = false;
 
+	$: if (searchTerm) handleSearch();
+
 	async function handleSearch() {
-		if (!searchQuery.trim()) {
+		if (!searchTerm.trim()) {
 			searchResults = [];
 			return;
 		}
 
 		isSearching = true;
 		try {
-			searchResults = await searchTranscriptions(searchQuery);
+			searchResults = await searchTranscriptions(searchTerm);
 		} catch (error) {
 			console.error('Search error:', error);
 			searchResults = [];
@@ -38,18 +40,18 @@
 	<div class="flex gap-2">
 		<input
 			type="text"
-			bind:value={searchQuery}
+			bind:value={searchTerm}
 			on:keydown={(e) => e.key === 'Enter' && handleSearch()}
 			placeholder="Search transcriptions..."
 			class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
 		/>
-		<button
+		<!-- <button
 			on:click={handleSearch}
 			class="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
 			disabled={isSearching}
 		>
 			{isSearching ? 'Searching...' : 'Search'}
-		</button>
+		</button> -->
 	</div>
 
 	{#if searchResults.length > 0}
