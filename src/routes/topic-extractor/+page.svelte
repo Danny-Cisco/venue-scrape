@@ -4,6 +4,7 @@
 	import DualRecorder from '$lib/components/audio/DualRecorder.svelte';
 	// import EmotionAndTopicBubbles from '$lib/components/outputs/EmotionAndTopicBubbles.svelte';
 	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
+	import RecordButton from '$lib/components/ui/RecordButton.svelte';
 
 	let length = 12;
 	let overlap = 2;
@@ -71,6 +72,7 @@
 		<div class="relative flex-1 h-full border">
 			<div class="max-w-[50vw] h-[100vh] pt-[200px] min-w-[50px]">
 				<D3Donut data={donutData} valueKey="value" />
+				<RecordButton />
 				{#if showSettings}
 					<div class="relative flex w-full gap-4" transition:slide>
 						<div class="flex-1">

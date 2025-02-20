@@ -16,9 +16,19 @@
 
 	import Button from '$lib/components/ui/Button.svelte';
 
+	import { isRecording, start, stop } from '$lib/stores/isRecordingStore.js';
+
+	$: $isRecording;
+
+	$: if ($start) {
+		startRecording();
+	}
+	$: if ($stop) {
+		stopRecording();
+	}
+
 	// Recording state variables
 	let stream = null;
-	let isRecording = false;
 	let recorder1Active = false;
 	let recorder2Active = false;
 	let error = '';
@@ -27,12 +37,6 @@
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
 
 	let searchTerm = '';
-
-	let buttonText = 'Listen';
-
-	$: if (isRecording) {
-		buttonText = 'Stop';
-	} else buttonText = 'Listen';
 
 	// Emotion categorization
 	const emotionCategories = {
@@ -123,7 +127,7 @@
 	async function startRecording() {
 		try {
 			stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-			isRecording = true;
+			$isRecording = true;
 			startRecordingCycle();
 		} catch (err) {
 			error = 'Error accessing microphone: ' + err.message;
@@ -135,10 +139,10 @@
 		recorder1Active = true;
 
 		function scheduleNextSwitch() {
-			if (!isRecording) return;
+			if (!$isRecording) return;
 
 			setTimeout(() => {
-				if (!isRecording) return;
+				if (!$isRecording) return;
 
 				if (recorder1Active) {
 					recorder2Active = true;
@@ -156,7 +160,7 @@
 	}
 
 	function stopRecording() {
-		isRecording = false;
+		$isRecording = false;
 		recorder1Active = false;
 		recorder2Active = false;
 
@@ -320,19 +324,6 @@
 </script>
 
 <div class="w-full mx-auto">
-	<div class="flex flex-col w-[150px] mx-auto mb-6">
-		<Button
-			text={buttonText}
-			on:click={() => {
-				if (isRecording) {
-					stopRecording();
-				} else {
-					startRecording();
-				}
-			}}
-		/>
-	</div>
-
 	{#if error}
 		<div class="px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
 			{error}
