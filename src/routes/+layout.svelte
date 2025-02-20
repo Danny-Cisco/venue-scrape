@@ -512,9 +512,22 @@
 						/>
 						<button
 							on:click={submitMagicLink}
-							class="px-4 py-2 font-light font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
+							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
 						>
-							{isSubmitting ? 'Loading...' : 'Send Magic Link'}
+							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-8"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+								/>
+							</svg>
 						</button>
 					</div>
 				</div>
