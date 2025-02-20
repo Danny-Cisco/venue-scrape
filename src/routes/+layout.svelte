@@ -448,7 +448,7 @@
 	class="fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-white/10 backdrop-blur"
 >
 	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-bold text-black/50">
+	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light text-black/50">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 424 424"
@@ -513,7 +513,7 @@
 						/>
 						<button
 							on:click={submitMagicLink}
-							class="px-4 py-2 font-semibold font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
+							class="px-4 py-2 font-light font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
 						>
 							{isSubmitting ? 'Loading...' : 'Send Magic Link'}
 						</button>

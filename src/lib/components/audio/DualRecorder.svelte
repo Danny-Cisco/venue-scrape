@@ -371,9 +371,9 @@
 					<use href="#wave3" stroke="#4287f5" fill="none" stroke-width="2" opacity="0.5" />
 				</svg>
 				<div
-					class="absolute inset-0 flex bg-white w-[200px] mx-auto hover:bg-gray-500 my-auto h-[60px] flex-col hover:text-white items-center justify-center rounded-full btn"
+					class="absolute top-0 left-0 right-0 font-light flex bg-white w-[200px] mx-auto hover:shadow-md hover:mt-[-1px] text-black/50 font-mono my-auto h-[60px] flex-col items-center justify-center rounded-full btn"
 				>
-					START
+					LISTEN
 				</div>
 			</button>
 		{:else}
