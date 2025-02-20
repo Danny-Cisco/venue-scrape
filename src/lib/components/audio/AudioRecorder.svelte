@@ -4,9 +4,9 @@
 	const dispatch = createEventDispatcher();
 
 	// Props
-	export let id = '1'; // Identifier for this recorder instance
-	export let stream = null; // Shared audio stream passed from parent
-	export let isActive = false; // Whether this recorder should be recording
+	export let id = '1';
+	export let stream = null;
+	export let isActive = false;
 	export let transcription = '';
 	export let duration = '10000';
 
@@ -19,6 +19,7 @@
 	let error = '';
 	let countdown = durationSeconds;
 	let countdownInterval;
+	let recordingStartTime;
 
 	$: if (isActive && stream && !isRecording) {
 		startRecording();
@@ -26,12 +27,35 @@
 		stopRecording();
 	}
 
+	async function checkAudioLevel(audioBlob) {
+		try {
+			const audioContext = new AudioContext();
+			const arrayBuffer = await audioBlob.arrayBuffer();
+			const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+			// Get the raw audio data
+			const channelData = audioBuffer.getChannelData(0); // Get first channel
+
+			// Calculate RMS (Root Mean Square) value
+			const sum = channelData.reduce((acc, val) => acc + val * val, 0);
+			const rms = Math.sqrt(sum / channelData.length);
+
+			// Convert to dB
+			const db = 20 * Math.log10(rms);
+
+			audioContext.close();
+			return db;
+		} catch (err) {
+			console.error('Error analyzing audio level:', err);
+			return -Infinity;
+		}
+	}
+
 	async function startRecording() {
 		try {
 			error = '';
 			audioChunks = [];
 
-			// Use the provided stream
 			if (!stream) {
 				throw new Error('No audio stream provided');
 			}
@@ -40,16 +64,27 @@
 
 			mediaRecorder.ondataavailable = (event) => {
 				audioChunks.push(event.data);
-				// console.log(`Recorder ${id}: Got data chunk of size ${event.data.size}`);
 			};
 
 			mediaRecorder.onstop = async () => {
-				// console.log(`Recorder ${id}: Stopped recording, processing chunks...`);
 				const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+				// Check audio level
+				const dbLevel = await checkAudioLevel(audioBlob);
+				const SILENCE_THRESHOLD_DB = -50; // Adjust this threshold as needed
+
+				if (dbLevel < SILENCE_THRESHOLD_DB) {
+					console.log(
+						`Recorder ${id}: Audio level too low (${dbLevel.toFixed(2)} dB), transcription aborted`
+					);
+					dispatch('recordingComplete');
+					return;
+				}
+
 				await sendForTranscription(audioBlob);
 			};
 
-			// console.log(`Recorder ${id}: Starting recording`);
+			recordingStartTime = Date.now();
 			mediaRecorder.start();
 			isRecording = true;
 			countdown = durationSeconds;
@@ -59,24 +94,19 @@
 			}, 1000);
 		} catch (err) {
 			error = 'Error starting recorder: ' + err.message;
-			// console.error(`Recorder ${id} error:`, err);
 		}
 	}
 
 	function stopRecording() {
 		if (mediaRecorder && isRecording) {
-			// console.log(`Recorder ${id}: Stopping recording`);
 			mediaRecorder.stop();
 			isRecording = false;
 			clearInterval(countdownInterval);
-			dispatch('recordingComplete');
 		}
 	}
 
 	async function sendForTranscription(audioBlob) {
 		try {
-			// console.log(`Recorder ${id}: Starting transcription...`);
-
 			const buffer = await audioBlob.arrayBuffer();
 			const base64Audio = btoa(
 				new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
@@ -99,12 +129,7 @@
 			const data = await response.json();
 			transcription = data.transcription;
 
-			// Only dispatch if we have actual transcription text
 			if (data.transcription?.trim()) {
-				// console.log(
-				// 	`Recorder ${id}: Dispatching transcription:`,
-				// 	data.transcription.slice(0, 50) + '...'
-				// );
 				dispatch('transcriptionComplete', {
 					transcription: data.transcription,
 					recorderId: id
@@ -112,7 +137,6 @@
 			}
 		} catch (err) {
 			error = 'Error during transcription: ' + err.message;
-			// console.error(`Recorder ${id} transcription error:`, err);
 		}
 	}
 </script>

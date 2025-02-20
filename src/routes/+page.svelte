@@ -1,5 +1,11 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		window.location.href = '/topic-extractor';
+	});
 </script>
 
 <div class="flex flex-col justify-center h-full max-w-md gap-2 mx-auto" in:fade>
@@ -29,7 +35,7 @@
 			r="180"
 		/></svg
 	>
-	<h1 class="text-5xl text-[magenta]">MindMapr.ai</h1>
+	<h1 class="text-5xl text-gray-500">MindMapr.ai</h1>
 	<div class="h-[1rem]"></div>
 	<div>
 		<h1>Welcome To MindMapr.ai</h1>
