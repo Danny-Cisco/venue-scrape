@@ -209,4 +209,4 @@
 	}
 </script>
 
-<svg id="donut-chart"></svg>
+<svg id="donut-chart" class="border"></svg>

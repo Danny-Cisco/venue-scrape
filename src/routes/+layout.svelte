@@ -375,8 +375,7 @@
 		</button>
 
 		<!-- Main Content -->
-		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] w-full">
-			<div class="h-[100px]"></div>
+		<main class="flex-1 relative overflow-y-auto h-[100vh] w-full">
 			<slot />
 			{#if $permissionStatus === 'denied'}
 				<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
