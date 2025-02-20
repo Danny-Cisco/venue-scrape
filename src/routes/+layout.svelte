@@ -143,86 +143,7 @@
 	});
 </script>
 
-<body class="relative flex flex-col min-h-screen text-gray-800">
-	<!-- Header -->
-	<header class="flex items-center justify-between px-4 h-[10vh] py-2 bg-[#f1f1f1]">
-		<!-- Logo -->
-		<strong class="flex items-end gap-1 text-3xl p-4 pt-0 text-[magenta]">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 424 424"
-				width="60"
-				height="60"
-				fill="none"
-				stroke="magenta"
-				stroke-width="2"
-			>
-				<circle cx="17" cy="407" r="15" />
-				<circle cx="32" cy="392" r="30" />
-				<circle cx="47" cy="377" r="45" />
-				<circle cx="62" cy="362" r="60" />
-				<circle cx="77" cy="347" r="75" />
-				<circle cx="92" cy="332" r="90" />
-				<circle cx="107" cy="317" r="105" />
-				<circle cx="122" cy="302" r="120" />
-				<circle cx="137" cy="287" r="135" />
-				<circle cx="152" cy="272" r="150" />
-				<circle cx="167" cy="257" r="165" />
-				<circle cx="182" cy="242" r="180" />
-			</svg>
-			MindMapr.ai
-		</strong>
-
-		<!-- User Authentication -->
-		{#if !$loading}
-			<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
-				{#if session}
-					<a href="/account" class="flex items-center gap-4"
-						><p class="font-bold text-gray-500">
-							{profile?.username || session.user.email || session.user.displayName}
-						</p>
-
-						<!-- User Avatar -->
-						<img
-							src={profile?.avatar_url || '/default-avatar.png'}
-							alt="User Avatar"
-							class="w-10 h-10 rounded-full"
-						/>
-					</a>
-				{:else}
-					<!-- Magic Link Form -->
-					<div class="flex flex-col items-end">
-						{#if $message}
-							<div class="" in:fly={{ x: 200, duration: 500 }}>
-								{$message}
-							</div>
-						{/if}
-						{#if $error}
-							<div class="" in:fly={{ x: 200, duration: 500 }}>
-								{$error}
-							</div>
-						{/if}
-						<div class="flex items-center justify-end gap-2 text-sm">
-							<label for="email" class="hidden">Email</label>
-							<input
-								type="email"
-								bind:value={email}
-								placeholder="Enter your email"
-								class="w-64 px-2 py-1 border rounded inputField"
-							/>
-							<button
-								on:click={submitMagicLink}
-								class="px-4 py-2 font-semibold text-[1rem] w-[160px] text-white bg-[magenta] rounded"
-							>
-								{isSubmitting ? 'Loading...' : 'Send Magic Link'}
-							</button>
-						</div>
-					</div>
-				{/if}
-			</div>
-		{/if}
-	</header>
-
+<body class="relative flex flex-col min-h-screen text-black/50">
 	<div class="flex flex-1">
 		<!-- Left Sidebar -->
 		{#if $showLeftSidebar}
@@ -432,7 +353,7 @@
 
 		<!-- Button to toggle left sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-[magenta] shadow-md left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-black/50 left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showLeftSidebar.update((v) => !v)}
 		>
 			<svg
@@ -455,6 +376,7 @@
 
 		<!-- Main Content -->
 		<main class="flex-1 p-6 pt-16 relative overflow-y-auto h-[90vh] w-full">
+			<div class="h-[100px]"></div>
 			<slot />
 			{#if $permissionStatus === 'denied'}
 				<div class="p-4 mb-6 text-red-700 bg-red-100 rounded-md">
@@ -475,7 +397,7 @@
 		{/if}
 
 		<div class="absolute top-[17vh] right-4" class:hidden={!$showRightSidebar}>
-			<div class="w-[268px] mx-auto bg-white p-4 pr-0 -mr-4 rounded-xl shadow-md">
+			<div class="w-[268px] mx-auto p-4 pr-0 -mr-4 rounded-xl">
 				<h2 class="mb-2 text-lg font-semibold">INPUTS</h2>
 
 				<Video
@@ -486,7 +408,7 @@
 				/>
 
 				<div
-					class="bg-gray-100 text-gray-500 border-[magenta] relative border-2 shadow rounded-lg h-[144px] w-[250px] flex flex-col items-center justify-center"
+					class="bg-gray-100 text-gray-500 relative border-2 shadow rounded-lg h-[144px] w-[250px] flex flex-col items-center justify-center"
 				>
 					captured image
 					<CapturedImageFly />
@@ -496,7 +418,7 @@
 
 		<!-- Button to toggle right sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-[magenta] shadow-md right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-black/50 right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showRightSidebar.update((v) => !v)}
 		>
 			<svg
@@ -520,6 +442,87 @@
 </body>
 
 <CameraSettingsModal />
+
+<!-- Header -->
+<header
+	class="fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-white/10 backdrop-blur"
+>
+	<!-- Logo -->
+	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-bold text-black/50">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 424 424"
+			width="60"
+			height="60"
+			fill="none"
+			stroke="black"
+			stroke-width="2"
+		>
+			<circle cx="17" cy="407" r="15" />
+			<circle cx="32" cy="392" r="30" />
+			<circle cx="47" cy="377" r="45" />
+			<circle cx="62" cy="362" r="60" />
+			<circle cx="77" cy="347" r="75" />
+			<circle cx="92" cy="332" r="90" />
+			<circle cx="107" cy="317" r="105" />
+			<circle cx="122" cy="302" r="120" />
+			<circle cx="137" cy="287" r="135" />
+			<circle cx="152" cy="272" r="150" />
+			<circle cx="167" cy="257" r="165" />
+			<circle cx="182" cy="242" r="180" />
+		</svg>
+		MindMapr.ai
+	</strong>
+
+	<!-- User Authentication -->
+	{#if !$loading}
+		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
+			{#if session}
+				<a href="/account" class="flex items-center gap-4"
+					><p class="font-bold text-gray-500">
+						{profile?.username || session.user.email || session.user.displayName}
+					</p>
+
+					<!-- User Avatar -->
+					<img
+						src={profile?.avatar_url || '/default-avatar.png'}
+						alt="User Avatar"
+						class="w-10 h-10 rounded-full"
+					/>
+				</a>
+			{:else}
+				<!-- Magic Link Form -->
+				<div class="flex flex-col items-end">
+					{#if $message}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$message}
+						</div>
+					{/if}
+					{#if $error}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$error}
+						</div>
+					{/if}
+					<div class="flex items-center justify-end gap-2 text-sm">
+						<label for="email" class="hidden">Email</label>
+						<input
+							type="email"
+							bind:value={email}
+							placeholder="Enter your email"
+							class="w-64 h-10 px-2 py-2 border-0 rounded !ring-black/20"
+						/>
+						<button
+							on:click={submitMagicLink}
+							class="px-4 py-2 font-semibold font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
+						>
+							{isSubmitting ? 'Loading...' : 'Send Magic Link'}
+						</button>
+					</div>
+				</div>
+			{/if}
+		</div>
+	{/if}
+</header>
 
 <style>
 	.size-5 {
