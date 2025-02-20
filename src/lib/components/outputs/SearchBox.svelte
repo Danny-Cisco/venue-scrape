@@ -36,7 +36,7 @@
 	}
 </script>
 
-<div class="w-full max-w-2xl mx-auto space-y-4">
+<div class="flex flex-col-reverse w-full max-w-2xl gap-2 mx-auto space-y-4">
 	<div class="flex gap-2">
 		<input
 			type="text"

@@ -33,10 +33,15 @@
 	$: console.log('🚀 ~ $categoryStore?.CategoryNames?.map ~ categoryStore:', $categoryStore);
 </script>
 
-<div class="relative w-full h-full space-y-4 font-mono" in:fade>
+<div class="relative w-full h-full space-y-4 font-mono font-light text-black/50" in:fade>
 	<div class="flex h-full">
 		<!-- Left Bento -->
 		<div class="border relative min-w-[200px]">
+			<div class="h-[200px]"></div>
+			<div>
+				<p>Conversations...</p>
+				<p></p>
+			</div>
 			<div class="absolute bottom-0 left-0 text-black/50">
 				<!-- Gear Icon -->
 				<button
@@ -72,7 +77,6 @@
 		<div class="relative flex-1 h-full border">
 			<div class="max-w-[50vw] h-[100vh] pt-[200px] min-w-[50px]">
 				<D3Donut data={donutData} valueKey="value" />
-				<RecordButton />
 				{#if showSettings}
 					<div class="relative flex w-full gap-4" transition:slide>
 						<div class="flex-1">
@@ -105,6 +109,9 @@
 						</div>
 					</div>
 				{/if}
+			</div>
+			<div class="absolute bottom-0 left-0 right-0">
+				<RecordButton />
 			</div>
 			<!-- <EmotionAndTopicBubbles /> -->
 		</div>
