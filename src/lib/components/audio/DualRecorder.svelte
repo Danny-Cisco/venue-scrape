@@ -6,7 +6,8 @@
 	import {
 		transcriptionStore,
 		addTranscription,
-		searchTranscriptions
+		searchTranscriptions,
+		searchTermStore
 	} from '$lib/stores/transcriptionStore.js';
 	import { categoryStore } from '$lib/stores/categoryStore.js';
 	import SearchBox from '$lib/components/outputs/SearchBox.svelte';
@@ -19,6 +20,8 @@
 	import { isRecording, start, stop } from '$lib/stores/isRecordingStore.js';
 
 	$: $isRecording;
+
+	$: $searchTermStore;
 
 	$: if ($start) {
 		startRecording();
@@ -35,8 +38,6 @@
 	let RECORD_DURATION = recordChunk * 1000;
 	let OVERLAP_DURATION = recordOverlap * 1000;
 	const SWITCH_INTERVAL = RECORD_DURATION - OVERLAP_DURATION;
-
-	let searchTerm = '';
 
 	// Emotion categorization
 	const emotionCategories = {
@@ -352,7 +353,7 @@
 	</div>
 
 	{#if transcriptions.length > 0}
-		<div class="mt-6 space-y-8">
+		<div class="absolute top-0 bottom-0 mt-6 space-y-8 overflow-y-auto">
 			<div class="w-full p-6">
 				<div class="flex flex-col gap-6">
 					<!-- Emotions -->
@@ -385,7 +386,7 @@
 								{@const category = getWikiEmotionCategory(wiki, wikiEmotions)}
 								<div class="flex items-center gap-1" transition:fly>
 									<button
-										on:click={() => (searchTerm = wiki)}
+										on:click={() => ($searchTermStore = wiki)}
 										class="flex items-center gap-2 px-4 py-2 text-sm text-purple-800 no-underline transition-transform bg-purple-100 border border-purple-200 rounded-full cursor-pointer hover:scale-105"
 									>
 										<span
@@ -424,7 +425,7 @@
 			</div>
 		</div>
 	{/if}
-	<div class="mb-6">
-		<SearchBox {searchTerm} />
+	<div class="absolute inset-0 w-full px-2 mb-6 overflow-y-auto">
+		<SearchBox />
 	</div>
 </div>

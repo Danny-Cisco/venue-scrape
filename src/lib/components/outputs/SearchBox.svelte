@@ -1,23 +1,23 @@
 <!-- SearchBox.svelte -->
 <script>
-	import { searchTranscriptions } from '$lib/stores/transcriptionStore';
+	import { searchTranscriptions, searchTermStore } from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
-
-	export let searchTerm = '';
+	let searchTerm = '';
+	$: $searchTermStore = searchTerm;
 	let searchResults = [];
 	let isSearching = false;
 
-	$: if (searchTerm.length > 1) handleSearch();
+	$: if ($searchTermStore.length > 1) handleSearch();
 
 	async function handleSearch() {
-		if (!searchTerm.trim()) {
+		if (!$searchTermStore.trim()) {
 			searchResults = [];
 			return;
 		}
 
 		isSearching = true;
 		try {
-			searchResults = await searchTranscriptions(searchTerm);
+			searchResults = await searchTranscriptions($searchTermStore);
 		} catch (error) {
 			console.error('Search error:', error);
 			searchResults = [];
@@ -36,26 +36,18 @@
 	}
 </script>
 
-<div class="flex flex-col-reverse w-full max-w-2xl gap-2 mx-auto space-y-4">
-	<div class="flex gap-2">
-		<input
-			type="text"
-			bind:value={searchTerm}
-			on:keydown={(e) => e.key === 'Enter' && handleSearch()}
-			on:click={() => (searchTerm = '')}
-			placeholder="Search transcriptions..."
-			class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-		/>
-	</div>
-
+<div
+	class="absolute bottom-[70px] top-[0px] left-0 right-0 flex flex-col w-full max-w-2xl gap-2 mx-auto space-y-4"
+>
+	<div class="h-[100px]"></div>
 	{#if searchResults.length > 0}
-		<div class="space-y-2">
+		<div class="inset-0 flex flex-col-reverse gap-2 overflow-y-auto">
 			{#each searchResults as result}
 				<div
 					class="p-4 transition-shadow bg-white border rounded-lg shadow-sm hover:shadow-md"
 					transition:fly={{ y: 20 }}
 				>
-					<div class="flex items-start justify-between mb-2">
+					<div class="flex items-start justify-between">
 						<span class="text-sm text-gray-500">
 							{formatTimestamp(result.timestamp)}
 						</span>
@@ -68,4 +60,15 @@
 			{/each}
 		</div>
 	{/if}
+</div>
+
+<div class="absolute bottom-0 left-0 right-0 flex gap-2">
+	<input
+		type="text"
+		bind:value={searchTerm}
+		on:keydown={(e) => e.key === 'Enter' && handleSearch()}
+		on:click={() => ($searchTermStore = '')}
+		placeholder="Search transcriptions..."
+		class="flex-1 px-4 py-2 border-0 rounded ring-none focus:ring-1 focus:ring-black/20"
+	/>
 </div>

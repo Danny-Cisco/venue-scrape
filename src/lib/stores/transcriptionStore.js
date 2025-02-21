@@ -3,6 +3,7 @@ import { writable } from 'svelte/store';
 
 // Create the transcriptions store
 export const transcriptionStore = writable([]);
+export const searchTermStore = writable('');
 
 // Function to get embeddings from OpenAI API
 async function getEmbedding(text) {

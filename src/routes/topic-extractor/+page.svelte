@@ -117,8 +117,8 @@
 		</div>
 
 		<!-- Right Bento -->
-		<div class="border relative flex-1 min-w-[200px]">
-			<div class="absolute bottom-0 w-full">
+		<div class="border relative flex-1 min-w-[33vw] max-w-[33vw] max-h-[100vh] min-h-[100vh]">
+			<div class="">
 				{#key key}
 					<DualRecorder recordChunk={length} recordOverlap={overlap} />
 				{/key}
