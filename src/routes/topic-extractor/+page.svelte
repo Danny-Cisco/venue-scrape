@@ -5,6 +5,7 @@
 	// import EmotionAndTopicBubbles from '$lib/components/outputs/EmotionAndTopicBubbles.svelte';
 	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
 	import RecordButton from '$lib/components/ui/RecordButton.svelte';
+	import SearchBox from '../../lib/components/outputs/SearchBox.svelte';
 
 	let length = 12;
 	let overlap = 2;
@@ -74,54 +75,61 @@
 		</div>
 
 		<!-- Main Bento -->
-		<div class="relative flex-1 h-full border">
-			<div class="max-w-[50vw] h-[100vh] pt-[200px] min-w-[50px]">
-				<D3Donut data={donutData} valueKey="value" />
-				{#if showSettings}
-					<div class="relative flex w-full gap-4" transition:slide>
-						<div class="flex-1">
-							<!-- Chunk Setting -->
-							<label for="length-input" class="block mb-1 whitespace-nowrap">Chunk (Seconds)</label>
-							<input
-								bind:value={length}
-								type="number"
-								id="length-input"
-								min="1"
-								on:input={keyRender}
-								class="w-full p-1 border rounded"
-							/>
-						</div>
+		<div class="relative flex flex-col flex-1 h-full border">
+			<div class="max-w-[50vw] h-[100vh] pt-[100px] min-w-[50px]">
+				<div class="absolute inset-0 pt-[150px] h-full overflow-y-auto border">
+					<D3Donut data={donutData} valueKey="value" />
+					{#if showSettings}
+						<div class="relative flex w-full gap-4" transition:slide>
+							<div class="flex-1">
+								<!-- Chunk Setting -->
+								<label for="length-input" class="block mb-1 whitespace-nowrap"
+									>Chunk (Seconds)</label
+								>
+								<input
+									bind:value={length}
+									type="number"
+									id="length-input"
+									min="1"
+									on:input={keyRender}
+									class="w-full p-1 border rounded"
+								/>
+							</div>
 
-						<div class="flex-1">
-							<!-- Overlap Setting -->
-							<label for="overlap-input" class="block mb-1 whitespace-nowrap"
-								>Overlap (Seconds)</label
-							>
-							<input
-								bind:value={overlap}
-								type="number"
-								id="overlap-input"
-								min="0"
-								max={length - 1}
-								on:input={keyRender}
-								class="w-full p-1 border rounded"
-							/>
+							<div class="flex-1">
+								<!-- Overlap Setting -->
+								<label for="overlap-input" class="block mb-1 whitespace-nowrap"
+									>Overlap (Seconds)</label
+								>
+								<input
+									bind:value={overlap}
+									type="number"
+									id="overlap-input"
+									min="0"
+									max={length - 1}
+									on:input={keyRender}
+									class="w-full p-1 border rounded"
+								/>
+							</div>
 						</div>
+					{/if}
+					{#key key}
+						<div class="max-h-[50vh]"></div>
+						<!-- <EmotionAndTopicBubbles /> -->
+
+						<DualRecorder recordChunk={length} recordOverlap={overlap} />
+					{/key}
+					<div class="fixed bottom-0 left-[50px]">
+						<RecordButton />
 					</div>
-				{/if}
+				</div>
 			</div>
-			<div class="absolute bottom-0 left-0 right-0">
-				<RecordButton />
-			</div>
-			<!-- <EmotionAndTopicBubbles /> -->
 		</div>
 
 		<!-- Right Bento -->
 		<div class="border relative flex-1 min-w-[33vw] max-w-[33vw] max-h-[100vh] min-h-[100vh]">
-			<div class="">
-				{#key key}
-					<DualRecorder recordChunk={length} recordOverlap={overlap} />
-				{/key}
+			<div class="absolute inset-0 w-full px-2 mb-6 overflow-y-auto">
+				<SearchBox />
 			</div>
 		</div>
 	</div>

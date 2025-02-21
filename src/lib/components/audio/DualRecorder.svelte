@@ -353,7 +353,7 @@
 	</div>
 
 	{#if transcriptions.length > 0}
-		<div class="absolute top-0 bottom-0 mt-6 space-y-8 overflow-y-auto">
+		<div class="space-y-8">
 			<div class="w-full p-6">
 				<div class="flex flex-col gap-6">
 					<!-- Emotions -->
@@ -425,7 +425,4 @@
 			</div>
 		</div>
 	{/if}
-	<div class="absolute inset-0 w-full px-2 mb-6 overflow-y-auto">
-		<SearchBox />
-	</div>
 </div>
