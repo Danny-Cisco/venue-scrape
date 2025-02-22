@@ -122,11 +122,15 @@
 					<!-- Timeline of slices -->
 					<div>
 						<div
-							class="flex mx-4 overflow-x-auto h-20 border-[2px] border-gray-500/10 rounded bg-gray-500/5"
+							class="flex mx-4 overflow-x-auto border-[2px] border-gray-500/10 rounded bg-gray-500/5"
 						>
-							{#each $transcriptionStore as result}
-								<TranscriptionSlice {result} />
-							{/each}
+							{#if $transcriptionStore.length > 0}
+								{#each $transcriptionStore as result}
+									<TranscriptionSlice {result} />
+								{/each}
+							{:else}
+								<div class="h-20"></div>
+							{/if}
 						</div>
 						<div class="text-center">
 							<!-- <h3>Timeline</h3> -->
