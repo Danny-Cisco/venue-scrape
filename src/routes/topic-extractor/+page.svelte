@@ -6,6 +6,12 @@
 	import D3Donut from '../../lib/components/outputs/D3Donut.svelte';
 	import RecordButton from '$lib/components/ui/RecordButton.svelte';
 	import SearchBox from '../../lib/components/outputs/SearchBox.svelte';
+	import TranscriptionSlice from '../../lib/components/outputs/TranscriptionSlice.svelte';
+
+	import { transcriptionStore } from '$lib/stores/transcriptionStore.js';
+
+	$: $transcriptionStore;
+	console.log('🚀 ~ $transcriptionStore:', $transcriptionStore);
 
 	let length = 12;
 	let overlap = 2;
@@ -113,6 +119,20 @@
 							</div>
 						</div>
 					{/if}
+					<!-- Timeline of slices -->
+					<div>
+						<div
+							class="flex mx-4 overflow-x-auto h-20 border-[2px] border-gray-500/5 rounded bg-gray-500/5"
+						>
+							{#each $transcriptionStore as result}
+								<TranscriptionSlice {result} />
+							{/each}
+						</div>
+						<div class="text-center">
+							<!-- <h3>Timeline</h3> -->
+						</div>
+					</div>
+
 					{#key key}
 						<div class="max-h-[50vh]"></div>
 						<!-- <EmotionAndTopicBubbles /> -->
