@@ -32,7 +32,7 @@ async function getEmbedding(text) {
 }
 
 // Function to search transcriptions by text
-export async function searchTranscriptions(searchText, limit = 5) {
+export async function searchTranscriptions(searchText, limit = 10) {
 	const searchEmbedding = await getEmbedding(searchText);
 	if (!searchEmbedding) return [];
 

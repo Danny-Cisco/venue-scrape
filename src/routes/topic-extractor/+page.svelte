@@ -77,7 +77,7 @@
 		<!-- Main Bento -->
 		<div class="relative flex flex-col flex-1 h-full border">
 			<div class="max-w-[50vw] h-[100vh] pt-[100px] min-w-[50px]">
-				<div class="absolute inset-0 pt-[150px] h-full overflow-y-auto border">
+				<div class="absolute inset-0 pt-[150px] h-full hide-scrollbar overflow-y-auto border">
 					<D3Donut data={donutData} valueKey="value" />
 					{#if showSettings}
 						<div class="relative flex w-full gap-4" transition:slide>

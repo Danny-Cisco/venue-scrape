@@ -6,7 +6,7 @@
 		transcriptionStore
 	} from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
-	import SimilarityBar from '../ui/SimilarityBarVertical.svelte';
+	import SimilarityBarVertical from '../ui/SimilarityBarVertical.svelte';
 	import { get } from 'svelte/store';
 	let searchTerm = '';
 	let searchResults = [];
@@ -50,12 +50,12 @@
 </script>
 
 <div
-	class="absolute bottom-[70px] top-[0px] left-0 right-0 flex flex-col w-full max-w-2xl gap-2 mx-auto space-y-4"
+	class="absolute bottom-[7px] top-[0px] left-4 right-4 flex flex-col max-w-2xl gap-2 mx-auto space-y-4"
 >
-	<div class="h-[100px]"></div>
+	<div class="h-[150px]"></div>
 
 	{#if searchResults.length > 0}
-		<div class="inset-0 flex flex-col-reverse gap-2 overflow-y-auto">
+		<div class="inset-0 flex flex-col-reverse gap-2 pt-48 pb-10 overflow-y-auto hide-scrollbar">
 			<div class="h-[200px]"></div>
 
 			{#each searchResults as result}
@@ -82,20 +82,18 @@
 							</svg>
 							{result.timestamp}
 						</span>
-						<!-- <span class="text-sm font-medium text-blue-500">
-							{formatSimilarity(result.similarity)}
-						</span> -->
+
 						<div></div>
 					</div>
 					<div class="absolute top-0 bottom-0 flex text-xs left-3">
-						<!-- <p>vibe</p> -->
-						<SimilarityBar similarity={result.similarity} />
+						<SimilarityBarVertical similarity={result.similarity} />
 					</div>
 					<p class="font-sans text-gray-800">"...{result.text}..."</p>
 				</div>
 			{/each}
-			<div class="h-[200px]"></div>
+			<div class="h-[300px]"></div>
 		</div>
+		<div class="h-4"></div>
 	{/if}
 </div>
 
@@ -126,13 +124,14 @@
 		<input
 			type="text"
 			id="searchField"
+			autocomplete="off"
 			bind:value={searchTerm}
 			on:keydown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
 			on:click={() => {
 				$searchTermStore = '';
 			}}
 			on:focus={() => {
-				focusClass = 'shadow-md relative top-[-1px]';
+				focusClass = 'shadow relative top-[-1px] h-[74px]';
 			}}
 			on:blur={() => {
 				focusClass = '';
