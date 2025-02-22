@@ -6,7 +6,7 @@
 </script>
 
 <div
-	class="relative transition-shadow h-20 w-2 bg-white border shadow-sm hover:top-[-1px] hover:shadow-md"
+	class="relative transition-shadow h-20 w-[10px] bg-white border shadow-sm hover:top-[-1px] hover:shadow-md"
 	transition:fly={{ y: 20 }}
 >
 	<!-- <div class="flex items-end justify-between w-full">

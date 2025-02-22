@@ -16,7 +16,9 @@
 </script>
 
 <div class="flex items-center gap-2 isolate">
-	<div class="w-2 h-20 overflow-hidden z-[1] flex flex-col-reverse h-full rounded-full bg-gray-100">
+	<div
+		class="w-2 max-h-20 h-20 overflow-hidden z-[1] flex flex-col-reverse h-full rounded-full bg-gray-100"
+	>
 		{#if percentage < 20}
 			<div
 				class="bg-green-500 opacity-30 h-full transition-all z-[2] duration-300"
