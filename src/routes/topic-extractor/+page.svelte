@@ -143,7 +143,7 @@
 
 						<DualRecorder recordChunk={length} recordOverlap={overlap} />
 					{/key}
-					<div class="fixed bottom-0 left-[50px]">
+					<div class="fixed bottom-0 left-0 m-3">
 						<RecordButton />
 					</div>
 				</div>
