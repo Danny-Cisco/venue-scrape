@@ -2,6 +2,7 @@
 <script>
 	import { searchTranscriptions, searchTermStore } from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
+	import SimilarityBar from '../ui/SimilarityBar.svelte';
 	let searchTerm = '';
 	let searchResults = [];
 	let isSearching = false;
@@ -55,9 +56,13 @@
 						<span class="text-sm text-gray-500">
 							{formatTimestamp(result.timestamp)}
 						</span>
-						<span class="text-sm font-medium text-blue-500">
+						<!-- <span class="text-sm font-medium text-blue-500">
 							{formatSimilarity(result.similarity)}
-						</span>
+						</span> -->
+						<div class="flex text-xs">
+							<!-- <p>vibe</p> -->
+							<SimilarityBar similarity={result.similarity} />
+						</div>
 					</div>
 					<p class="text-gray-800">{result.text}</p>
 				</div>

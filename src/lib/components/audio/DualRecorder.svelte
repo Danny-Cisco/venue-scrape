@@ -84,6 +84,8 @@
 	let filteredWikisList = [];
 	let selectedEmotionsList = new Set();
 
+	let startTime = new Date();
+
 	// Subscribe to stores
 	topicsStore.subscribe((value) => (topics = value));
 	ideasStore.subscribe((value) => (ideas = value));
@@ -138,6 +140,8 @@
 
 	function startRecordingCycle() {
 		recorder1Active = true;
+
+		startTime = new Date();
 
 		function scheduleNextSwitch() {
 			if (!$isRecording) return;
@@ -202,8 +206,10 @@
 
 	async function handleTranscriptionComplete(event) {
 		const { transcription, recorderId } = event.detail;
+		const currentTime = new Date();
+		const calculatedTime = new Date(currentTime - startTime);
+		const timestamp = calculatedTime.toISOString();
 
-		const timestamp = new Date().toISOString();
 		const newTranscription = {
 			recorder: recorderId,
 			text: transcription,
