@@ -8,10 +8,10 @@
 	import SearchBox from '../../lib/components/outputs/SearchBox.svelte';
 	import TranscriptionSlice from '../../lib/components/outputs/TranscriptionSlice.svelte';
 
-	import { transcriptionStore } from '$lib/stores/transcriptionStore.js';
+	import { transcriptionSimilarityStore } from '$lib/stores/transcriptionStore.js';
 
-	$: $transcriptionStore;
-	console.log('🚀 ~ $transcriptionStore:', $transcriptionStore);
+	$: $transcriptionSimilarityStore;
+	console.log('✅🚀 ~ $transcriptionSimilarityStore:', $transcriptionSimilarityStore);
 
 	let length = 12;
 	let overlap = 2;
@@ -124,8 +124,8 @@
 						<div
 							class="flex mx-4 overflow-x-auto border-[2px] border-gray-500/10 rounded bg-gray-500/5"
 						>
-							{#if $transcriptionStore.length > 0}
-								{#each $transcriptionStore as result}
+							{#if $transcriptionSimilarityStore.length > 0}
+								{#each $transcriptionSimilarityStore as result}
 									<TranscriptionSlice {result} />
 								{/each}
 							{:else}

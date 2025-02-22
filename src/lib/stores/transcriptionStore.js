@@ -1,5 +1,4 @@
-// transcriptionStore.js
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
 // Create the transcriptions store
 export const transcriptionStore = writable([]);
@@ -81,18 +80,20 @@ export function removeTranscription(id) {
 // Function to get all transcriptions
 export function getTranscriptions() {
 	let transcriptions;
-	transcriptionStore.subscribe((value) => {
+	const unsubscribe = transcriptionStore.subscribe((value) => {
 		transcriptions = value;
-	})();
+	});
+	unsubscribe();
 	return transcriptions;
 }
 
 // Optional: Function to search similar transcriptions using cosine similarity
 export function findSimilarTranscriptions(embedding, threshold = 0.8) {
 	let transcriptions;
-	transcriptionStore.subscribe((value) => {
+	const unsubscribe = transcriptionStore.subscribe((value) => {
 		transcriptions = value;
-	})();
+	});
+	unsubscribe();
 
 	return transcriptions
 		.map((t) => ({
@@ -113,3 +114,49 @@ function cosineSimilarity(vectorA, vectorB) {
 
 	return dotProduct / (magnitudeA * magnitudeB);
 }
+
+// Create a custom store for handling async similarity updates
+function createSimilarityStore() {
+	const { subscribe, set } = writable([]);
+
+	let currentSearchTerm = '';
+	let currentTranscriptions = [];
+
+	// Subscribe to both stores
+	transcriptionStore.subscribe((transcriptions) => {
+		currentTranscriptions = transcriptions;
+		updateSimilarities();
+	});
+
+	searchTermStore.subscribe((searchTerm) => {
+		currentSearchTerm = searchTerm;
+		updateSimilarities();
+	});
+
+	async function updateSimilarities() {
+		if (!currentSearchTerm.trim()) {
+			set(currentTranscriptions.map((t) => ({ ...t, similarity: 0 })));
+			return;
+		}
+
+		const searchEmbedding = await getEmbedding(currentSearchTerm);
+		if (!searchEmbedding) {
+			set(currentTranscriptions.map((t) => ({ ...t, similarity: 0 })));
+			return;
+		}
+
+		const transcriptionsWithSimilarity = currentTranscriptions.map((t) => ({
+			...t,
+			similarity: cosineSimilarity(searchEmbedding, t.embedding)
+		}));
+
+		set(transcriptionsWithSimilarity);
+	}
+
+	return {
+		subscribe
+	};
+}
+
+// Export the similarity store
+export const transcriptionSimilarityStore = createSimilarityStore();
