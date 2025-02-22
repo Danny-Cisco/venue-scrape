@@ -7,11 +7,17 @@
 	import RecordButton from '$lib/components/ui/RecordButton.svelte';
 	import SearchBox from '../../lib/components/outputs/SearchBox.svelte';
 	import TranscriptionSlice from '../../lib/components/outputs/TranscriptionSlice.svelte';
+	import SurpriseSlice from '../../lib/components/outputs/SurpriseSlice.svelte';
 
-	import { transcriptionSimilarityStore } from '$lib/stores/transcriptionStore.js';
+	import {
+		transcriptionSimilarityStore,
+		transcriptionSurpriseStore
+	} from '$lib/stores/transcriptionStore.js';
 
 	$: $transcriptionSimilarityStore;
-	console.log('✅🚀 ~ $transcriptionSimilarityStore:', $transcriptionSimilarityStore);
+	$: $transcriptionSurpriseStore;
+	$: console.log('🚀 ~ transcriptionSurpriseStore:', $transcriptionSurpriseStore);
+	$: console.log('✅🚀 ~ $transcriptionSimilarityStore:', $transcriptionSimilarityStore);
 
 	let length = 12;
 	let overlap = 2;
@@ -120,7 +126,10 @@
 						</div>
 					{/if}
 					<!-- Timeline of slices -->
-					<div>
+					<div class="mb-4">
+						<div class="text-center">
+							<h3>Search Results</h3>
+						</div>
 						<div
 							class="flex mx-4 overflow-x-auto border-[2px] border-gray-500/10 rounded bg-gray-500/5"
 						>
@@ -132,8 +141,23 @@
 								<div class="h-20"></div>
 							{/if}
 						</div>
+					</div>
+
+					<!-- Timeline of surprise -->
+					<div>
 						<div class="text-center">
-							<!-- <h3>Timeline</h3> -->
+							<h3>Surprise</h3>
+						</div>
+						<div
+							class="flex mx-4 overflow-x-auto border-[2px] border-gray-500/10 rounded bg-gray-500/5"
+						>
+							{#if $transcriptionSurpriseStore.length > 0}
+								{#each $transcriptionSurpriseStore as result}
+									<SurpriseSlice {result} />
+								{/each}
+							{:else}
+								<div class="h-20"></div>
+							{/if}
 						</div>
 					</div>
 

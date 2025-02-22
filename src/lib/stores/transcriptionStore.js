@@ -160,3 +160,51 @@ function createSimilarityStore() {
 
 // Export the similarity store
 export const transcriptionSimilarityStore = createSimilarityStore();
+
+// Baseline text for general conversation
+const BASELINE_TEXT =
+	'Hi, welcome, nice to meet you. Lets begin. This is a general conversation about everyday topics. It includes common subjects like weather, work, and daily activities.';
+
+// Store for the baseline embedding
+const baselineStore = writable(null);
+
+// Initialize the baseline embedding when the module loads
+(async () => {
+	const embedding = await getEmbedding(BASELINE_TEXT);
+	baselineStore.set(embedding);
+})();
+
+// Create a derived store for surprise values that depends on both stores
+export const transcriptionSurpriseStore = derived(
+	[transcriptionStore, baselineStore],
+	([$transcriptionStore, $baselineEmbedding]) => {
+		// If baseline isn't loaded yet, return transcriptions without surprise values
+		if (!$baselineEmbedding) {
+			return $transcriptionStore.map((t) => ({ ...t, surprise: 0 }));
+		}
+
+		return $transcriptionStore.map((transcription, index) => {
+			let surprise;
+
+			if (index === 0) {
+				// For first transcription, compare with baseline
+				surprise = 1 - cosineSimilarity(transcription.embedding, $baselineEmbedding);
+			} else {
+				// Compare with previous transcription
+				const previousTranscription = $transcriptionStore[index - 1];
+				surprise = 1 - cosineSimilarity(transcription.embedding, previousTranscription.embedding);
+			}
+
+			return {
+				...transcription,
+				surprise: parseFloat(surprise.toFixed(4))
+			};
+		});
+	}
+);
+
+// Optional: Export function to manually update baseline if needed
+export async function updateBaseline(newBaselineText = BASELINE_TEXT) {
+	const embedding = await getEmbedding(newBaselineText);
+	baselineStore.set(embedding);
+}
