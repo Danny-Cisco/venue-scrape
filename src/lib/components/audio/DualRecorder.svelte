@@ -207,20 +207,20 @@
 	async function handleTranscriptionComplete(event) {
 		const { transcription, recorderId } = event.detail;
 		const currentTime = new Date();
-		const calculatedTime = new Date(currentTime - startTime);
-		const timestamp = calculatedTime.toISOString();
+		const durationMs = currentTime - startTime;
+		const seconds = Math.floor((durationMs / 1000) % 60);
+		const minutes = Math.floor((durationMs / 1000 / 60) % 60);
+		const hours = Math.floor(durationMs / 1000 / 60 / 60);
+		const time = `${hours.toString().padStart(2, '0')}h:${minutes.toString().padStart(2, '0')}m:${seconds.toString().padStart(2, '0')}s`;
 
 		const newTranscription = {
 			recorder: recorderId,
 			text: transcription,
-			timestamp: timestamp
+			timestamp: time
 		};
 
 		const isDuplicate = transcriptions.some(
-			(t) =>
-				t.recorder === recorderId &&
-				t.text === transcription &&
-				Math.abs(new Date(t.timestamp) - new Date(timestamp)) < 1000
+			(t) => t.recorder === recorderId && t.text === transcription
 		);
 
 		if (!isDuplicate) {
@@ -235,10 +235,10 @@
 					(wiki) => wiki.charAt(0).toUpperCase() + wiki.slice(1)
 				);
 
-				addWikiEmotions(capitalizedWikis, emotions, timestamp);
-				topicsStore.update((current) => [...current, { items: analysis.topics, timestamp }]);
-				ideasStore.update((current) => [...current, { items: analysis.ideas, timestamp }]);
-				themesStore.update((current) => [...current, { items: analysis.themes, timestamp }]);
+				addWikiEmotions(capitalizedWikis, emotions, time);
+				topicsStore.update((current) => [...current, { items: analysis.topics, time }]);
+				ideasStore.update((current) => [...current, { items: analysis.ideas, time }]);
+				themesStore.update((current) => [...current, { items: analysis.themes, time }]);
 			}
 		}
 	}

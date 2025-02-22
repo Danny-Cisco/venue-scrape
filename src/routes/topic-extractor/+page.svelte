@@ -128,7 +128,7 @@
 
 		<!-- Right Bento -->
 		<div class="border relative flex-1 min-w-[33vw] max-w-[33vw] max-h-[100vh] min-h-[100vh]">
-			<div class="absolute inset-0 w-full px-2 mb-6 overflow-y-auto">
+			<div class="absolute mb-6 overflow-y-auto inset-2">
 				<SearchBox />
 			</div>
 		</div>

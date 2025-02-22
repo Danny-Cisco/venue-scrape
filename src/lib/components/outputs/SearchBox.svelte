@@ -2,7 +2,7 @@
 <script>
 	import { searchTranscriptions, searchTermStore } from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
-	import SimilarityBar from '../ui/SimilarityBar.svelte';
+	import SimilarityBar from '../ui/SimilarityBarVertical.svelte';
 	let searchTerm = '';
 	let searchResults = [];
 	let isSearching = false;
@@ -45,28 +45,32 @@
 	class="absolute bottom-[70px] top-[0px] left-0 right-0 flex flex-col w-full max-w-2xl gap-2 mx-auto space-y-4"
 >
 	<div class="h-[100px]"></div>
+
 	{#if searchResults.length > 0}
 		<div class="inset-0 flex flex-col-reverse gap-2 overflow-y-auto">
+			<div class="h-[200px]"></div>
+
 			{#each searchResults as result}
 				<div
-					class="p-4 transition-shadow bg-white border rounded-lg shadow-sm hover:shadow-md"
+					class="relative p-4 pl-8 transition-shadow bg-white border rounded-lg shadow-sm hover:top-[-1px] hover:shadow-md"
 					transition:fly={{ y: 20 }}
 				>
 					<div class="flex items-start justify-between">
-						<span class="text-sm text-gray-500">
-							{formatTimestamp(result.timestamp)}
+						<span class="mb-4 text-sm text-gray-500">
+							{result.timestamp}
 						</span>
 						<!-- <span class="text-sm font-medium text-blue-500">
 							{formatSimilarity(result.similarity)}
 						</span> -->
-						<div class="flex text-xs">
+						<div class="absolute top-0 bottom-0 flex text-xs left-3">
 							<!-- <p>vibe</p> -->
 							<SimilarityBar similarity={result.similarity} />
 						</div>
 					</div>
-					<p class="text-gray-800">{result.text}</p>
+					<p class="font-sans text-gray-800">"...{result.text}..."</p>
 				</div>
 			{/each}
+			<div class="h-[200px]"></div>
 		</div>
 	{/if}
 </div>
