@@ -16,8 +16,6 @@
 
 	$: $transcriptionSimilarityStore;
 	$: $transcriptionSurpriseStore;
-	$: console.log('🚀 ~ transcriptionSurpriseStore:', $transcriptionSurpriseStore);
-	$: console.log('✅🚀 ~ $transcriptionSimilarityStore:', $transcriptionSimilarityStore);
 
 	let length = 12;
 	let overlap = 2;
