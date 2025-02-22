@@ -1,17 +1,24 @@
 <!-- SearchBox.svelte -->
 <script>
-	import { searchTranscriptions, searchTermStore } from '$lib/stores/transcriptionStore';
+	import {
+		searchTranscriptions,
+		searchTermStore,
+		transcriptionStore
+	} from '$lib/stores/transcriptionStore';
 	import { fly } from 'svelte/transition';
 	import SimilarityBar from '../ui/SimilarityBarVertical.svelte';
 	import { get } from 'svelte/store';
 	let searchTerm = '';
 	let searchResults = [];
 	let isSearching = false;
+	let focusClass = '';
 
 	$: searchTerm = $searchTermStore;
 
 	$: if ($searchTermStore.length > 1) handleSearch($searchTermStore);
 	$: if (searchTerm.length > 1) handleSearch(searchTerm);
+
+	$: if ($transcriptionStore) handleSearch(searchTerm);
 
 	async function handleSearch(searchTerm) {
 		// exit early if empty
@@ -58,12 +65,27 @@
 				>
 					<div class="flex items-end justify-between w-full">
 						<div></div>
-						<span class="mb-4 text-sm text-gray-500">
+						<span class="flex items-center gap-1 mb-4 text-sm text-black/40">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+								/>
+							</svg>
 							{result.timestamp}
 						</span>
 						<!-- <span class="text-sm font-medium text-blue-500">
 							{formatSimilarity(result.similarity)}
 						</span> -->
+						<div></div>
 					</div>
 					<div class="absolute top-0 bottom-0 flex text-xs left-3">
 						<!-- <p>vibe</p> -->
@@ -77,12 +99,13 @@
 	{/if}
 </div>
 
-<div class="absolute bottom-0 left-0 right-0 flex gap-2">
-	<div class="flex p-[1px] items-center justify-center w-full bg-white rounded">
+<div class="absolute left-0 right-0 flex gap-2 bottom-1">
+	<div class="flex items-center {focusClass} justify-center w-full p-4 bg-white rounded-3xl">
 		<button
 			type="button"
 			on:click={() => {
 				document.getElementById('searchField').focus();
+				$searchTermStore = '';
 			}}
 		>
 			<svg
@@ -91,7 +114,7 @@
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="mx-4 size-6"
+				class="ml-1 mr-4 size-6"
 			>
 				<path
 					stroke-linecap="round"
@@ -105,8 +128,16 @@
 			id="searchField"
 			bind:value={searchTerm}
 			on:keydown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
-			on:click={() => ($searchTermStore = '')}
-			placeholder="Search transcriptions..."
+			on:click={() => {
+				$searchTermStore = '';
+			}}
+			on:focus={() => {
+				focusClass = 'shadow-md relative top-[-1px]';
+			}}
+			on:blur={() => {
+				focusClass = '';
+			}}
+			placeholder="Search for quotes..."
 			class="flex-1 px-4 py-2 border-0 rounded ring-none focus:ring-1 focus:ring-black/20"
 		/>
 	</div>
