@@ -122,7 +122,7 @@
 					<!-- Timeline of slices -->
 					<div>
 						<div
-							class="flex mx-4 overflow-x-auto h-20 border-[2px] border-gray-500/5 rounded bg-gray-500/5"
+							class="flex mx-4 overflow-x-auto h-20 border-[2px] border-gray-500/10 rounded bg-gray-500/5"
 						>
 							{#each $transcriptionStore as result}
 								<TranscriptionSlice {result} />
