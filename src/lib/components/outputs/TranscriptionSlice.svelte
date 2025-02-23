@@ -38,7 +38,7 @@
 </div>
 
 {#if showTrancription}
-	<div class="absolute z-[99] left-4 right-4">
+	<div class="absolute z-[99] left-4 right-4 -mt-[100px]">
 		<TranscriptionContainerLarge {result} />
 		<button
 			class="absolute w-8 h-8 bg-white rounded-full -top-4 -right-4 hover:shadow hover:mt-[-2px]"
