@@ -1,6 +1,7 @@
 <script>
 	import { onMount, afterUpdate } from 'svelte';
 	import * as d3 from 'd3';
+	import { searchTermStore } from '$lib/stores/transcriptionStore';
 
 	export let data = [];
 	export let valueKey = 'value';
@@ -15,15 +16,12 @@
 	onMount(() => {
 		width = window.innerWidth / 2;
 		const height = Math.min(500, width * 0.614);
-		// Reduce the outer radius to leave space for labels
 		const outerRadius = (height / 2) * 0.8;
 		const innerRadius = outerRadius * 0.667;
 
 		color = d3.scaleOrdinal(d3.schemeCategory10);
-
 		arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
 
-		// Create a larger arc for label positioning
 		const labelArc = d3
 			.arc()
 			.innerRadius(outerRadius * 1.1)
@@ -47,6 +45,10 @@
 
 	function midAngle(d) {
 		return d.startAngle + (d.endAngle - d.startAngle) / 2;
+	}
+
+	function handleLabelClick(text) {
+		searchTermStore.set(text);
 	}
 
 	function updateChart(newData) {
@@ -83,8 +85,6 @@
 
 		// Exit paths
 		paths.exit().remove();
-
-		// Labels section only - replace the existing labels code with this:
 
 		// Labels
 		const labels = svg.selectAll('text.label').data(pieData);
@@ -126,20 +126,28 @@
 			});
 		}
 
-		// Enter labels
+		// Enter labels with click handling
 		const enterLabels = labels
 			.enter()
 			.append('text')
 			.attr('class', 'label')
 			.style('font-size', '14px')
+			.on('mouseenter', function () {
+				d3.select(this).style('text-decoration', 'underline');
+			})
+			.on('mouseleave', function () {
+				d3.select(this).style('text-decoration', 'none');
+			})
 			.style('font-family', 'Monospace')
 			.style('fill', '#000')
 			.style('text-anchor', (d) => {
 				const angle = midAngle(d);
 				return angle < Math.PI ? 'start' : 'end';
 			})
-			.style('pointer-events', 'none')
+			.style('pointer-events', 'all') // Enable pointer events
+			.style('cursor', 'pointer') // Show pointer cursor
 			.attr('opacity', 0)
+			.on('click', (event, d) => handleLabelClick(d.data.category)) // Add click handler
 			.call(createTspans);
 
 		// Update existing labels
@@ -148,6 +156,9 @@
 				const angle = midAngle(d);
 				return angle < Math.PI ? 'start' : 'end';
 			})
+			.style('pointer-events', 'all')
+			.style('cursor', 'pointer')
+			.on('click', (event, d) => handleLabelClick(d.data.category))
 			.call(createTspans);
 
 		// Merge and transition all labels
@@ -167,6 +178,7 @@
 
 		// Exit labels
 		labels.exit().transition().duration(750).attr('opacity', 0).remove();
+
 		// Add connecting lines
 		const polylines = svg.selectAll('polyline').data(pieData);
 
