@@ -9,6 +9,8 @@
 	import TranscriptionSlice from '../../lib/components/outputs/TranscriptionSlice.svelte';
 	import SurpriseSlice from '../../lib/components/outputs/SurpriseSlice.svelte';
 
+	let closeAll = false;
+
 	import {
 		transcriptionSimilarityStore,
 		transcriptionSurpriseStore
@@ -133,7 +135,7 @@
 						>
 							{#if $transcriptionSimilarityStore.length > 0}
 								{#each $transcriptionSimilarityStore as result}
-									<TranscriptionSlice {result} />
+									<TranscriptionSlice {result} bind:closeAll />
 								{/each}
 							{:else}
 								<div class="h-20"></div>
