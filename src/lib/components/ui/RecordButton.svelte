@@ -72,19 +72,19 @@
 		inset: -100%;
 		background: conic-gradient(
 			from 0deg,
-			#ff0000,
-			#ff8800,
-			#ffff00,
-			#88ff00,
-			#00ff00,
-			#00ff88,
-			#00ffff,
-			#0088ff,
-			#0000ff,
-			#8800ff,
-			#ff00ff,
-			#ff0088,
-			#ff0000
+			#ffb3b3,
+			/* Pastel red */ #ffd4b3,
+			/* Pastel orange */ #fff2b3,
+			/* Pastel yellow */ #d4ffb3,
+			/* Pastel lime */ #b3ffb3,
+			/* Pastel green */ #b3ffd4,
+			/* Pastel mint */ #b3ffff,
+			/* Pastel cyan */ #b3d4ff,
+			/* Pastel light blue */ #b3b3ff,
+			/* Pastel blue */ #d4b3ff,
+			/* Pastel purple */ #ffb3ff,
+			/* Pastel magenta */ #ffb3d4,
+			/* Pastel pink */ #ffb3b3 /* Back to pastel red */
 		);
 	}
 
