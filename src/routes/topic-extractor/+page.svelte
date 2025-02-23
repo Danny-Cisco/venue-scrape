@@ -128,7 +128,7 @@
 					<!-- Timeline of slices -->
 					<div class="mb-4">
 						<div class="text-center">
-							<h3>Search Results</h3>
+							<h3>Slices</h3>
 						</div>
 						<div
 							class="flex mx-4 overflow-x-auto border-[2px] border-gray-500/10 rounded bg-gray-500/5"
