@@ -1,44 +1,168 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/mindmapr-favicon-simple.svg" />
-		<meta name="viewport" content="width=device-width" />
+		<title>Danny Cisco</title>
+		<meta
+			name="description"
+			content="Danny Cisco is a maker and web designer from Melbourne. This is a place for all his hacky experiments."
+		/>
+		<link rel="icon" href="/favicon.ico" sizes="any" />
+		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="Danny Cisco" />
+		<meta
+			property="og:description"
+			content="Danny Cisco is a maker and web designer from Melbourne. This is a place for all his hacky experiments."
+		/>
+		<meta property="og:url" content="https://dannycisco.com" />
+		<meta property="og:image" content="https://dannycisco.com/DannyCiscoLogoBlack.jpg" />
+		<meta property="og:image:alt" content="Danny Cisco logo" />
+		<meta property="og:site_name" content="Danny Cisco's home on the web." />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="Danny Cisco" />
+		<meta
+			name="twitter:description"
+			content="Danny Cisco is a maker and web designer from Melbourne. This is a place for all his hacky experiments."
+		/>
+		<meta name="twitter:image" content="https://dannycisco.com/DannyCiscoLogoBlack.jpg" />
+		<meta name="twitter:image:alt" content="A description of the image." />
+		<meta name="twitter:site" content="@NascentClouds" />
+
+		<!-- Structured Data -->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "WebSite",
+				"name": "Danny Cisco's home on the web.",
+				"url": "https://dannycisco.com",
+				"description": "Danny Cisco is a maker and web designer from Melbourne. This is a place for all his hacky experiments.",
+				"image": "https://dannycisco.com/DannyCiscoLogoBlack.jpg",
+				"author": {
+					"@type": "Person",
+					"name": "Danny Cisco"
+				}
+			}
+		</script>
+
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover" data-theme="">
-		<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>
+
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>
-
 <style>
-	@font-face {
-		font-family: 'Quicksand';
-		src: url('/fonts/Quicksand.ttf') format('truetype');
-		font-display: swap;
-	}
-	:root {
-		background-color: #f1f1f1f1 !important;
-		color: black;
-		font-family: 'Quicksand', sans-serif; /* Added fallback */
+	html,
+	body,
+	#svelte {
+		width: 100vw;
+		height: 100%;
+		display: relative;
+		font-family: 'IBM Plex Mono', monospace !important;
+		background-color: hsl(250, 50%, 10%);
+		color: hsl(60, 10%, 90%);
+		font-weight: 100;
 	}
 
-	:root a,
 	h1,
-	h2 {
+	h2,
+	h3 {
 		font-weight: bold;
+		margin-bottom: 0.5rem;
+	}
+	a {
+		color: hsl(200, 60%, 50%);
 	}
 
-	:root ::placeholder {
-		color: #bbbbbb;
+	.bg-dark {
+		background-color: hsl(250, 50%, 10%);
 	}
-	:root ::-webkit-input-placeholder {
-		color: #bbbbbb;
+	.text-light {
+		color: hsl(60, 10%, 90%);
 	}
-	:root ::-moz-placeholder {
-		color: #bbbbbb;
+
+	.text-light-500 {
+		color: hsl(200, 10%, 70%);
 	}
-	:root :-ms-input-placeholder {
-		color: #bbbbbb;
+
+	.btn {
+		border-radius: 9999px;
+		background-color: hsl(200, 60%, 50%);
+		padding: 8px 24px;
+		color: white;
+	}
+	.btn:hover {
+		position: relative;
+		top: -1px;
+
+		box-shadow:
+			rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+			rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+	}
+	.btn:active {
+		transform: scale(0.96) translateY(1px); /* Slight press effect */
+		box-shadow:
+			rgba(60, 64, 67, 0.2) 0px 1px 1px 0px,
+			rgba(60, 64, 67, 0.1) 0px 1px 4px 2px; /* Subtle shadow change */
+	}
+	input {
+		background: hsl(0, 0%, 10%);
+		border-radius: 4px;
+	}
+	textarea {
+		background: hsl(0, 0%, 10%);
+		border-radius: 4px;
+	}
+	select {
+		background: hsl(0, 0%, 10%);
+		border-radius: 4px;
+	}
+
+	.page {
+		width: 100%;
+		max-width: 80ch;
+		margin-inline: auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.shadow-fx-r {
+		box-shadow:
+			rgba(240, 46, 170, 0.4) 5px 5px,
+			rgba(240, 46, 170, 0.3) 10px 10px,
+			rgba(240, 46, 170, 0.2) 15px 15px,
+			rgba(240, 46, 170, 0.1) 20px 20px,
+			rgba(240, 46, 170, 0.05) 25px 25px;
+	}
+
+	.shadow-fx-l {
+		box-shadow:
+			rgba(240, 46, 170, 0.4) -5px 5px,
+			rgba(240, 46, 170, 0.3) -10px 10px,
+			rgba(240, 46, 170, 0.2) -15px 15px,
+			rgba(240, 46, 170, 0.1) -20px 20px,
+			rgba(240, 46, 170, 0.05) -25px 25px;
+	}
+
+	.shadow-fx {
+		box-shadow:
+			rgba(240, 46, 170, 0.4) 0px 5px,
+			rgba(240, 46, 170, 0.3) 0px 10px,
+			rgba(240, 46, 170, 0.2) 0px 15px,
+			rgba(240, 46, 170, 0.1) 0px 20px,
+			rgba(240, 46, 170, 0.05) 0px 25px;
 	}
 </style>
