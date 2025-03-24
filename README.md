@@ -1,5 +1,3 @@
-# MindMapr
+# Venue Scrape
 
-A suite of tools for AI powered whiteboards.
-
-Perfect for brainstorming, visualising and notetaking.
+AI assisted music venue booking tools
