@@ -75,7 +75,7 @@
 	};
 </script>
 
-<div class="max-w-xl mx-auto" in:fade>
+<div class="mx-auto page-center" in:fade>
 	<form
 		class="w-full"
 		method="post"
@@ -91,7 +91,7 @@
 					{#if avatarUrl}
 						<img src={avatarUrl} alt="Avatar" class="object-cover w-16 h-16 rounded-full" />
 					{:else}
-						<div class="flex items-center justify-center w-16 h-16 bg-gray-200 rounded-full">
+						<div class="flex items-center justify-center w-16 h-16 rounded-full">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -208,22 +208,18 @@
 	}
 
 	button {
-		background-color: white;
 		border-radius: 9999px;
 		width: 100%;
-		color: magenta;
+
 		height: 3rem;
 		margin-bottom: 8px;
 	}
 	#sign-out {
-		background: magenta;
-		color: white;
 	}
 	#upload-label {
-		background-color: white;
 		border-radius: 9999px;
 		width: 100%;
-		color: magenta;
+
 		height: 3rem;
 		margin-bottom: 8px;
 	}

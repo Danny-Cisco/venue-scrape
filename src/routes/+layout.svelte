@@ -77,8 +77,13 @@
 	});
 </script>
 
+<!-- page gradient -->
+<div class="fixed inset-0 z-[0] bg-gradient-to-br from-white/10 to-black/50"></div>
+
 <!-- Header -->
-<header class="flex items-center justify-between px-4 py-2 bg-white/10">
+<header
+	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-white/10"
+>
 	<!-- Logo -->
 	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light">
 		<img src="icon.svg" class="size-10" alt="" />
@@ -96,7 +101,7 @@
 
 					<!-- User Avatar -->
 					<img
-						src={profile?.avatar_url || '/default-avatar.png'}
+						src={profile?.avatar_url || '/default-avatar.svg'}
 						alt="User Avatar"
 						class="w-10 h-10 rounded-full"
 					/>
@@ -147,12 +152,21 @@
 		</div>
 	{/if}
 </header>
-<div class="fixed inset-0 z-[0] bg-gradient-to-br from-white/10 to-black/50"></div>
 
 <div class="flex flex-1 h-full">
+	<!-- Main Content -->
+	<div class="relative w-full h-full pt-[100px]">
+		<main>
+			<slot />
+		</main>
+	</div>
 	<!-- Left Sidebar -->
 	{#if $showLeftSidebar}
-		<aside class="w-[250px] p-4 pt-16 bg-white/5 h-full" transition:slide={{ axis: 'x' }}>
+		<aside
+			class="w-[250px] p-4 pt-16 bg-black isolate absolute z-[99999] left-0 h-full"
+			transition:slide={{ axis: 'x' }}
+		>
+			<div class="h-[101px]"></div>
 			<h2 class="mb-2 text-lg font-semibold">Venue Scrape</h2>
 			<ul>
 				<li class="mb-2">
@@ -179,7 +193,7 @@
 				</li>
 				<li class="mb-2">
 					<a
-						href="/"
+						href="/settings"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 					>
 						<svg
@@ -259,7 +273,7 @@
 
 	<!-- Button to toggle left sidebar -->
 	<button
-		class="absolute left-0 z-20 p-2 px-4 my-1 rounded-r-full top-30 bg-white/10 btn-hover"
+		class="absolute left-0 z-20 p-2 px-4 my-1 z-[999999] rounded-r-full top-[101px] bg-white/10 btn-hover"
 		on:click={() => showLeftSidebar.update((v) => !v)}
 	>
 		<svg
@@ -279,11 +293,6 @@
 			/>
 		</svg>
 	</button>
-
-	<!-- Main Content -->
-	<div class="absolute inset-0 h-full isolate">
-		<slot />
-	</div>
 </div>
 
 <style>
