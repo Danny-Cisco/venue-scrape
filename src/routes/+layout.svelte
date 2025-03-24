@@ -86,7 +86,7 @@
 >
 	<!-- Logo -->
 	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light">
-		<img src="icon.svg" class="size-10" alt="" />
+		<img src="/icon.svg" class="size-10" alt="" />
 		Venue Scrape
 	</strong>
 

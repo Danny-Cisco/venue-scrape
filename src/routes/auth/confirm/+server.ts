@@ -7,7 +7,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const token_hash = url.searchParams.get('token_hash');
 	const type = url.searchParams.get('type') as EmailOtpType | null;
 	// Default to root instead of /account to match your magic link implementation
-	const next = url.searchParams.get('next') ?? '/';
+	const next = url.searchParams.get('next') ?? '/auth/confirm';
 
 	const redirectTo = new URL(url);
 	redirectTo.pathname = next;
