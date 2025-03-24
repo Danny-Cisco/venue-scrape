@@ -143,20 +143,88 @@
 	});
 </script>
 
-<body class="relative flex flex-col min-h-screen text-black/50">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-2 bg-white/10">
+	<!-- Logo -->
+	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light">
+		<img src="icon.svg" class="size-10" alt="" />
+		Venue Scrape
+	</strong>
+
+	<!-- User Authentication -->
+	{#if !$loading}
+		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
+			{#if session}
+				<a href="/account" class="flex items-center gap-4"
+					><p class="font-bold">
+						{profile?.username || session.user.email || session.user.displayName}
+					</p>
+
+					<!-- User Avatar -->
+					<img
+						src={profile?.avatar_url || '/default-avatar.png'}
+						alt="User Avatar"
+						class="w-10 h-10 rounded-full"
+					/>
+				</a>
+			{:else}
+				<!-- Magic Link Form -->
+				<div class="flex flex-col items-end">
+					{#if $message}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$message}
+						</div>
+					{/if}
+					{#if $error}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$error}
+						</div>
+					{/if}
+					<div class="flex items-center justify-end gap-2 text-sm">
+						<label for="email" class="hidden">Email</label>
+						<input
+							type="email"
+							bind:value={email}
+							placeholder="Enter your email"
+							class="w-64 h-10 px-2 py-2 bg-transparent rounded !ring-black/20"
+						/>
+						<button
+							on:click={submitMagicLink}
+							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] hover:shadow-md hover:mt-[-1px] rounded"
+						>
+							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-8"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
+			{/if}
+		</div>
+	{/if}
+</header>
+
+<body class="relative flex flex-col min-h-screen">
 	<div class="flex flex-1">
 		<!-- Left Sidebar -->
 		{#if $showLeftSidebar}
-			<aside
-				class="w-[300px] p-4 pt-16 rounded-md shadow-lg m-4 bg-white"
-				transition:slide={{ axis: 'x' }}
-			>
-				<h2 class="mb-2 text-lg font-semibold">MindMapr</h2>
+			<aside class="w-[300px] p-4 pt-16 rounded-md shadow-lg m-4" transition:slide={{ axis: 'x' }}>
+				<h2 class="mb-2 text-lg font-semibold">Venue Scrape</h2>
 				<ul>
 					<li class="mb-2">
 						<a
 							href="/"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +246,7 @@
 					<li class="mb-2">
 						<button
 							on:click={() => ($showCameraSettingsModal = true)}
-							class="flex items-center justify-start gap-2 ml-0 font-bold text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-bold whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -206,7 +274,7 @@
 					<li class="mb-2">
 						<a
 							href="/account"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -234,7 +302,7 @@
 					<li class="mb-2">
 						<a
 							href="/control-panels/vision-chat"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -256,7 +324,7 @@
 					<li class="mb-2">
 						<a
 							href="/control-panels/conversation-to-d3-mindmap"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -279,7 +347,7 @@
 					<li>
 						<a
 							href="/control-panels/post-it-to-miro"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +372,7 @@
 					<li class="mb-2">
 						<a
 							href="/displays/vision-chat-markdown"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -327,7 +395,7 @@
 					<li class="mb-2">
 						<a
 							href="/topic-extractor"
-							class="flex items-center justify-start gap-2 ml-0 font-light text-gray-500 whitespace-nowrap hover:underline"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -353,7 +421,7 @@
 
 		<!-- Button to toggle left sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-r-full px-4 bg-white text-black/50 left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-r-full px-4 left-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showLeftSidebar.update((v) => !v)}
 		>
 			<svg
@@ -407,7 +475,7 @@
 				/>
 
 				<div
-					class="bg-gray-100 text-gray-500 relative border-2 shadow rounded-lg h-[144px] w-[250px] flex flex-col items-center justify-center"
+					class="bg-gray-100 relative border-2 shadow rounded-lg h-[144px] w-[250px] flex flex-col items-center justify-center"
 				>
 					captured image
 					<CapturedImageFly />
@@ -417,7 +485,7 @@
 
 		<!-- Button to toggle right sidebar -->
 		<button
-			class="absolute z-20 p-2 rounded-l-full px-4 bg-white text-black/50 right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
+			class="absolute z-20 p-2 rounded-l-full px-4 right-0 top-[10vh] hover:mt-[-1px] hover:shadow-md"
 			on:click={() => showRightSidebar.update((v) => !v)}
 		>
 			<svg
@@ -441,100 +509,6 @@
 </body>
 
 <CameraSettingsModal />
-
-<!-- Header -->
-<header
-	class="fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-white/10 backdrop-blur"
->
-	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light text-black/50">
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 424 424"
-			width="60"
-			height="60"
-			fill="none"
-			stroke="black"
-			stroke-width="2"
-		>
-			<circle cx="17" cy="407" r="15" />
-			<circle cx="32" cy="392" r="30" />
-			<circle cx="47" cy="377" r="45" />
-			<circle cx="62" cy="362" r="60" />
-			<circle cx="77" cy="347" r="75" />
-			<circle cx="92" cy="332" r="90" />
-			<circle cx="107" cy="317" r="105" />
-			<circle cx="122" cy="302" r="120" />
-			<circle cx="137" cy="287" r="135" />
-			<circle cx="152" cy="272" r="150" />
-			<circle cx="167" cy="257" r="165" />
-			<circle cx="182" cy="242" r="180" />
-		</svg>
-		MindMapr.ai
-	</strong>
-
-	<!-- User Authentication -->
-	{#if !$loading}
-		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
-			{#if session}
-				<a href="/account" class="flex items-center gap-4"
-					><p class="font-bold text-gray-500">
-						{profile?.username || session.user.email || session.user.displayName}
-					</p>
-
-					<!-- User Avatar -->
-					<img
-						src={profile?.avatar_url || '/default-avatar.png'}
-						alt="User Avatar"
-						class="w-10 h-10 rounded-full"
-					/>
-				</a>
-			{:else}
-				<!-- Magic Link Form -->
-				<div class="flex flex-col items-end">
-					{#if $message}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
-							{$message}
-						</div>
-					{/if}
-					{#if $error}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
-							{$error}
-						</div>
-					{/if}
-					<div class="flex items-center justify-end gap-2 text-sm">
-						<label for="email" class="hidden">Email</label>
-						<input
-							type="email"
-							bind:value={email}
-							placeholder="Enter your email"
-							class="w-64 h-10 px-2 py-2 border-0 rounded !ring-black/20"
-						/>
-						<button
-							on:click={submitMagicLink}
-							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] bg-white text-black/50 hover:shadow-md hover:mt-[-1px] rounded"
-						>
-							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-8"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-								/>
-							</svg>
-						</button>
-					</div>
-				</div>
-			{/if}
-		</div>
-	{/if}
-</header>
 
 <style>
 	.size-5 {
