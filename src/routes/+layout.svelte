@@ -156,7 +156,7 @@
 <div class="flex flex-1 h-full">
 	<!-- Main Content -->
 	<div class="relative w-full h-full pt-[100px]">
-		<main>
+		<main class="h-full">
 			<slot />
 		</main>
 	</div>
