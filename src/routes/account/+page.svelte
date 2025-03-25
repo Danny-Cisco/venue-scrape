@@ -13,9 +13,16 @@
 	let loading = false;
 	let username: string = profile?.username ?? '';
 	let avatarUrl: string = profile?.avatar_url ?? '';
+	$: console.log('🚀 ~ username:', username);
 	let avatarFile: FileList;
 	let uploading = false;
 	let uploadError: string | null = null;
+
+	let needsSaving = false;
+
+	function handleUsernameChange() {
+		needsSaving = true;
+	}
 
 	async function uploadAvatar() {
 		try {
@@ -48,6 +55,7 @@
 
 			// Reset file input
 			avatarFile = undefined;
+			needsSaving = true;
 		} catch (error) {
 			uploadError = error instanceof Error ? error.message : 'Error uploading avatar';
 			console.error('Upload error:', error);
@@ -75,7 +83,7 @@
 	};
 </script>
 
-<div class="mx-auto page-center" in:fade>
+<div class="mx-auto page-center !max-w-sm" in:fade>
 	<form
 		class="w-full"
 		method="post"
@@ -83,99 +91,106 @@
 		use:enhance={handleSubmit}
 		bind:this={profileForm}
 	>
-		<div class="flex flex-col gap-6">
-			<!-- Avatar Upload Section -->
-			<div class="flex flex-col gap-2">
-				<!-- <label class="text-sm font-medium">Profile Picture</label> -->
-				<div class="flex items-center gap-4">
-					{#if avatarUrl}
-						<img src={avatarUrl} alt="Avatar" class="object-cover w-16 h-16 rounded-full" />
-					{:else}
-						<div class="flex items-center justify-center w-16 h-16 rounded-full">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-6"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-								/>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-								/>
-							</svg>
-						</div>
-					{/if}
-
-					<div class="flex flex-col w-full gap-2">
-						<label
-							id="UploadLabel"
-							for="avatar"
-							class="font-semibold hover:text-[magenta] hover:cursor-pointer"
-							class:opacity-50={uploading}
-							class:cursor-not-allowed={uploading}
+		<!-- Avatar Upload Section -->
+		<div class="flex flex-col items-center gap-2 mb-4">
+			<!-- <label class="text-sm font-medium">Profile Picture</label> -->
+			<div class="flex items-center gap-4">
+				{#if avatarUrl}
+					<img src={avatarUrl} alt="Avatar" class="object-cover w-16 h-16 rounded-full" />
+				{:else}
+					<div class="flex items-center justify-center w-16 h-16 rounded-full">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
 						>
-							{uploading ? 'Uploading...' : 'Upload New Picture'}
-						</label>
-						<input
-							type="file"
-							id="avatar"
-							accept="image/*"
-							class="hidden"
-							bind:files={avatarFile}
-							on:change={uploadAvatar}
-						/>
-						<input type="text" name="avatarUrl" value={avatarUrl} />
-
-						{#if uploadError}
-							<p class="text-sm text-red-600">{uploadError}</p>
-						{/if}
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
+							/>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
+							/>
+						</svg>
 					</div>
+				{/if}
+
+				<div class="flex flex-col gap-2 text-light">
+					<label
+						id="UploadLabel"
+						for="avatar"
+						class="btn"
+						class:opacity-50={uploading}
+						class:cursor-not-allowed={uploading}
+					>
+						{uploading ? 'Uploading...' : 'Upload Avatar'}
+					</label>
+					<input
+						type="file"
+						id="avatar"
+						accept="image/*"
+						class="hidden"
+						bind:files={avatarFile}
+						on:change={uploadAvatar}
+					/>
+					<input type="text" class="hidden" name="avatarUrl" value={avatarUrl} />
+
+					{#if uploadError}
+						<p class="text-sm text-red-600">{uploadError}</p>
+					{/if}
 				</div>
 			</div>
-
+		</div>
+		<div class="flex flex-col items-center gap-6">
 			<div>
-				<label for="email">Email</label>
-				<input id="email" type="text" value={session.user.email} disabled />
+				<p>
+					{session.user.email}
+				</p>
 			</div>
+		</div>
 
-			<div>
+		<div class="flex flex-col items-center gap-6 mt-10">
+			<div class="flex items-center w-full gap-2 px-4">
 				<label for="username">Username</label>
-				<input id="username" name="username" type="text" value={form?.username ?? username} />
+				<input
+					id="username"
+					name="username"
+					type="text"
+					bind:value={username}
+					on:keydown={handleUsernameChange}
+				/>
 			</div>
 
-			<div>
-				<button
-					type="submit"
-					class="gap-2 shadow btn button primary"
-					disabled={loading || uploading}
-					><svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-					>
-						<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-					</svg>
+			<button
+				type="submit"
+				class="w-full gap-2 shadow btn primary"
+				class:hidden={!needsSaving}
+				disabled={loading || uploading}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-6"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+				</svg>
 
-					{loading ? 'Loading...' : 'Update'}
-				</button>
-			</div>
+				{loading ? 'Loading...' : 'Save'}
+			</button>
 		</div>
 	</form>
 
-	<form method="post" action="?/signout" use:enhance={handleSignOut}>
-		<div>
-			<button id="sign-out" class="gap-2 shadow btn" disabled={loading}
+	<form method="post" action="?/signout" use:enhance={handleSignOut} class="w-full">
+		<div class="w-full mt-10">
+			<button id="sign-out" class="w-full gap-2 !bg-red-500 shadow btn" disabled={loading}
 				><svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -190,7 +205,7 @@
 						d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
 					/>
 				</svg>
-				Sign Out</button
+				Logout</button
 			>
 		</div>
 	</form>
@@ -207,15 +222,6 @@
 		border: none;
 	}
 
-	button {
-		border-radius: 9999px;
-		width: 100%;
-
-		height: 3rem;
-		margin-bottom: 8px;
-	}
-	#sign-out {
-	}
 	#upload-label {
 		border-radius: 9999px;
 		width: 100%;
