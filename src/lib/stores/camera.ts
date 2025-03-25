@@ -5,7 +5,7 @@ import { writable } from 'svelte/store';
 const createPersistentDevice = () => {
 	// Only access localStorage when in the browser
 	const initialValue = browser ? localStorage.getItem('selectedDeviceId') : null;
-	console.log('🚀 ~ createPersistentDevice ~ initialValue:', initialValue);
+	// console.log('🚀 ~ createPersistentDevice ~ initialValue:', initialValue);
 
 	const store = writable(initialValue);
 

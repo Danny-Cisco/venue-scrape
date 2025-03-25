@@ -46,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// Add this line to actually call safeGetSession
 	await event.locals.safeGetSession();
 
-	// console.log('event.locals.user: ', event.locals.user);
+	console.log('event.locals.user: ', event.locals.user);
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {

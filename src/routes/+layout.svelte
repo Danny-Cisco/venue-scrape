@@ -26,7 +26,7 @@
 	async function submitMagicLink() {
 		isSubmitting = true;
 		const result = await handleMagicLink(email, supabase);
-		console.log('🚀 ~ submitMagicLink ~ result:', result);
+		// console.log('🚀 ~ submitMagicLink ~ result:', result);
 
 		if (result.success) {
 			message.set(result.message);
@@ -40,8 +40,8 @@
 
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
-	$: console.log('🚀 ~ profile:', profile);
-	$: console.log('🚀 ~ data:', data);
+	// $: console.log('🚀 ~ profile:', profile);
+	// $: console.log('🚀 ~ data:', data);
 
 	const hotkeyEmitter = createHotkeyEmitter();
 
@@ -163,7 +163,7 @@
 	<!-- Left Sidebar -->
 	{#if $showLeftSidebar}
 		<aside
-			class="w-[250px] p-4 pt-16 bg-black isolate absolute z-[99999] left-0 h-full"
+			class="w-[250px] p-4 pt-16 bg-black top-[100px] isolate absolute z-[99999] left-0 h-full"
 			transition:slide={{ axis: 'x' }}
 		>
 			<div class="h-[101px]"></div>
