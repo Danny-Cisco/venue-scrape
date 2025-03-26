@@ -130,6 +130,32 @@
 		border-radius: 4px;
 	}
 
+	/* Add this to your existing CSS */
+	::selection {
+		background-color: hsl(200, 60%, 50%); /* Same as your button color */
+		color: white;
+	}
+
+	/* For Firefox */
+	::-moz-selection {
+		background-color: hsl(200, 60%, 50%);
+		color: white;
+	}
+
+	/* Specific styles for input and textarea selection */
+	input::selection,
+	textarea::selection {
+		background-color: hsl(200, 60%, 50%);
+		color: white;
+	}
+
+	/* For Firefox */
+	input::-moz-selection,
+	textarea::-moz-selection {
+		background-color: hsl(200, 60%, 50%);
+		color: white;
+	}
+
 	.page {
 		width: 100%;
 		max-width: 80ch;
