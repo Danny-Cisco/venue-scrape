@@ -1,23 +1,17 @@
 <script lang="ts">
 	import '../app.postcss';
 
-	import { videoElement, devices, selectedDevice, permissionStatus } from '$lib/stores/camera';
-	import { showLeftSidebar, showRightSidebar, showCameraSettingsModal } from '$lib/stores/ui';
+	import { showLeftSidebar } from '$lib/stores/ui';
 	import { message, error, loading } from '$lib/stores/auth';
-	import { triggerStartStream, triggerStopStream } from '$lib/stores/video';
 
-	import { onMount, tick } from 'svelte';
-	import { slide, fly, fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import { slide, fly } from 'svelte/transition';
 
-	import { createHotkeyEmitter } from '$lib/helpers/hotkey.js';
-
-	import type { ActionData, SubmitFunction } from './$types.js';
+	import type { SubmitFunction } from './$types.js';
 
 	export let data;
 
 	import { handleMagicLink } from '$lib/utils/magicLink';
-
-	$: $selectedDevice;
 
 	let email = '';
 
@@ -43,14 +37,6 @@
 	// $: console.log('🚀 ~ profile:', profile);
 	// $: console.log('🚀 ~ data:', data);
 
-	const hotkeyEmitter = createHotkeyEmitter();
-
-	$: if ($selectedDevice) {
-		triggerStartStream.set(true);
-	} else {
-		triggerStopStream.set(true);
-	}
-
 	const handleSubmit: SubmitFunction = () => {
 		$loading = true;
 		return async ({ update }) => {
@@ -66,11 +52,9 @@
 		if (isMobile) {
 			// hide the sidebars if page loaded on mobile
 			showLeftSidebar.set(false);
-			showRightSidebar.set(false);
 		} else {
 			// hide the sidebars on desktop as well
 			showLeftSidebar.set(false);
-			showRightSidebar.set(false);
 		}
 
 		return () => {};
@@ -237,8 +221,11 @@
 					</a>
 				</li>
 			</ul>
-
-			<h2 class="justify-start mb-2 ml-0 text-lg font-semibold whitespace-nowrap">Dashboards</h2>
+			<a href="/dashboards">
+				<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+					Dashboards
+				</h2></a
+			>
 			<ul class="justify-start ml-0 whitespace-nowrap">
 				<li class="mb-2">
 					<a
