@@ -11,12 +11,12 @@
 	}
 </script>
 
-<div class="page" in:fade>
-	<h1>Scrape Venues</h1>
+<div class="pt-10 space-y-4 page" in:fade>
+	<h1 class="text-3xl">Scrape Venues</h1>
 
-	<input type="text" bind:value={url} />
+	<input type="text" class="w-full" bind:value={url} />
 
-	<button on:click={scrapeSite}>Scrape Html</button>
+	<button on:click={scrapeSite} class="btn">Scrape Html</button>
 
 	{html}
 </div>
