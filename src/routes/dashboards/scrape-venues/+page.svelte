@@ -3,7 +3,7 @@
 
 	let markdown = '';
 	let oztixLinks: string[] = [];
-	let placeholder = 'https://thetotehotel.com/gig-guide/';
+	let placeholder = 'https://thetotehotel.oztix.com.au/';
 	let url = '';
 	let isLoading = false;
 
