@@ -4,12 +4,14 @@ import type { Actions, PageServerLoad } from './$types';
 
 // src/routes/+layout.server.ts
 import { redirect } from '@sveltejs/kit';
+import { goto } from '$app/navigation';
 
 export const load = async ({ locals: { supabase, safeGetSession } }) => {
 	const { session } = await safeGetSession();
 
 	if (!session) {
 		// Optionally redirect unauthenticated users to the home page
+
 		return { session: null, profile: null };
 	}
 

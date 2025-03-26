@@ -12,10 +12,13 @@
 	export let data;
 
 	import { handleMagicLink } from '$lib/utils/magicLink';
-
+	import { redirect } from '@sveltejs/kit';
+	import { goto } from '$app/navigation';
 	let email = '';
 
 	let isSubmitting = false;
+	let { supabase, session, profile } = data;
+	$: ({ supabase, session, profile } = data);
 
 	async function submitMagicLink() {
 		isSubmitting = true;
@@ -31,11 +34,6 @@
 		}
 		isSubmitting = false;
 	}
-
-	let { supabase, session, profile } = data;
-	$: ({ supabase, session, profile } = data);
-	// $: console.log('🚀 ~ profile:', profile);
-	// $: console.log('🚀 ~ data:', data);
 
 	const handleSubmit: SubmitFunction = () => {
 		$loading = true;
@@ -177,7 +175,7 @@
 				</li>
 				<li class="mb-2">
 					<a
-						href="/settings"
+						href="/app-settings"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 					>
 						<svg

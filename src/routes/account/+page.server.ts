@@ -5,7 +5,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
 	const { session } = await safeGetSession();
 
 	if (!session) {
-		throw redirect(303, '/');
+		throw redirect(303, '/not-logged-in');
 	}
 
 	const { data: profile, error: profileError } = await supabase

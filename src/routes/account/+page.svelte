@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 
 	export let data;
 	export let form;
@@ -19,6 +19,10 @@
 	let uploadError: string | null = null;
 
 	let needsSaving = false;
+
+	$: if (username === profile?.username) {
+		needsSaving = false;
+	}
 
 	function handleUsernameChange() {
 		needsSaving = true;
@@ -164,27 +168,29 @@
 					type="text"
 					bind:value={username}
 					on:keydown={handleUsernameChange}
+					autocomplete="off"
 				/>
 			</div>
+			{#if needsSaving}
+				<button
+					type="submit"
+					class="w-full gap-2 shadow btn primary"
+					disabled={loading || uploading}
+					in:slide
+					><svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-6"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+					</svg>
 
-			<button
-				type="submit"
-				class="w-full gap-2 shadow btn primary"
-				class:hidden={!needsSaving}
-				disabled={loading || uploading}
-				><svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-6"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-				</svg>
-
-				{loading ? 'Loading...' : 'Save'}
-			</button>
+					{loading ? 'Loading...' : 'Save'}
+				</button>
+			{/if}
 		</div>
 	</form>
 
