@@ -1,1 +1,5 @@
-<div class="page-center">Dashboard List Goes Here</div>
+<script>
+	import { fade } from 'svelte/transition';
+</script>
+
+<div class="page-center" in:fade>Dashboard List Goes Here</div>
