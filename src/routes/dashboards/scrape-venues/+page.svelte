@@ -1,18 +1,21 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 
 	let markdown = '';
 	let oztixLinks: string[] = [];
-	let placeholder = 'https://thetotehotel.oztix.com.au/';
+	let urlPlaceholder = 'enter url';
 	let url = '';
+
+	let regexPlaceholder = 'enter regex';
+	let regex;
 	let isLoading = false;
 
 	async function fetchMarkdown() {
 		try {
 			isLoading = true;
-			if (!url) {
-				url = placeholder;
-			}
+
+			if (!regex || !url) return;
+
 			// Prepend r.jina.ai/ to the URL
 			const jinaUrl = `https://r.jina.ai/${url}`;
 			const res = await fetch(jinaUrl);
@@ -20,8 +23,10 @@
 			markdown = await res.text();
 
 			// Extract Oztix links using regex
-			const linkRegex = /https:\/\/thetotehotel\.oztix\.com\.au\/default[^\s)]+/gi;
-			oztixLinks = [...new Set(markdown.match(linkRegex) || [])]; // Remove duplicates with Set
+			const regexObj = new RegExp(regex, 'g');
+			console.log('regex: ', regex);
+
+			oztixLinks = [...new Set(markdown.match(regexObj) || [])]; // Remove duplicates with Set
 		} catch (error) {
 			console.error('Error fetching Markdown:', error);
 			oztixLinks = ['Error occurred while fetching Markdown'];
@@ -31,18 +36,29 @@
 	}
 </script>
 
-<div class="pt-10 space-y-4 page" in:fade>
+<div class="!items-start pt-10 space-y-4 page" in:fade>
 	<h1 class="text-3xl">Scrape Oztix Links with Jina</h1>
 
-	<input type="text" class="w-full p-2 border rounded" {placeholder} bind:value={url} />
+	<label for="url">URL</label>
+	<input
+		type="text"
+		class="w-full p-2 border rounded"
+		placeholder={urlPlaceholder}
+		bind:value={url}
+	/>
+	<label for="regex">Regex Pattern</label>
+	<input
+		type="text"
+		class="w-full p-2 border rounded"
+		placeholder={regexPlaceholder}
+		bind:value={regex}
+	/>
 
-	<button
-		on:click={fetchMarkdown}
-		class="px-4 py-2 text-white bg-blue-500 rounded btn hover:bg-blue-600"
-		disabled={isLoading}
-	>
-		{isLoading ? 'Fetching...' : 'Find Oztix Links'}
-	</button>
+	{#if url && regex}
+		<button on:click={fetchMarkdown} class="w-full btn" disabled={isLoading} in:slide>
+			{isLoading ? 'Fetching...' : 'Find Oztix Links'}
+		</button>
+	{/if}
 
 	{#if oztixLinks.length > 0}
 		<div class="mt-4">
