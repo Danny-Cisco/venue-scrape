@@ -46,6 +46,13 @@
 			// Check if waitlist container exists
 			const waitlistContainer = doc.getElementById('waitlist-container');
 
+			function soldOutCheck() {
+				const tickets = doc.querySelector('.tickets-container')?.textContent?.trim();
+				if (tickets.includes('Join for Updates')) {
+					return true;
+				} else return false;
+			}
+
 			// Get other event information
 			event = {
 				tags,
@@ -54,7 +61,7 @@
 				description: doc.querySelector('.event-description')?.textContent?.trim() || '',
 				presentedBy: doc.querySelector('.presented-by')?.textContent?.trim() || '',
 				tickets: doc.querySelector('.tickets-container')?.textContent?.trim() || '',
-				soldOut: !!waitlistContainer
+				soldOut: soldOutCheck()
 			};
 		} catch (error) {
 			console.error('Error scraping site:', error);
