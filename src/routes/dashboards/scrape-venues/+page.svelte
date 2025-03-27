@@ -20,7 +20,7 @@
 			markdown = await res.text();
 
 			// Extract Oztix links using regex
-			const linkRegex = /https:\/\/thetotehotel\.oztix\.com\.au[^\s)]+/g;
+			const linkRegex = /https:\/\/thetotehotel\.oztix\.com\.au\/default[^\s)]+/gi;
 			oztixLinks = [...new Set(markdown.match(linkRegex) || [])]; // Remove duplicates with Set
 		} catch (error) {
 			console.error('Error fetching Markdown:', error);
