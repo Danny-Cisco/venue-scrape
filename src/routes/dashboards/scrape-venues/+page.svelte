@@ -9,6 +9,7 @@
 	let regexPlaceholder = 'enter regex';
 	let regex;
 	let isLoading = false;
+	let websites = [];
 
 	async function fetchMarkdown() {
 		try {
@@ -34,10 +35,26 @@
 			isLoading = false;
 		}
 	}
+
+	async function handleFetchWebsites() {
+		const response = await fetch('/api/supabase/get-all?table=websites', { method: 'GET' });
+		const json = await response.json();
+		websites = json.records;
+		console.log('websites: ', websites);
+	}
 </script>
 
 <div class="!items-start pt-10 space-y-4 page" in:fade>
 	<h1 class="text-3xl">Scrape Oztix Links with Jina</h1>
+
+	<button class="w-full btn" on:click={handleFetchWebsites}>Fetch Websites</button>
+
+	{#each websites as website}
+		<div class="w-full p-4 border rounded">
+			<p>{website.url}</p>
+			<p>{website.regex}</p>
+		</div>
+	{/each}
 
 	<label for="url">URL</label>
 	<input

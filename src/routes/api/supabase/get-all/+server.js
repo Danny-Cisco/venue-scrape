@@ -3,11 +3,12 @@ export async function GET({ locals, url }) {
 	try {
 		const tableName = url.searchParams.get('table') || 'main';
 
+		console.log('🚀 ~ GET ~ locals.user.id;:', locals.user.id);
 		// Fetch records for the current user
 		const { data: records, error } = await supabase
 			.from(tableName)
 			.select('*')
-			.eq('user_id', locals.user.id)
+			// .eq('user_id', locals.user.id) dont check for user for a single client app
 			.order('created_at', { ascending: false });
 
 		if (error) {
