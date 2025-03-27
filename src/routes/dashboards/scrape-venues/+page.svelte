@@ -11,7 +11,7 @@
 	let isLoading = false;
 	let websites = [];
 
-	async function fetchMarkdown() {
+	async function useJina() {
 		try {
 			isLoading = true;
 
@@ -20,11 +20,11 @@
 			// Prepend r.jina.ai/ to the URL
 			const jinaUrl = `https://r.jina.ai/${url}`;
 			const res = await fetch(jinaUrl);
-			if (!res.ok) throw new Error('Failed to fetch Markdown');
+			if (!res.ok) throw new Error('Jina failed to fetch Markdown');
 			markdown = await res.text();
 
 			// Extract Oztix links using regex
-			const regexObj = new RegExp(regex, 'g');
+			const regexObj = new RegExp(regex, 'gi');
 			console.log('regex: ', regex);
 
 			oztixLinks = [...new Set(markdown.match(regexObj) || [])]; // Remove duplicates with Set
@@ -36,7 +36,7 @@
 		}
 	}
 
-	async function handleFetchWebsites() {
+	async function fetchWebsites() {
 		const response = await fetch('/api/supabase/get-all?table=websites', { method: 'GET' });
 		const json = await response.json();
 		websites = json.records;
@@ -47,7 +47,7 @@
 <div class="!items-start pt-10 space-y-4 page" in:fade>
 	<h1 class="text-3xl">Scrape Oztix Links with Jina</h1>
 
-	<button class="w-full btn" on:click={handleFetchWebsites}>Fetch Websites</button>
+	<button class="w-full btn" on:click={fetchWebsites}>Fetch Websites</button>
 
 	{#each websites as website}
 		<div class="w-full p-4 border rounded">
@@ -72,7 +72,7 @@
 	/>
 
 	{#if url && regex}
-		<button on:click={fetchMarkdown} class="w-full btn" disabled={isLoading} in:slide>
+		<button on:click={useJina} class="w-full btn" disabled={isLoading} in:slide>
 			{isLoading ? 'Fetching...' : 'Find Oztix Links'}
 		</button>
 	{/if}
