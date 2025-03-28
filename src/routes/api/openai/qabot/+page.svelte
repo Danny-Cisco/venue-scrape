@@ -1,7 +1,7 @@
 <script>
-	import { dog } from '$lib/utils/prompts.ts';
+	import { dog, eventToJson } from '$lib/utils/prompts.ts';
 	let question = '';
-	let systemPrompt = dog;
+	let systemPrompt = eventToJson;
 	let responseText = '';
 
 	async function sendQuestion() {
