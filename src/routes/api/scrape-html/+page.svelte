@@ -24,11 +24,15 @@
 	let placeholder = 'https://thetotehotel.com/gig-guide/';
 	let url = '';
 
+	let readout = '';
+
 	async function scrapeSite() {
 		try {
 			if (!url) {
 				url = placeholder;
 			}
+
+			readout = 'Fetching HTML...';
 			const res = await fetch(`/api/scrape-html?target=${url}`);
 			const data = await res.json();
 			html = data.html;
@@ -61,7 +65,9 @@
 				tickets: doc.querySelector('.tickets-container')?.textContent?.trim() || '',
 				soldOut: soldOutCheck()
 			};
+			readout = 'Success!';
 		} catch (error) {
+			readout = error;
 			console.error('Error scraping site:', error);
 			event = {
 				tags: [],
@@ -77,6 +83,10 @@
 
 <div class="pt-10 space-y-4 page" in:fade>
 	<h1 class="text-3xl">Scrape Event</h1>
+
+	<div class="h-10 text-green-500">
+		<p>{readout}</p>
+	</div>
 
 	<input type="text" class="w-full p-2 border rounded" {placeholder} bind:value={url} />
 
@@ -114,7 +124,5 @@
 				<p>{event.tickets}</p>
 			</div>
 		</div>
-	{:else if html}
-		<p>No event information found in the scraped content</p>
 	{/if}
 </div>
