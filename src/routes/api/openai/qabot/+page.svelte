@@ -23,8 +23,16 @@
 <div class="gap-4 page-center">
 	<h1>openai chat test</h1>
 
-	<input type="text" bind:value={question} />
-
+	<!-- <input type="text" bind:value={question} /> -->
+	<textarea
+		name="question"
+		id="question"
+		class="w-full"
+		on:keydown={(e) => {
+			if (e.key === 'Enter' && e.metaKey) sendQuestion();
+		}}
+		bind:value={question}
+	/>
 	<button on:click={sendQuestion} class="btn">Send Message</button>
 	<p>{responseText}</p>
 </div>
