@@ -21,9 +21,20 @@
 </script>
 
 <div class="gap-4 page-center">
-	<h1>openai chat test</h1>
+	<h1 class="text-4xl">OpenAI QA Bot</h1>
+	<p class="flex w-full">System Prompt:</p>
+	<textarea
+		name="systemPrompt"
+		id="systemPrompt"
+		class="w-full h-[150px]"
+		on:keydown={(e) => {
+			if (e.key === 'Enter' && e.metaKey) sendQuestion();
+		}}
+		bind:value={systemPrompt}
+	/>
 
 	<!-- <input type="text" bind:value={question} /> -->
+	<p class="flex w-full">Question:</p>
 	<textarea
 		name="question"
 		id="question"
