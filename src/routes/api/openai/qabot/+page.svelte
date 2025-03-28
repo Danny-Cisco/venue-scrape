@@ -1,6 +1,7 @@
 <script>
+	import { dog } from '$lib/utils/prompts.ts';
 	let question = '';
-	let systemPrompt = ' always reply like a pirate';
+	let systemPrompt = dog;
 	let responseText = '';
 
 	async function sendQuestion() {
