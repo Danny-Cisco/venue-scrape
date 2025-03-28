@@ -16,6 +16,8 @@
 	import { goto } from '$app/navigation';
 	let email = '';
 
+	let leftSidebarContainer;
+
 	let isSubmitting = false;
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
@@ -42,6 +44,10 @@
 			$loading = false;
 		};
 	};
+
+	function handleOutsideClick() {
+		$showLeftSidebar = false;
+	}
 
 	onMount(() => {
 		// Detect if the user is on mobile and update the stores
@@ -141,7 +147,7 @@
 
 <div class="flex flex-1 h-full">
 	<!-- Main Content -->
-	<div class="relative w-full h-full pt-[100px]">
+	<div class="relative w-full h-full pt-[100px]" on:click={handleOutsideClick}>
 		<main class="h-full max-w-[80ch] mx-auto overflow-y-auto">
 			<slot />
 		</main>
@@ -149,6 +155,7 @@
 	<!-- Left Sidebar -->
 	{#if $showLeftSidebar}
 		<aside
+			bind:this={leftSidebarContainer}
 			class="w-[250px] p-4 pt-16 bg-black top-[100px] isolate absolute z-[99999] left-0 h-full"
 			transition:slide={{ axis: 'x' }}
 		>
