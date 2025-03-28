@@ -14,7 +14,7 @@
 </script>
 
 <div class="gap-4 page-center">
-	<h1>openai chat test</h1>
+	<h1>openai chat test NEEDS WORK STILL</h1>
 
 	<input type="text" bind:value={message} />
 

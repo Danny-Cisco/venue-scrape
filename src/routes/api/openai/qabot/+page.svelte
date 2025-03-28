@@ -1,15 +1,16 @@
 <script>
 	let question = '';
+	let systemPrompt = ' always reply like a pirate';
 	let responseText = '';
 
 	async function sendQuestion() {
-		const parsedQuestion = await JSON.stringify({ question });
+		const parsedBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: parsedQuestion
+			body: parsedBody
 		});
 
 		const data = await response.json();

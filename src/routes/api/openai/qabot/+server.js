@@ -8,7 +8,7 @@ const openai = new OpenAI({
 export async function POST({ request }) {
 	try {
 		// Parse the incoming request to get the question
-		const { question } = await request.json();
+		const { question, systemPrompt } = await request.json();
 
 		if (!question) {
 			return new Response(JSON.stringify({ error: 'Question is required' }), {
@@ -18,7 +18,10 @@ export async function POST({ request }) {
 		}
 
 		// Format the single message into the chat completions format
-		const messages = [{ role: 'user', content: question }];
+		const messages = [
+			{ role: 'system', content: systemPrompt },
+			{ role: 'user', content: question }
+		];
 
 		// Send the formatted messages to OpenAI API
 		const response = await openai.chat.completions.create({
