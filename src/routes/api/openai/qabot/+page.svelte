@@ -1,10 +1,13 @@
 <script>
+	import { slide, fade } from 'svelte/transition';
 	import { dog, eventToJson } from '$lib/utils/prompts.ts';
 	let question = '';
 	let systemPrompt = eventToJson;
 	let responseText = '';
+	let loading = false;
 
 	async function sendQuestion() {
+		loading = true;
 		const parsedBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
 			method: 'POST',
@@ -15,8 +18,8 @@
 		});
 
 		const data = await response.json();
-		console.log('🚀 ~ sendQuestion ~ data:', data);
 		responseText = data.answer;
+		loading = false;
 	}
 </script>
 
@@ -45,5 +48,16 @@
 		bind:value={question}
 	/>
 	<button on:click={sendQuestion} class="btn">Send Message</button>
-	<p>{responseText}</p>
+
+	{#if loading}
+		<div class="row">
+			loading <img src="/pac-man.svg" alt="" class=" size-10" transition:slide />
+		</div>
+	{/if}
+	{#if responseText}
+		<p class="flex w-full">Answer:</p>
+		<div class="rounded bg-white/5">
+			<p class="p-4 rounded">{responseText}</p>
+		</div>
+	{/if}
 </div>
