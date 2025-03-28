@@ -43,9 +43,7 @@
 				.map((element) => element.textContent || '')
 				.filter((text) => text !== '');
 
-			// Check if waitlist container exists
-			const waitlistContainer = doc.getElementById('waitlist-container');
-
+			// Check if sold out
 			function soldOutCheck() {
 				const tickets = doc.querySelector('.tickets-container')?.textContent?.trim();
 				if (tickets.includes('Join for Updates')) {
@@ -93,13 +91,13 @@
 		<div class="mt-4">
 			<div class="p-4 border rounded shadow-sm">
 				<div class="flex items-center justify-between mb-2">
-					<div class="space-x-2">
+					<div class="row">
 						{#each event.tags as tag}
-							<span class="px-2 py-1 text-sm bg-blue-500 rounded-full">{tag}</span>
+							<span class="px-2 py-1 text-sm bg-blue-500 rounded-full center">{tag}</span>
 						{/each}
 					</div>
 					{#if event.soldOut}
-						<span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full"
+						<span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full center"
 							>Sold Out</span
 						>
 					{/if}
