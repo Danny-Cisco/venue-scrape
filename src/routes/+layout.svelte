@@ -67,9 +67,13 @@
 	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-white/10"
 >
 	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 font-mono text-3xl font-light">
+	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl font-light font-bold">
 		<img src="/icon.svg" class="size-10" alt="" />
-		Venue Scrape
+		<span
+			class="text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400"
+		>
+			Venue Scrape
+		</span>
 	</strong>
 
 	<!-- User Authentication -->
@@ -149,9 +153,9 @@
 			transition:slide={{ axis: 'x' }}
 		>
 			<div class="h-[101px]"></div>
-			<h2 class="mb-2 text-lg font-semibold">Venue Scrape</h2>
+			<h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Venue Scrape</h2>
 			<ul>
-				<li class="mb-2">
+				<li class="mb-2 row">
 					<a
 						href="/"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
@@ -173,7 +177,7 @@
 						Home
 					</a>
 				</li>
-				<li class="mb-2">
+				<li class="mb-2 row">
 					<a
 						href="/app-settings"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
@@ -201,7 +205,7 @@
 					</a>
 				</li>
 
-				<li class="mb-2">
+				<li class="mb-2 row">
 					<a
 						href="/account"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
@@ -225,7 +229,7 @@
 				</h2></a
 			>
 			<ul class="justify-start ml-0 whitespace-nowrap">
-				<li class="mb-2">
+				<li class="mb-2 row">
 					<a
 						href="/dashboards/scrape-venues"
 						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"

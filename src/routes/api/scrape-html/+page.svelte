@@ -97,7 +97,8 @@
 						{/each}
 					</div>
 					{#if event.soldOut}
-						<span class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full center"
+						<span
+							class="px-3 py-1 text-sm font-medium text-white bg-red-500 rounded-full whitespace-nowrap center"
 							>Sold Out</span
 						>
 					{/if}
