@@ -8,8 +8,17 @@
 	let gigs = [];
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
+	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
 
 	let output = '';
+
+	let gigObj = {
+		tixUrl: '',
+		venue: 'The Gem',
+		eventName: '',
+		eventDescription: '',
+		markdown: ''
+	};
 
 	let url = 'https://r.jina.ai/https://www.thegembar.com.au/';
 
@@ -36,10 +45,19 @@
 		if (links.length === 0) return;
 		for (const link of links) {
 			readOut = `fetching ${link}`;
-			const gig = await getGig(link);
+			const markdown = await getGig(link);
+			const tixUrl = await getTixUrl(markdown);
+
+			let gig = {
+				tixUrl,
+				venue: 'The Gem',
+				eventName: '', // You could extract this from markdown if needed
+				eventDescription: '', // Same here
+				markdown
+			};
+
 			gigs = [...gigs, gig];
 		}
-
 		readOut = 'Done';
 		loading = false;
 	}
@@ -53,6 +71,10 @@
 			output = 'Failed to get gig';
 			return;
 		}
+	}
+
+	async function getTixUrl(markdown) {
+		return markdown.match(tixUrlRegex) || '';
 	}
 </script>
 
@@ -82,9 +104,19 @@
 		<div>
 			<h1>GIGS</h1>
 			{#each gigs as gig}
-				<p class="space-y-10">
-					{gig}
-				</p>
+				<div class="flex flex-col gap-10">
+					<p class="p-4 border rounded">
+						{gig.markdown}
+					</p>
+
+					{#if !gig.tixUrl}
+						<p>FREE GIG??</p>
+					{:else}
+						<p class>{gig.tixUrl}</p>
+
+						<a class="btn" href={gig.tixUrl}>{gig.tixUrl}</a>
+					{/if}
+				</div>
 			{/each}
 		</div>
 	{/if}
