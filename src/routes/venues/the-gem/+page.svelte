@@ -5,6 +5,7 @@
 	let loading = false;
 
 	let links = [];
+	let gigs = [];
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 
@@ -29,6 +30,30 @@
 		loading = false;
 		readOut = 'Done';
 	}
+
+	async function crawlGemGigs() {
+		loading = true;
+		if (links.length === 0) return;
+		for (const link of links) {
+			readOut = `fetching ${link}`;
+			const gig = await getGig(link);
+			gigs = [...gigs, gig];
+		}
+
+		readOut = 'Done';
+		loading = false;
+	}
+
+	async function getGig(link) {
+		const jinaLink = 'https://r.jina.ai/' + link;
+		const res = await fetch(jinaLink);
+		if (res.ok) {
+			return await res.text();
+		} else {
+			output = 'Failed to get gig';
+			return;
+		}
+	}
 </script>
 
 <div class="space-y-4 page">
@@ -47,6 +72,18 @@
 			{#each links as link}
 				<p>
 					{link}
+				</p>
+			{/each}
+		</div>
+		<button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button>
+	{/if}
+
+	{#if gigs.length > 0}
+		<div>
+			<h1>GIGS</h1>
+			{#each gigs as gig}
+				<p class="space-y-10">
+					{gig}
 				</p>
 			{/each}
 		</div>
