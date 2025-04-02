@@ -30,3 +30,6 @@ package-lock.json
 # IDE-specific files
 .vscode/
 .idea/
+
+tmp/
+storage/

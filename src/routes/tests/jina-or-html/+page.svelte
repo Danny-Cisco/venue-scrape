@@ -41,6 +41,23 @@
 			output = `Network error: ${err.message}`;
 		}
 	}
+
+	async function useCheerio() {
+		copied = false;
+		try {
+			const res = await fetch(`/api/cheerio/gem-gig?url=${input}`);
+
+			if (res.ok) {
+				const json = await res.json();
+				output = JSON.stringify(json, null, 2);
+			} else {
+				const errText = await res.text();
+				output = `Error ${res.status}: ${errText}`;
+			}
+		} catch (err) {
+			output = `Network error: ${err.message}`;
+		}
+	}
 </script>
 
 <div class="mb-4 space-y-4 page">
@@ -50,6 +67,7 @@
 	<div class="flex gap-4">
 		<button class="btn" on:click={useJina}>JINA</button>
 		<button class="btn" on:click={useHtml}>HTML</button>
+		<button class="btn" on:click={useCheerio}>Cheerio</button>
 	</div>
 </div>
 <div class="w-full p-4 bg-white/5 rounded-xl">
