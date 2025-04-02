@@ -26,6 +26,7 @@
 	.gig-card {
 		display: flex;
 		flex-direction: column;
+		align-items: end;
 		gap: 1rem;
 		background-color: #fff;
 		border-radius: 1rem;
@@ -36,7 +37,7 @@
 	}
 
 	.gig-image {
-		width: 100%;
+		width: 100px;
 		height: auto;
 		border-radius: 0.5rem;
 		object-fit: cover;

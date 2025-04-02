@@ -117,9 +117,9 @@
 	{#if gigs.length > 0}
 		<div>
 			<h1>GIGS</h1>
-			{#each gigs as giggy}
+			{#each gigs as gig}
 				<div class="flex flex-col gap-4">
-					<GigCard gig={giggy} />
+					<GigCard {gig} />
 				</div>
 			{/each}
 		</div>
