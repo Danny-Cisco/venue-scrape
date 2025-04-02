@@ -68,87 +68,10 @@
 <!-- page gradient -->
 <div class="fixed inset-0 z-[0] bg-gradient-to-br from-white/10 to-black/50"></div>
 
-<!-- Header -->
-<header
-	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-white/10"
->
-	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl font-light font-bold">
-		<img src="/icon.svg" class="size-10" alt="" />
-		<span
-			class="text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400"
-		>
-			Venue Scrape
-		</span>
-	</strong>
-
-	<!-- User Authentication -->
-	{#if !$loading}
-		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
-			{#if session}
-				<a href="/account" class="flex items-center gap-4"
-					><p class="font-bold">
-						{profile?.username || session.user.email || session.user.displayName}
-					</p>
-
-					<!-- User Avatar -->
-					<img
-						src={profile?.avatar_url || '/default-avatar.svg'}
-						alt="User Avatar"
-						class="w-10 h-10 rounded-full"
-					/>
-				</a>
-			{:else}
-				<!-- Magic Link Form -->
-				<div class="flex flex-col items-end">
-					{#if $message}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
-							{$message}
-						</div>
-					{/if}
-					{#if $error}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
-							{$error}
-						</div>
-					{/if}
-					<div class="flex items-center justify-end gap-2 text-sm">
-						<label for="email" class="hidden">Email</label>
-						<input
-							type="email"
-							bind:value={email}
-							placeholder="Enter your email"
-							class="w-64 h-10 px-2 py-2 bg-transparent rounded !ring-black/20"
-						/>
-						<button
-							on:click={submitMagicLink}
-							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] hover:shadow-md hover:mt-[-1px] rounded"
-						>
-							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-8"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-								/>
-							</svg>
-						</button>
-					</div>
-				</div>
-			{/if}
-		</div>
-	{/if}
-</header>
-
 <div class="flex flex-1 h-full">
 	<!-- Main Content -->
-	<div class="relative w-full h-full pt-[100px]" on:click={handleOutsideClick}>
-		<main class="h-full max-w-[80ch] mx-auto overflow-y-auto">
+	<div class="relative w-full h-full overflow-y-auto pt-[100px]" on:click={handleOutsideClick}>
+		<main class="h-full max-w-[80ch] mx-auto">
 			<slot />
 		</main>
 	</div>
@@ -347,6 +270,83 @@
 		</svg>
 	</button>
 </div>
+
+<!-- Header -->
+<header
+	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-dark"
+>
+	<!-- Logo -->
+	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl font-light font-bold">
+		<img src="/icon.svg" class="size-10" alt="" />
+		<span
+			class="text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400"
+		>
+			Venue Scrape
+		</span>
+	</strong>
+
+	<!-- User Authentication -->
+	{#if !$loading}
+		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
+			{#if session}
+				<a href="/account" class="flex items-center gap-4"
+					><p class="font-bold">
+						{profile?.username || session.user.email || session.user.displayName}
+					</p>
+
+					<!-- User Avatar -->
+					<img
+						src={profile?.avatar_url || '/default-avatar.svg'}
+						alt="User Avatar"
+						class="w-10 h-10 rounded-full"
+					/>
+				</a>
+			{:else}
+				<!-- Magic Link Form -->
+				<div class="flex flex-col items-end">
+					{#if $message}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$message}
+						</div>
+					{/if}
+					{#if $error}
+						<div class="" in:fly={{ x: 200, duration: 500 }}>
+							{$error}
+						</div>
+					{/if}
+					<div class="flex items-center justify-end gap-2 text-sm">
+						<label for="email" class="hidden">Email</label>
+						<input
+							type="email"
+							bind:value={email}
+							placeholder="Enter your email"
+							class="w-64 h-10 px-2 py-2 bg-transparent rounded !ring-black/20"
+						/>
+						<button
+							on:click={submitMagicLink}
+							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] hover:shadow-md hover:mt-[-1px] rounded"
+						>
+							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-8"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
+			{/if}
+		</div>
+	{/if}
+</header>
 
 <style>
 	.size-5 {

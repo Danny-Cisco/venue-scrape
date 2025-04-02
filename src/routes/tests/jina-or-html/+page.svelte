@@ -1,10 +1,14 @@
 <script>
+	import CopyClipboard from '$lib/components/ui/CopyClipboard.svelte';
 	let input;
 	let output;
+
+	let copied = false;
 
 	let jinaString = 'https://r.jina.ai/';
 
 	async function useJina() {
+		copied = false;
 		try {
 			const res = await fetch(jinaString + input);
 
@@ -22,26 +26,19 @@
 	}
 
 	async function useHtml() {
+		copied = false;
 		try {
 			const res = await fetch(`/api/scrape-html?target=${input}`);
 
 			if (res.ok) {
-				output = await res.text();
+				const json = await res.json();
+				output = json.html;
 			} else {
 				const errText = await res.text();
 				output = `Error ${res.status}: ${errText}`;
 			}
 		} catch (err) {
 			output = `Network error: ${err.message}`;
-		}
-	}
-
-	async function copyToClipboard() {
-		try {
-			await navigator.clipboard.writeText(output);
-			alert('Copied to clipboard!');
-		} catch (err) {
-			console.error('Failed to copy: ', err);
 		}
 	}
 </script>
@@ -55,14 +52,13 @@
 		<button class="btn" on:click={useHtml}>HTML</button>
 	</div>
 </div>
-<div class="w-full p-4 border rounded">
+<div class="w-full p-4 bg-white/5 rounded-xl">
 	<div class="flex items-center justify-between mb-2">
-		<h1>OUTPUT HERE:</h1>
-
-		<button class="btn btn-sm" on:click={copyToClipboard}>Copy</button>
+		<h1>OUTPUT GOES HERE:</h1>
+		<CopyClipboard text={output} {copied} />
 	</div>
 	{#if output}
-		<div class="w-full border-t"></div>
+		<div class="w-full my-8 border-t border-dashed"></div>
 
 		<pre class="whitespace-pre-wrap">{output}</pre>
 	{/if}
