@@ -1,13 +1,12 @@
 <script>
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
-	import { json } from '@sveltejs/kit';
+	import GigCard from '../../../lib/components/ui/GigCard.svelte';
 	let venueName = 'The Gem';
 	let readOut = 'Ready to begin';
 	let loading = false;
 
 	let links = [];
 	let gigs = [];
-	let gig = {};
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
@@ -53,7 +52,7 @@
 
 			if (res.ok) {
 				const json = await res.json();
-				gig = JSON.stringify(json, null, 2);
+				return json;
 			} else {
 				const errText = await res.text();
 				readOut = `Error ${res.status}: ${errText}`;
@@ -69,7 +68,7 @@
 		for (const link of links) {
 			readOut = `cheerio fetching ${link}`;
 
-			await useCheerio(link);
+			const gig = await useCheerio(link);
 
 			gigs = [...gigs, gig];
 		}
@@ -118,11 +117,9 @@
 	{#if gigs.length > 0}
 		<div>
 			<h1>GIGS</h1>
-			{#each gigs as gig}
-				<div class="flex flex-col gap-10">
-					<p class="p-4 border rounded">
-						{gig}
-					</p>
+			{#each gigs as giggy}
+				<div class="flex flex-col gap-4">
+					<GigCard gig={giggy} />
 				</div>
 			{/each}
 		</div>
