@@ -1,11 +1,13 @@
 <script>
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
+	import { json } from '@sveltejs/kit';
 	let venueName = 'The Gem';
 	let readOut = 'Ready to begin';
 	let loading = false;
 
 	let links = [];
 	let gigs = [];
+	let gig = {};
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
@@ -20,41 +22,54 @@
 		markdown: ''
 	};
 
-	let url = 'https://r.jina.ai/https://www.thegembar.com.au/';
+	let url = 'https://www.thegembar.com.au/';
 
 	async function getLinks() {
 		loading = true;
-		readOut = 'fetching Markdown';
-		let res = await fetch(url);
-		if (!res.ok) {
-			readOut = res.error;
-			throw new Error('Jina failed to fetch Markdown');
-		} else {
-			output = await res.text();
-		}
-		readOut = 'extracting links using regex';
+		readOut = 'cheerio fetching links';
 
-		links = [...new Set(output.match(regex) || [])];
+		const res = await fetch(`/api/cheerio/gem-links?url=${url}`);
+
+		if (!res.ok) {
+			readOut = await res.text();
+			throw new Error('Cheerio failed to fetch Links');
+		}
+
+		const json = await res.json(); // ✅ this is already your array
+
+		output = JSON.stringify(json, null, 2); // ✅ this is just for visual logging or display
+
+		// ✅ assign json directly to links
+		links = [...new Set(json)];
 
 		loading = false;
 		readOut = 'Done';
+	}
+
+	async function useCheerio(link) {
+		// copied = false;
+		try {
+			const res = await fetch(`/api/cheerio/gem-gig?url=${link}`);
+
+			if (res.ok) {
+				const json = await res.json();
+				gig = JSON.stringify(json, null, 2);
+			} else {
+				const errText = await res.text();
+				readOut = `Error ${res.status}: ${errText}`;
+			}
+		} catch (err) {
+			readOut = `Network error: ${err.message}`;
+		}
 	}
 
 	async function crawlGemGigs() {
 		loading = true;
 		if (links.length === 0) return;
 		for (const link of links) {
-			readOut = `fetching ${link}`;
-			const markdown = await getGig(link);
-			const tixUrl = await getTixUrl(markdown);
+			readOut = `cheerio fetching ${link}`;
 
-			let gig = {
-				tixUrl,
-				venue: 'The Gem',
-				eventName: '', // You could extract this from markdown if needed
-				eventDescription: '', // Same here
-				markdown
-			};
+			await useCheerio(link);
 
 			gigs = [...gigs, gig];
 		}
@@ -106,16 +121,8 @@
 			{#each gigs as gig}
 				<div class="flex flex-col gap-10">
 					<p class="p-4 border rounded">
-						{gig.markdown}
+						{gig}
 					</p>
-
-					{#if !gig.tixUrl}
-						<p>FREE GIG??</p>
-					{:else}
-						<p class>{gig.tixUrl}</p>
-
-						<a class="btn" href={gig.tixUrl}>{gig.tixUrl}</a>
-					{/if}
 				</div>
 			{/each}
 		</div>
