@@ -57,8 +57,13 @@
 </div>
 <div class="w-full p-4 border rounded">
 	<div class="flex items-center justify-between mb-2">
-		<h1>OUTPUT</h1>
+		<h1>OUTPUT HERE:</h1>
+
 		<button class="btn btn-sm" on:click={copyToClipboard}>Copy</button>
 	</div>
-	<pre class="whitespace-pre-wrap">{output}</pre>
+	{#if output}
+		<div class="w-full border-t"></div>
+
+		<pre class="whitespace-pre-wrap">{output}</pre>
+	{/if}
 </div>
