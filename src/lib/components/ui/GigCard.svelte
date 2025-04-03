@@ -1,21 +1,56 @@
 <script>
 	export let gig = {};
+
+	let show = false;
 </script>
 
 <div class="gig-card">
-	{#if gig.imageUrl}
-		<img src={gig.imageUrl} alt={gig.title} class="gig-image" />
-	{/if}
-
-	<div class="gig-details">
+	<div class="w-full gig-details">
 		<h2 class="gig-title">{gig.title}</h2>
-		<p class="gig-datetime">
-			<strong>{gig.date}</strong> at <strong>{gig.time}</strong>
+		<p class="flex flex-col gig-datetime">
+			<strong>{gig.date}</strong>
+			<strong>{gig.time}</strong>
 		</p>
-		<p class="gig-description">{gig.description}</p>
+
+		{#if !show}
+			<button class="text-black" on:click={() => (show = !show)}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-5"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5"
+					/>
+				</svg>
+			</button>
+		{:else}
+			<button class="text-black" on:click={() => (show = !show)}
+				><svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-5"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
+				</svg>
+			</button>
+			{#if gig.imageUrl}
+				<img src={gig.imageUrl} alt={gig.title} class="gig-image" />
+			{/if}
+			<p class="gig-description">{gig.description}</p>
+		{/if}
 
 		{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-			<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button">Buy Tickets</a>
+			<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button">Visit Ticketing Site</a>
 		{:else}
 			<p class="gig-ticket-free">Free Entry</p>
 		{/if}
@@ -34,10 +69,11 @@
 		padding: 1.5rem;
 		max-width: 600px;
 		margin: 8px;
+		height: 100%;
 	}
 
 	.gig-image {
-		width: 100px;
+		width: 100%;
 		height: auto;
 		border-radius: 0.5rem;
 		object-fit: cover;
@@ -70,17 +106,18 @@
 	.gig-ticket-button {
 		margin-top: 1rem;
 		padding: 0.5rem 1rem;
-		background-color: #e85914;
+		background-color: gray;
 		color: #fff;
 		font-weight: bold;
 		border-radius: 0.5rem;
 		text-align: center;
 		text-decoration: none;
 		transition: background-color 0.2s;
+		border-radius: 999999px;
 	}
 
 	.gig-ticket-button:hover {
-		background-color: #c44710;
+		background-color: black;
 	}
 
 	.gig-ticket-free {

@@ -43,6 +43,7 @@
 
 		loading = false;
 		readOut = 'Done';
+		crawlGemGigs();
 	}
 
 	async function useCheerio(link) {
@@ -96,10 +97,10 @@
 	<h1 class="text-5xl font-bold text-center">
 		{venueName}
 	</h1>
-	<div class="flex flex-col items-center w-full p-10 text-center bg-white/5">
+	<div class="flex flex-col items-center w-full p-10 text-center rounded-3xl bg-white/5">
 		{readOut}{#if loading}<PacMan />{/if}
 	</div>
-	<button class="w-full btn" on:click={getLinks}>Get Links</button>
+	<button class="w-full btn" on:click={getLinks}>START</button>
 	<!-- <h1>JINA OUT</h1>
 	<div>{output}</div> -->
 	{#if links.length > 0}
@@ -111,17 +112,18 @@
 				</p>
 			{/each}
 		</div>
-		<button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button>
+		<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
 	{/if}
 
 	{#if gigs.length > 0}
-		<div>
-			<h1>GIGS</h1>
-			{#each gigs as gig}
-				<div class="flex flex-col gap-4">
-					<GigCard {gig} />
-				</div>
-			{/each}
+		<div class="w-screen">
+			<div class="flex flex-wrap justify-center gap-4 mx-auto">
+				{#each gigs as gig}
+					<div class="max-w-[400px] min-w-[400px] min-h-[200px]">
+						<GigCard {gig} />
+					</div>
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>
