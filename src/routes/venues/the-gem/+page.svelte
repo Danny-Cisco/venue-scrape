@@ -2,8 +2,8 @@
 	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 	import GigCard from '../../../lib/components/ui/GigCard.svelte';
-	let venueName = 'The Gem Bar';
-	let readOut = 'Ready to begin';
+	let venueName = 'The Gem';
+	let readOut = '😎 Ready to begin';
 	let loading = false;
 
 	let links = [];
@@ -26,7 +26,7 @@
 
 	async function getLinks() {
 		loading = true;
-		readOut = 'cheerio fetching links';
+		readOut = '✋ Cheerio is finding links';
 
 		const res = await fetch(`/api/cheerio/gem-links?url=${url}`);
 
@@ -43,7 +43,7 @@
 		links = [...new Set(json)];
 
 		loading = false;
-		readOut = 'Done';
+		readOut = '✅ Done';
 		crawlGemGigs();
 	}
 
@@ -68,13 +68,13 @@
 		loading = true;
 		if (links.length === 0) return;
 		for (const link of links) {
-			readOut = `cheerio fetching ${link}`;
+			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
 
 			gigs = [...gigs, gig];
 		}
-		readOut = 'Done';
+		readOut = '✅ Done';
 		loading = false;
 	}
 
@@ -95,9 +95,6 @@
 </script>
 
 <div class="page">
-	<!-- <h1 class="flex gap-4 mt-4 text-5xl font-bold text-center whitespace-nowrap">
-		{venueName}
-	</h1> -->
 	<div class="w-screen text-center bg-gradient-to-br from-purple-500 to-pink-500">
 		<h1
 			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
@@ -108,7 +105,7 @@
 
 	<div class="flex flex-col items-center w-screen p-10 text-center h-[100px] bg-black">
 		{#key readOut}
-			<div class="h-[2rem] overflow-hidden max-w-full" in:fade>
+			<div class="h-[2rem] flex items-center overflow-hidden max-w-full" in:fade>
 				{readOut}
 			</div>
 		{/key}
