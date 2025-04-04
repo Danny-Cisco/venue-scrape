@@ -9,6 +9,8 @@
 	let links = [];
 	let gigs = [];
 
+	let bands = [];
+
 	let lastClicked = {};
 	let showGigModal = false;
 
@@ -100,6 +102,37 @@
 		lastClicked = gig;
 		showGigModal = true;
 	}
+
+	async function getBands(question) {
+		const systemPrompt =
+			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }';
+
+		loading = true;
+		const parsedBody = await JSON.stringify({ question, systemPrompt });
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: parsedBody
+		});
+
+		const data = await response.json();
+		const responseJson = data.answer;
+
+		const finalJson = await JSON.parse(responseJson);
+
+		bands = [...bands, ...(finalJson.bands || [])];
+		loading = false;
+	}
+
+	$: console.log('bands: ', bands);
+
+	$: if (gigs.length > 0) {
+		const lastGig = gigs[gigs.length - 1];
+		const question = lastGig.title + lastGig.description;
+		getBands(question);
+	}
 </script>
 
 <div class="page">
@@ -128,6 +161,13 @@
 				{#each links as link}
 					<p>
 						{link}
+					</p>
+				{/each}
+			</div>
+			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
+				{#each bands as band}
+					<p>
+						{band}
 					</p>
 				{/each}
 			</div>
