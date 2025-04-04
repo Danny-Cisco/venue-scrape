@@ -103,6 +103,7 @@
 </script>
 
 <div class="page">
+	<!-- header with gradient -->
 	<div class="w-screen text-center bg-gradient-to-br from-purple-500 to-pink-500">
 		<h1
 			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
@@ -111,6 +112,7 @@
 		</h1>
 	</div>
 
+	<!-- upper section of output -->
 	<div class="flex flex-col items-center w-screen p-10 text-center h-[100px] bg-black">
 		{#key readOut}
 			<div class="h-[2rem] flex items-center overflow-hidden max-w-full" in:fade>
@@ -119,6 +121,7 @@
 		{/key}
 	</div>
 
+	<!-- lower section of output -->
 	<div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
 		{#if links.length > 0}
 			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
@@ -134,6 +137,7 @@
 	<div class="flex items-center w-screen my-10">
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
+		<!-- start button -->
 		<div class="min-w-xl center w-full max-w-[800px]">
 			<button
 				class="w-full max-w-xl mt-2 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
