@@ -139,51 +139,53 @@
 	<!-- <h1>JINA OUT</h1>
 	<div>{output}</div> -->
 
-	<div class="border-t-[3px] border-dashed border-purple-500 w-screen mt-8 mb-10"></div>
+	<div class="border-t-[3px] border-dotted border-purple-500 w-screen mt-8 mb-10"></div>
 
-	<div class="w-screen px-4 overflow-x-auto">
-		<table class="min-w-full border border-gray-300 table-auto">
-			<thead class="text-left bg-gray-900">
-				<tr>
-					<th class="px-4 py-2 border-b">Title</th>
-					<th class="px-4 py-2 border-b">Date</th>
-					<th class="px-4 py-2 border-b">Time</th>
-					<th class="px-4 py-2 border-b">Description</th>
-					<th class="px-4 py-2 border-b">Image</th>
-					<th class="px-4 py-2 border-b">Ticket Price</th>
-					<th class="px-4 py-2 border-b">Ticket Link</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each gigs as gig}
-					<tr class="hover:bg-gray-50/10 max-h-[2.5rem] overflow-hidden">
-						<td class="px-4 py-2 font-medium border-b">{gig.title}</td>
-						<td class="px-4 py-2 border-b">{gig.date}</td>
-						<td class="px-4 py-2 border-b">{gig.time}</td>
-						<td class="px-4 py-2 text-xs border-b">{gig.description}</td>
-						<td class="px-4 py-2 border-b">
-							{#if gig.imageUrl}
-								<img src={gig.imageUrl} alt="Gig Image" class="object-cover w-20 h-20 rounded" />
-							{:else}
-								<span class="text-sm italic text-gray-400">No image</span>
-							{/if}
-						</td>
-						<td class="px-4 py-2 border-b">{gig.ticketPrice}</td>
-						<td class="px-4 py-2 border-b">
-							{#if gig.ticketUrl}
-								<a
-									href={gig.ticketUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="text-blue-600 underline">Buy Ticket</a
-								>
-							{:else}
-								<span class="text-sm italic text-gray-400">N/A</span>
-							{/if}
-						</td>
+	{#if gigs.length > 0}
+		<div class="w-screen px-4 overflow-x-auto" in:fade>
+			<table class="min-w-full border border-gray-300 table-auto">
+				<thead class="text-left bg-gray-900">
+					<tr>
+						<th class="px-4 py-2 border-b">Title</th>
+						<th class="px-4 py-2 border-b">Date</th>
+						<th class="px-4 py-2 border-b">Time</th>
+						<th class="px-4 py-2 border-b">Description</th>
+						<th class="px-4 py-2 border-b">Image</th>
+						<th class="px-4 py-2 border-b">Ticket Price</th>
+						<th class="px-4 py-2 border-b">Ticket Link</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
+				</thead>
+				<tbody>
+					{#each gigs as gig}
+						<tr class="hover:bg-gray-50/10 max-h-[2.5rem] overflow-hidden">
+							<td class="px-4 py-2 font-medium border-b">{gig.title}</td>
+							<td class="px-4 py-2 border-b">{gig.date}</td>
+							<td class="px-4 py-2 border-b">{gig.time}</td>
+							<td class="px-4 py-2 text-xs border-b">{gig.description}</td>
+							<td class="px-4 py-2 border-b">
+								{#if gig.imageUrl}
+									<img src={gig.imageUrl} alt="Gig Image" class="object-cover w-20 h-20 rounded" />
+								{:else}
+									<span class="text-sm italic text-gray-400">No image</span>
+								{/if}
+							</td>
+							<td class="px-4 py-2 border-b">{gig.ticketPrice}</td>
+							<td class="px-4 py-2 border-b">
+								{#if gig.ticketUrl}
+									<a
+										href={gig.ticketUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-blue-600 underline">Buy Ticket</a
+									>
+								{:else}
+									<span class="text-sm italic text-gray-400">N/A</span>
+								{/if}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
 </div>
