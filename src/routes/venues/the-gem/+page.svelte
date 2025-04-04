@@ -186,7 +186,7 @@
 				on:click={getLinks}
 			>
 				<span
-					class="relative px-5 py-2.5 transition-all ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
+					class="relative px-5 py-2.5 transition-all h-[3rem] row items-center justify-center ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
 				>
 					{#if loading}<PacMan />{:else}
 						<div in:fade={{ delay: 700, duration: 300 }}>START</div>{/if}
