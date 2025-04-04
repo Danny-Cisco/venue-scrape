@@ -9,6 +9,8 @@
 	let links = [];
 	let gigs = [];
 
+	let activeTab = 'gigs'; // or 'bands'
+
 	let bands = [];
 
 	let lastClicked = {};
@@ -199,7 +201,31 @@
 	<!-- <h1>JINA OUT</h1>
 	<div>{output}</div> -->
 
-	{#if gigs.length > 0}
+	<!-- Tab buttons -->
+	<div class="flex justify-center mb-4 space-x-4">
+		<button
+			class="px-4 py-2 font-medium transition-colors duration-200 border-2 rounded-lg"
+			class:!bg-purple-600={activeTab === 'gigs'}
+			class:!text-white={activeTab === 'gigs'}
+			class:bg-gray-800={activeTab !== 'gigs'}
+			class:text-gray-300={activeTab !== 'gigs'}
+			on:click={() => (activeTab = 'gigs')}
+		>
+			Gigs
+		</button>
+		<button
+			class="px-4 py-2 font-medium transition-colors duration-200 border-2 rounded-lg"
+			class:!bg-pink-600={activeTab === 'bands'}
+			class:!text-white={activeTab === 'bands'}
+			class:bg-gray-800={activeTab !== 'bands'}
+			class:text-gray-300={activeTab !== 'bands'}
+			on:click={() => (activeTab = 'bands')}
+		>
+			Bands
+		</button>
+	</div>
+
+	{#if activeTab === 'gigs' && gigs.length > 0}
 		<div class="w-screen px-4 overflow-x-auto" in:fade>
 			<table class="min-w-full overflow-hidden table-auto rounded-xl">
 				<thead class="text-left bg-black border-b-[2px] border-white">
@@ -245,6 +271,27 @@
 								{/if}
 							</td>
 							<td class="px-4 py-2">{gig.soldOut}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
+
+	{#if activeTab === 'bands' && bands.length > 0}
+		<div class="w-screen px-4 mt-8 overflow-x-auto" in:fade>
+			<table class="min-w-full overflow-hidden table-auto rounded-xl">
+				<thead class="text-left bg-black border-b-[2px] border-white">
+					<tr>
+						<th class="px-4 py-2">Band Name</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each bands as band}
+						<tr
+							class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
+						>
+							<td class="px-4 py-2">{band}</td>
 						</tr>
 					{/each}
 				</tbody>
