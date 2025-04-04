@@ -1,7 +1,8 @@
 <script>
+	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 	import GigCard from '../../../lib/components/ui/GigCard.svelte';
-	let venueName = 'The Gem';
+	let venueName = 'The Gem Bar';
 	let readOut = 'Ready to begin';
 	let loading = false;
 
@@ -93,27 +94,53 @@
 	}
 </script>
 
-<div class="space-y-4 page">
-	<h1 class="text-5xl font-bold text-center">
+<div class="page">
+	<!-- <h1 class="flex gap-4 mt-4 text-5xl font-bold text-center whitespace-nowrap">
 		{venueName}
-	</h1>
-	<div class="flex flex-col items-center w-full p-10 text-center rounded-3xl bg-white/5">
-		{readOut}{#if loading}<PacMan />{/if}
+	</h1> -->
+	<div class="w-screen text-center bg-gradient-to-br from-purple-500 to-pink-500">
+		<h1
+			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
+		>
+			{venueName}
+		</h1>
 	</div>
-	<button class="w-full btn" on:click={getLinks}>START</button>
+
+	<div class="flex flex-col items-center w-screen p-10 text-center h-[100px] bg-black">
+		{#key readOut}
+			<div class="h-[2rem] overflow-hidden max-w-full" in:fade>
+				{readOut}
+			</div>
+		{/key}
+	</div>
+
+	<div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
+		{#if links.length > 0}
+			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
+				{#each links as link}
+					<p>
+						{link}
+					</p>
+				{/each}
+			</div>
+			<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
+		{/if}
+	</div>
+
+	<button
+		class="w-full max-w-xl my-4 relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
+		on:click={getLinks}
+	>
+		<span
+			class="relative px-5 py-2.5 transition-all ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
+		>
+			{#if loading}<PacMan />{:else}
+				START{/if}
+		</span>
+	</button>
+
 	<!-- <h1>JINA OUT</h1>
 	<div>{output}</div> -->
-	{#if links.length > 0}
-		<div>
-			<h1>LINKS</h1>
-			{#each links as link}
-				<p>
-					{link}
-				</p>
-			{/each}
-		</div>
-		<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
-	{/if}
 
 	{#if gigs.length > 0}
 		<div class="w-screen">
