@@ -9,6 +9,9 @@
 	let links = [];
 	let gigs = [];
 
+	let lastClicked = {};
+	let showGigModal = false;
+
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
 
@@ -92,6 +95,11 @@
 	async function getTixUrl(markdown) {
 		return markdown.match(tixUrlRegex) || '';
 	}
+
+	function handleRowClick(gig) {
+		lastClicked = gig;
+		showGigModal = true;
+	}
 </script>
 
 <div class="page">
@@ -143,34 +151,38 @@
 
 	{#if gigs.length > 0}
 		<div class="w-screen px-4 overflow-x-auto" in:fade>
-			<table class="min-w-full border border-gray-300 table-auto">
-				<thead class="text-left bg-gray-900">
+			<table class="min-w-full overflow-hidden table-auto rounded-xl">
+				<thead class="text-left bg-black border-b-[2px] border-white">
 					<tr>
-						<th class="px-4 py-2 border-b">Title</th>
-						<th class="px-4 py-2 border-b">Date</th>
-						<th class="px-4 py-2 border-b">Time</th>
-						<th class="px-4 py-2 border-b">Description</th>
-						<th class="px-4 py-2 border-b">Image</th>
-						<th class="px-4 py-2 border-b">Ticket Price</th>
-						<th class="px-4 py-2 border-b">Ticket Link</th>
+						<th class="px-4 py-2">Title</th>
+						<th class="px-4 py-2">Date</th>
+						<th class="px-4 py-2">Time</th>
+						<th class="px-4 py-2">Description</th>
+						<th class="px-4 py-2">Image</th>
+						<th class="px-4 py-2">Ticket Price</th>
+						<th class="px-4 py-2">Ticket Link</th>
+						<th class="px-4 py-2">Sold Out</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each gigs as gig}
-						<tr class="hover:bg-gray-50/10 max-h-[2.5rem] overflow-hidden">
-							<td class="px-4 py-2 font-medium border-b">{gig.title}</td>
-							<td class="px-4 py-2 border-b">{gig.date}</td>
-							<td class="px-4 py-2 border-b">{gig.time}</td>
-							<td class="px-4 py-2 text-xs border-b">{gig.description}</td>
-							<td class="px-4 py-2 border-b">
+						<tr
+							class="hover:bg-gray-900 max-h-[2.5rem] rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500 overflow-hidden"
+							on:click={handleRowClick(gig)}
+						>
+							<td class="px-4 py-2">{gig.title}</td>
+							<td class="px-4 py-2">{gig.date}</td>
+							<td class="px-4 py-2">{gig.time}</td>
+							<td class="px-4 py-2 text-xs">{gig.description}</td>
+							<td class="px-4 py-2">
 								{#if gig.imageUrl}
 									<img src={gig.imageUrl} alt="Gig Image" class="object-cover w-20 h-20 rounded" />
 								{:else}
 									<span class="text-sm italic text-gray-400">No image</span>
 								{/if}
 							</td>
-							<td class="px-4 py-2 border-b">{gig.ticketPrice}</td>
-							<td class="px-4 py-2 border-b">
+							<td class="px-4 py-2">{gig.ticketPrice}</td>
+							<td class="px-4 py-2">
 								{#if gig.ticketUrl}
 									<a
 										href={gig.ticketUrl}
@@ -182,6 +194,7 @@
 									<span class="text-sm italic text-gray-400">N/A</span>
 								{/if}
 							</td>
+							<td class="px-4 py-2">{gig.soldOut}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -189,3 +202,38 @@
 		</div>
 	{/if}
 </div>
+
+{#if showGigModal && lastClicked}
+	<div
+		class="fixed inset-0 top-[100px] flex flex-col items-center justify-center bg-black/80"
+		transition:fade={{ duration: 100 }}
+	>
+		<div class="relative h-full">
+			<GigCard gig={lastClicked} />
+			<div
+				class="absolute top-0 bg-purple-500 rounded-full size-8 center hover:bg-pink-500 -right-10"
+				on:click={() => {
+					showGigModal = false;
+					lastClicked = null;
+				}}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="size-6"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+				</svg>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<style>
+	.rowfx {
+		transition: color, 200ms;
+	}
+</style>

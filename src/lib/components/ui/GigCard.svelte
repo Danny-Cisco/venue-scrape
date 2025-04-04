@@ -4,7 +4,7 @@
 	let show = false;
 </script>
 
-<div class="gig-card">
+<div class="overflow-y-auto gig-card">
 	<div class="w-full gig-details">
 		<h2 class="gig-title">{gig.title}</h2>
 		<p class="flex flex-col gig-datetime">
@@ -12,42 +12,10 @@
 			<strong>{gig.time}</strong>
 		</p>
 
-		{#if !show}
-			<button class="text-black" on:click={() => (show = !show)}
-				><svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-5"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5"
-					/>
-				</svg>
-			</button>
-		{:else}
-			<button class="text-black" on:click={() => (show = !show)}
-				><svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-5"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 18.75 7.5-7.5 7.5 7.5" />
-					<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 7.5-7.5 7.5 7.5" />
-				</svg>
-			</button>
-			{#if gig.imageUrl}
-				<img src={gig.imageUrl} alt={gig.title} class="gig-image" />
-			{/if}
-			<p class="gig-description">{gig.description}</p>
+		{#if gig.imageUrl}
+			<img src={gig.imageUrl} alt={gig.title} class="gig-image" />
 		{/if}
+		<p class="gig-description">{gig.description}</p>
 
 		{#if gig.ticketUrl && gig.ticketUrl !== '#'}
 			<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button">Visit Ticketing Site</a>
@@ -64,16 +32,16 @@
 		align-items: end;
 		gap: 1rem;
 		background-color: #fff;
-		border-radius: 1rem;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		padding: 1.5rem;
-		max-width: 600px;
-		margin: 8px;
+
+		max-width: 900px;
+
+		padding: 2rem;
 		height: 100%;
 	}
 
 	.gig-image {
 		width: 100%;
+		max-width: 300px;
 		height: auto;
 		border-radius: 0.5rem;
 		object-fit: cover;
