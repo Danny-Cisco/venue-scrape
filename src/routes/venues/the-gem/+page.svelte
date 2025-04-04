@@ -131,23 +131,29 @@
 			<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
 		{/if}
 	</div>
+	<div class="flex items-center w-screen my-10">
+		<!-- dotted divider -->
+		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
+		<div class="min-w-xl center w-full max-w-[800px]">
+			<button
+				class="w-full max-w-xl mt-2 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
+				on:click={getLinks}
+			>
+				<span
+					class="relative px-5 py-2.5 transition-all ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
+				>
+					{#if loading}<PacMan />{:else}
+						<div in:fade={{ delay: 700, duration: 300 }}>START</div>{/if}
+				</span>
+			</button>
+		</div>
 
-	<button
-		class="w-full max-w-xl mt-10 relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
-		on:click={getLinks}
-	>
-		<span
-			class="relative px-5 py-2.5 transition-all ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
-		>
-			{#if loading}<PacMan />{:else}
-				<div in:fade={{ delay: 700, duration: 300 }}>START</div>{/if}
-		</span>
-	</button>
+		<!-- dotted divider -->
+		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
+	</div>
 
 	<!-- <h1>JINA OUT</h1>
 	<div>{output}</div> -->
-
-	<div class="border-t-[3px] border-dotted border-purple-500 w-screen mt-8 mb-10"></div>
 
 	{#if gigs.length > 0}
 		<div class="w-screen px-4 overflow-x-auto" in:fade>
