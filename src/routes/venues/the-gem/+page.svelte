@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 	import GigCard from '../../../lib/components/ui/GigCard.svelte';
+	import { interpolateViridis } from 'd3';
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
@@ -180,7 +181,7 @@
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
 		<!-- start button -->
-		<div class="min-w-xl center w-full max-w-[800px]">
+		<div class="w-full max-w-xl min-w-xl center">
 			<button
 				class="w-full max-w-xl mt-2 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
 				on:click={getLinks}
@@ -188,8 +189,16 @@
 				<span
 					class="relative px-5 py-2.5 transition-all h-[3rem] row items-center justify-center ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
 				>
-					{#if loading}<PacMan />{:else}
-						<div in:fade={{ delay: 700, duration: 300 }}>START</div>{/if}
+					{#if loading}
+						<div class="relative w-full h-full">
+							<div class="absolute inset-0 center">
+								<PacMan />
+							</div>
+						</div>
+					{:else}
+						<div class="absolute inset-0 font-bold center" in:fade={{ delay: 700, duration: 300 }}>
+							START
+						</div>{/if}
 				</span>
 			</button>
 		</div>
@@ -202,26 +211,41 @@
 	<div>{output}</div> -->
 
 	<!-- Tab buttons -->
-	<div class="flex justify-center mb-4 space-x-4">
+	<div class="flex justify-center w-screen space-x-1 px-14">
 		<button
-			class="px-4 py-2 font-medium transition-colors duration-200 border-2 rounded-lg"
+			class="flex-1 px-4 py-2 font-medium transition-all duration-200 border-[1px] border-b-0 rounded-t-2xl overflow-hidden relative group"
 			class:!bg-purple-600={activeTab === 'gigs'}
 			class:!text-white={activeTab === 'gigs'}
 			class:bg-gray-800={activeTab !== 'gigs'}
 			class:text-gray-300={activeTab !== 'gigs'}
+			class:invisible={gigs.length === 0}
 			on:click={() => (activeTab = 'gigs')}
+			in:fade
 		>
-			Gigs
+			<!-- Gradient hover background -->
+			<span
+				class="absolute inset-0 z-0 transition-opacity duration-200 opacity-0 bg-gradient-to-br from-purple-500 to-pink-500 group-hover:opacity-100 rounded-t-2xl"
+			></span>
+			<!-- Text layer -->
+			<span class="relative z-10">Gigs</span>
 		</button>
+
 		<button
-			class="px-4 py-2 font-medium transition-colors duration-200 border-2 rounded-lg"
+			class="flex-1 px-4 py-2 font-medium transition-all duration-200 border-[1px] border-b-0 rounded-t-2xl overflow-hidden relative group"
 			class:!bg-pink-600={activeTab === 'bands'}
 			class:!text-white={activeTab === 'bands'}
 			class:bg-gray-800={activeTab !== 'bands'}
 			class:text-gray-300={activeTab !== 'bands'}
+			class:invisible={bands.length === 0}
 			on:click={() => (activeTab = 'bands')}
+			in:fade
 		>
-			Bands
+			<!-- Gradient hover background -->
+			<span
+				class="absolute inset-0 z-0 transition-opacity duration-200 opacity-0 bg-gradient-to-br from-purple-500 to-pink-500 group-hover:opacity-100 rounded-t-2xl"
+			></span>
+			<!-- Text layer -->
+			<span class="relative z-10">Bands</span>
 		</button>
 	</div>
 
@@ -279,7 +303,7 @@
 	{/if}
 
 	{#if activeTab === 'bands' && bands.length > 0}
-		<div class="w-screen px-4 mt-8 overflow-x-auto" in:fade>
+		<div class="w-screen px-4 overflow-x-auto" in:fade>
 			<table class="min-w-full overflow-hidden table-auto rounded-xl">
 				<thead class="text-left bg-black border-b-[2px] border-white">
 					<tr>
