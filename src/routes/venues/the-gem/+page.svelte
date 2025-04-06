@@ -2,13 +2,14 @@
 	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 	import GigCard from '../../../lib/components/ui/GigCard.svelte';
-	import { interpolateViridis } from 'd3';
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
 	let links = [];
 	let gigs = [];
+
+	let socialUrls = [];
 
 	let activeTab = 'gigs'; // or 'bands'
 
@@ -125,7 +126,35 @@
 
 		const finalJson = await JSON.parse(responseJson);
 
+		for (const band of finalJson.bands) {
+			await getSocialUrls(band);
+		}
+
 		bands = [...bands, ...(finalJson.bands || [])];
+		loading = false;
+	}
+
+	async function getSocialUrls(bandName) {
+		const systemPrompt =
+			' return as a json array { "socialUrls": []}, do not say anything else do not enclose in backticks';
+		loading = true;
+
+		const prompt = `what are all the social media links you can find for the band called ${bandName}`;
+		const parsedBody = await JSON.stringify({ prompt, systemPrompt });
+		const response = await fetch('/api/perplexity/sonar-pro', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: parsedBody
+		});
+
+		const body = await response.json();
+		console.log('🚀 ~ getSocialUrls ~ body.message:', body.message);
+		const json = JSON.parse(body.message);
+		socialUrls = [...socialUrls, ...(json.socialUrls || [])];
+		console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
+
 		loading = false;
 	}
 
@@ -171,6 +200,13 @@
 				{#each bands as band}
 					<p>
 						{band}
+					</p>
+				{/each}
+			</div>
+			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
+				{#each socialUrls as url}
+					<p>
+						{url}
 					</p>
 				{/each}
 			</div>

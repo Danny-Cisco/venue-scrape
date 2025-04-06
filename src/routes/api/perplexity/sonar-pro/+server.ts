@@ -1,21 +1,25 @@
 import { json } from '@sveltejs/kit';
 
+import { PERPLEXITY_API_KEY } from '$env/static/private';
+
 export async function POST({ request }) {
 	const body = await request.json();
+
+	const systemPrompt = body.systemPrompt || 'Be precise and concise.';
 
 	const perplexityRes = await fetch('https://api.perplexity.ai/chat/completions', {
 		method: 'POST',
 		headers: {
 			accept: 'application/json',
 			'content-type': 'application/json',
-			Authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}`
+			Authorization: `Bearer ${PERPLEXITY_API_KEY}`
 		},
 		body: JSON.stringify({
 			model: 'sonar-pro',
 			messages: [
 				{
 					role: 'system',
-					content: 'Be precise and concise.'
+					content: systemPrompt
 				},
 				{
 					role: 'user',
@@ -31,5 +35,7 @@ export async function POST({ request }) {
 	}
 
 	const result = await perplexityRes.json();
-	return json(result);
+	const message = result.choices?.[0]?.message?.content || 'No response';
+
+	return json({ message });
 }
