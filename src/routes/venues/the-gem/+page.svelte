@@ -127,10 +127,10 @@
 		const finalJson = await JSON.parse(responseJson);
 
 		for (const band of finalJson.bands) {
-			await getSocialUrls(band);
+			const bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			bands = [...bands, bandOject || {}];
 		}
 
-		bands = [...bands, ...(finalJson.bands || [])];
 		loading = false;
 	}
 
@@ -152,10 +152,11 @@
 		const body = await response.json();
 		console.log('🚀 ~ getSocialUrls ~ body.message:', body.message);
 		const json = JSON.parse(body.message);
-		socialUrls = [...socialUrls, ...(json.socialUrls || [])];
+		// socialUrls = [...socialUrls, ...(json.socialUrls || [])];
 		console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
 
 		loading = false;
+		return json.socialUrls || [];
 	}
 
 	$: console.log('bands: ', bands);
@@ -199,17 +200,12 @@
 			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
 				{#each bands as band}
 					<p>
-						{band}
+						{band.bandName}
+						{band.socialUrls}
 					</p>
 				{/each}
 			</div>
-			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
-				{#each socialUrls as url}
-					<p>
-						{url}
-					</p>
-				{/each}
-			</div>
+
 			<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
 		{/if}
 	</div>
@@ -344,6 +340,7 @@
 				<thead class="text-left bg-black border-b-[2px] border-white">
 					<tr>
 						<th class="px-4 py-2">Band Name</th>
+						<th class="px-4 py-2">Social Urls</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -351,7 +348,8 @@
 						<tr
 							class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
 						>
-							<td class="px-4 py-2">{band}</td>
+							<td class="px-4 py-2">{band.bandName}</td>
+							<td class="px-4 py-2">{band.socialUrls}</td>
 						</tr>
 					{/each}
 				</tbody>
