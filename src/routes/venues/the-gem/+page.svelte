@@ -75,6 +75,7 @@
 
 	async function crawlGemGigs() {
 		loading = true;
+
 		if (links.length === 0) return;
 		for (const link of links) {
 			readOut = `✋ Cheerio is fetching :   ${link}`;
@@ -112,6 +113,7 @@
 			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }';
 
 		loading = true;
+		readOut = '😛 ChatGPT is finding band names';
 		const parsedBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
 			method: 'POST',
@@ -131,15 +133,18 @@
 			bands = [...bands, bandOject || {}];
 		}
 
+		readOut = '✅ Done!';
 		loading = false;
 	}
 
 	async function getSocialUrls(bandName) {
 		const systemPrompt =
-			' return as a json array { "socialUrls": []}, do not say anything else do not enclose in backticks';
+			' return as a json array { "socialUrls": []}, do not say anything else. do not enclose json in backticks';
 		loading = true;
 
-		const prompt = `what are all the social media links you can find for the band called ${bandName}`;
+		readOut = `💀 Perplexity is finding social media links for ${bandName}`;
+
+		const prompt = `what are all the social media links you can find for the band called ${bandName}.`;
 		const parsedBody = await JSON.stringify({ prompt, systemPrompt });
 		const response = await fetch('/api/perplexity/sonar-pro', {
 			method: 'POST',
@@ -156,6 +161,7 @@
 		console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
 
 		loading = false;
+		readOut = '✅ Done';
 		return json.socialUrls || [];
 	}
 
