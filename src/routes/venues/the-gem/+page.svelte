@@ -21,6 +21,8 @@
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
 
+	let instaProfileRegex = /https:\/\/www\.instagram\.com\/(?!reel\/)[\w\.\-]+\/?/gi;
+
 	let output = '';
 
 	let gigObj = {
@@ -130,6 +132,11 @@
 
 		for (const band of finalJson.bands) {
 			const bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			console.log('🚀✅ ~ getBands ~ bandOject.socialUrls:', bandOject.socialUrls); // lets peek at the socialUrls here
+
+			for (const url of bandOject.socialUrls) {
+				if (url.match(instaProfileRegex)) await scrapeInsta(url);
+			}
 			bands = [...bands, bandOject || {}];
 		}
 
@@ -137,9 +144,13 @@
 		loading = false;
 	}
 
+	async function scrapeInsta(url) {
+		console.log('👀👀👀 scrapeInsta function has url: ', url);
+	}
+
 	async function getSocialUrls(bandName) {
 		const systemPrompt =
-			' return as a json array { "socialUrls": []}, do not say anything else. do not enclose json in backticks';
+			' You are to act as a simple tool to return as a json array of social media links in the following format { "socialUrls": []}, do not say anything else. do not enclose the result in backticks';
 		loading = true;
 
 		readOut = `💀 Perplexity is finding social media links for ${bandName}`;
@@ -156,13 +167,26 @@
 
 		const body = await response.json();
 		console.log('🚀 ~ getSocialUrls ~ body.message:', body.message);
-		const json = JSON.parse(body.message);
-		// socialUrls = [...socialUrls, ...(json.socialUrls || [])];
-		console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
+
+		// Remove ```json or ``` and trim the string
+		const cleanMessage = body.message
+			.replace(/^```json\s*/i, '') // Remove starting ```json (case-insensitive)
+			.replace(/^```\s*/i, '') // Or just ```
+			.replace(/```$/, '') // Remove ending ```, at end of string
+			.trim();
+
+		let socialUrls = [];
+		try {
+			const json = JSON.parse(cleanMessage);
+			socialUrls = json.socialUrls || [];
+			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
+		} catch (err) {
+			console.error('❌ Failed to parse message as JSON:', err);
+		}
 
 		loading = false;
 		readOut = '✅ Done';
-		return json.socialUrls || [];
+		return socialUrls || [];
 	}
 
 	$: console.log('bands: ', bands);
@@ -347,6 +371,7 @@
 					<tr>
 						<th class="px-4 py-2">Band Name</th>
 						<th class="px-4 py-2">Social Urls</th>
+						<th class="px-4 py-2">FurtherUrls</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -355,7 +380,20 @@
 							class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
 						>
 							<td class="px-4 py-2">{band.bandName}</td>
-							<td class="px-4 py-2">{band.socialUrls}</td>
+							<td class="px-4 py-2">
+								{#each band.socialUrls || [] as socialUrl}
+									<div class="flex flex-col">
+										{socialUrl}
+									</div>
+								{/each}
+							</td>
+							<td class="px-4 py-2">
+								{#each band.furtherUrls || [] as furtherUrl}
+									<div class="flex flex-col">
+										{furtherUrl}
+									</div>
+								{/each}</td
+							>
 						</tr>
 					{/each}
 				</tbody>
