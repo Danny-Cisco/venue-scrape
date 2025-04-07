@@ -145,7 +145,33 @@
 	}
 
 	async function scrapeInsta(url) {
-		console.log('👀👀👀 scrapeInsta function has url: ', url);
+		loading = true;
+		console.log('👀👀👀 scrapeInsta function has url:', url);
+
+		const instaUsernameRegex = /https:\/\/www\.instagram\.com\/([a-zA-Z0-9_.]+)\/?(?!.*reel)/i;
+		const match = url.match(instaUsernameRegex);
+
+		if (!match || !match[1]) {
+			console.error('❌ No valid Instagram username found in URL.');
+			return;
+		}
+
+		const username = match[1]; // ← This is the captured username
+		console.log('✅ Extracted username:', username);
+		readOut = `✌️ Apify is scraping Instagram profile: ${username}`;
+
+		const response = await fetch(`/api/apify/instagram-profile-scraper?username=${username}`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const data = await response.json();
+		console.log('🌼 Received data:', data);
+		loading = false;
+		readOut = '✅ Done!';
+		return data;
 	}
 
 	async function getSocialUrls(bandName) {
