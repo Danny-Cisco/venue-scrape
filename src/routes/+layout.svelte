@@ -14,6 +14,7 @@
 	import { handleMagicLink } from '$lib/utils/magicLink';
 	import { redirect } from '@sveltejs/kit';
 	import { goto } from '$app/navigation';
+	import ModalLauncher from '$lib/components/modals/ModalLauncher.svelte';
 	let email = '';
 
 	let leftSidebarContainer;
@@ -347,6 +348,8 @@
 		</div>
 	{/if}
 </header>
+
+<ModalLauncher />
 
 <style>
 	.size-5 {

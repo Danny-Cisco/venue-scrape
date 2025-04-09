@@ -1,7 +1,9 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
-	import GigCard from '../../../lib/components/ui/GigCard.svelte';
+
+	import { lastClicked, showGigModal } from '$lib/stores/modalStores.js';
+
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
@@ -15,8 +17,8 @@
 
 	let bands = [];
 
-	let lastClicked = {};
-	let showGigModal = false;
+	$lastClicked = {};
+	$showGigModal = false;
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
@@ -106,8 +108,8 @@
 	}
 
 	function handleRowClick(gig) {
-		lastClicked = gig;
-		showGigModal = true;
+		$lastClicked = gig;
+		$showGigModal = true;
 	}
 
 	async function getBands(question) {
@@ -224,7 +226,7 @@
 	}
 </script>
 
-<div class="page">
+<div class="page isolate">
 	<!-- header with gradient -->
 	<div class="w-screen text-center bg-gradient-to-br from-purple-500 to-pink-500">
 		<h1
@@ -427,35 +429,6 @@
 		</div>
 	{/if}
 </div>
-
-{#if showGigModal && lastClicked}
-	<div
-		class="fixed inset-0 top-[100px] flex flex-col items-center justify-center bg-black/80"
-		transition:fade={{ duration: 100 }}
-	>
-		<div class="relative h-full">
-			<GigCard gig={lastClicked} />
-			<div
-				class="absolute top-0 bg-purple-500 rounded-full size-8 center hover:bg-pink-500 -right-10"
-				on:click={() => {
-					showGigModal = false;
-					lastClicked = null;
-				}}
-			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-6"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-				</svg>
-			</div>
-		</div>
-	</div>
-{/if}
 
 <style>
 	.rowfx {
