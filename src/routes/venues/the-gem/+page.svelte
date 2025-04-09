@@ -135,12 +135,13 @@
 		const finalJson = await JSON.parse(responseJson);
 
 		for (const band of finalJson.bands) {
-			const bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			let bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
 			console.log('🚀✅ ~ getBands ~ bandOject.socialUrls:', bandOject.socialUrls); // lets peek at the socialUrls here
 
 			for (const url of bandOject.socialUrls) {
-				if (url.match(instaProfileRegex)) await scrapeInsta(url);
+				if (url.match(instaProfileRegex)) bandOject.instagram = await scrapeInsta(url);
 			}
+
 			bands = [...bands, bandOject || {}];
 		}
 
@@ -173,9 +174,10 @@
 
 		const data = await response.json();
 		console.log('🌼 Received data:', data);
+
 		loading = false;
 		readOut = '✅ Done!';
-		return data;
+		return data.data[0];
 	}
 
 	async function getSocialUrls(bandName) {
