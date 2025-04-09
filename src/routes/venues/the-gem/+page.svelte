@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
-	import { lastClicked, showGigModal } from '$lib/stores/modalStores.js';
+	import { lastClicked, showGigModal, showBandModal } from '$lib/stores/modalStores.js';
 
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
@@ -16,9 +16,6 @@
 	let activeTab = 'gigs'; // or 'bands'
 
 	let bands = [];
-
-	$lastClicked = {};
-	$showGigModal = false;
 
 	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
@@ -107,9 +104,14 @@
 		return markdown.match(tixUrlRegex) || '';
 	}
 
-	function handleRowClick(gig) {
+	function handleGigRowClick(gig) {
 		$lastClicked = gig;
 		$showGigModal = true;
+	}
+
+	function handleBandRowClick(band) {
+		$lastClicked = band;
+		$showBandModal = true;
 	}
 
 	async function getBands(question) {
@@ -358,7 +360,7 @@
 					{#each gigs as gig}
 						<tr
 							class="hover:bg-gray-900 max-h-[2.5rem] rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500 overflow-hidden"
-							on:click={handleRowClick(gig)}
+							on:click={handleGigRowClick(gig)}
 						>
 							<td class="px-4 py-2">{gig.title}</td>
 							<td class="px-4 py-2">{gig.date}</td>
@@ -406,6 +408,7 @@
 					{#each bands as band}
 						<tr
 							class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
+							on:click={handleBandRowClick(band)}
 						>
 							<td class="px-4 py-2">{band.bandName}</td>
 							<td class="px-4 py-2">
