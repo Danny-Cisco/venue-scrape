@@ -1,7 +1,9 @@
 <script>
 	export let band = {};
 
-	let clickedPost = band.instagram?.latestPosts[0] || null;
+	let clickedPost = null;
+
+	$: clickedPost = band.instagram?.latestPosts?.[0] || null;
 
 	let totalInstagramLikes = 0;
 	let averageInstagramLikes = 0;
@@ -104,7 +106,8 @@
 							<a href={extUrl.url}>{extUrl.url}</a>
 						</div>
 					{/each}
-					<h2>Biography of {band.bandName}</h2>
+					<img src={band.instagram.profilePicUrlHD} alt="" />
+					<h2>Biography of {band.instagram.fullName}</h2>
 					<p class="ml-8">{band.instagram.biography}</p>
 
 					<h2 class="mt-4">Recent Posts:</h2>
