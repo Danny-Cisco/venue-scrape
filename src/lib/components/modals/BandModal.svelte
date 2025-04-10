@@ -262,16 +262,24 @@
 								</div>
 								<div class="flex flex-wrap gap-2">
 									{#each clickedPost.mentions || [] as mention}
-										<p class="p-2 mx-2 font-bold text-white bg-blue-500 rounded-full">{mention}</p>
+										<p class="px-2 py-1 text-xs font-light text-white bg-blue-500 rounded-full">
+											{mention}
+										</p>
 									{/each}
 
 									{#each clickedPost.hashtags || [] as hashtag}
-										<p class="p-2 mx-2 font-bold text-white bg-blue-500 rounded-full">{hashtag}</p>
+										<p
+											class="px-2 py-1 text-xs font-light text-white bg-purple-500 rounded-full row"
+										>
+											# {hashtag}
+										</p>
 									{/each}
 									{#if clickedPost.taggedUsers}
 										{#each clickedPost.taggedUsers || [] as taggedUser}
-											<p class="p-2 mx-2 font-bold text-white bg-blue-500 rounded-full">
-												{taggedUser.full_name}
+											<p
+												class="px-2 py-1 text-xs font-light text-white bg-pink-500 rounded-full row"
+											>
+												@ {taggedUser.full_name}
 											</p>
 										{/each}
 									{/if}
