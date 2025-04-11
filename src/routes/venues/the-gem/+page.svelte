@@ -82,7 +82,8 @@
 			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
-			gig.bands = [];
+			gig.bands = []; // add some blank fields ready for the ui
+			gig.bios = []; // add some blank fields ready for the ui
 
 			gigs = [...gigs, gig];
 		}
@@ -115,7 +116,7 @@
 		$showBandModal = true;
 	}
 
-	async function getBands(question) {
+	async function getBands(question, gigIndex) {
 		console.log('🍄 ~ getBands ~ question:', question);
 		const systemPrompt =
 			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }';
@@ -138,10 +139,14 @@
 
 		for (const band of finalJson.bands) {
 			let bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			// let bandOject = { bandName: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandOject.socialUrls:', bandOject.socialUrls); // lets peek at the socialUrls here
 
 			for (const url of bandOject.socialUrls) {
-				if (url.match(instaProfileRegex)) bandOject.instagram = await scrapeInsta(url);
+				if (url.match(instaProfileRegex)) {
+					bandOject.instagram = await scrapeInsta(url);
+					gigs[gigIndex].bios = [...(gigs[gigIndex].bios || []), bandOject.instagram.biography]; // spread bios into gig
+				}
 			}
 
 			bands = [...bands, bandOject || {}];
@@ -234,10 +239,10 @@
 
 	async function updateBandForLastGig() {
 		commencedIndex = lastGigIndex;
-		console.log('🚀 ~ updateBandForLastGig ~ lastGigIndex:', lastGigIndex);
-		const lastGig = gigs[lastGigIndex];
+		console.log('🚀 ~ updateBandForLastGig ~ commencedIndex:', commencedIndex);
+		const lastGig = gigs[commencedIndex];
 		const question = lastGig.title + lastGig.description;
-		gigs[lastGigIndex].bands = await getBands(question);
+		gigs[commencedIndex].bands = await getBands(question, commencedIndex);
 	}
 
 	$: if (gigs.length > 0) {
@@ -371,6 +376,7 @@
 						<th class="px-4 py-2">Time</th>
 						<th class="px-4 py-2">Bands</th>
 						<th class="px-4 py-2">Description</th>
+						<th class="px-4 py-2">Bios</th>
 						<th class="px-4 py-2">Image</th>
 						<th class="px-4 py-2">Ticket Price</th>
 						<th class="px-4 py-2">Ticket Link</th>
@@ -394,6 +400,13 @@
 								{/if}
 							</td>
 							<td class="px-4 py-2 text-xs">{gig.description}</td>
+							<td class="px-4 py-2"
+								>{#if gig.bios?.length > 0}
+									{#each gig.bios || [] as bio}
+										<div class="block">{bio}</div>
+									{/each}
+								{/if}
+							</td>
 							<td class="px-4 py-2">
 								{#if gig.imageUrl}
 									<img src={gig.imageUrl} alt="Gig Image" class="object-cover w-20 h-20 rounded" />
