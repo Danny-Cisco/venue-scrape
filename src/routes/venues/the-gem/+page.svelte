@@ -32,7 +32,7 @@
 		markdown: ''
 	};
 
-	let url = 'https://www.thegembar.com.au/';
+	let url = 'https://www.thegembar.com.au/gigs';
 
 	async function getLinks() {
 		loading = true;
@@ -48,9 +48,11 @@
 		const json = await res.json(); // ✅ this is already your array
 
 		output = JSON.stringify(json, null, 2); // ✅ this is just for visual logging or display
+		console.log('👀👀🤖🥸 ~ getLinks ~ 🔥output:', output);
 
 		// ✅ assign json directly to links
 		links = [...new Set(json)];
+		console.log('👀👀🤖🥸 ~ getLinks ~ links:', links);
 
 		loading = false;
 		readOut = '✅ Done';
@@ -61,6 +63,25 @@
 		// copied = false;
 		try {
 			const res = await fetch(`/api/cheerio/gem-gig?url=${link}`);
+
+			if (res.ok) {
+				const json = await res.json();
+				return json;
+			} else {
+				const errText = await res.text();
+				readOut = `Error ${res.status}: ${errText}`;
+			}
+		} catch (err) {
+			readOut = `Network error: ${err.message}`;
+		}
+	}
+
+	async function getOztix(link) {
+		readOut = `✋ Cheerio is scraping Oztix event : ${link}`;
+
+		// copied = false;
+		try {
+			const res = await fetch(`/api/cheerio/oztix?url=${link}`);
 
 			if (res.ok) {
 				const json = await res.json();
@@ -87,6 +108,9 @@
 			gig.instaCaptions = []; // add some blank fields ready for the ui
 			gig.instaHashtags = []; // add some blank fields ready for the ui
 			gig.oztix = {};
+			if (gig.ticketUrl != '#' || false) {
+				gig.oztix = await getOztix(gig.ticketUrl);
+			}
 
 			gigs = [...gigs, gig];
 		}
@@ -394,6 +418,7 @@
 						<th class="px-4 py-2">Image</th>
 						<th class="px-4 py-2">Ticket Price</th>
 						<th class="px-4 py-2">Ticket Link</th>
+						<th class="px-4 py-2">Oztix</th>
 						<th class="px-4 py-2">Sold Out</th>
 					</tr>
 				</thead>
@@ -480,6 +505,13 @@
 										<span class="text-sm italic text-gray-400">N/A</span>
 									{/if}
 								</div>
+							</td>
+							<td class="px-4 py-2">
+								{#if gig.oztix}
+									<div class="max-h-[200px] overflow-y-auto">
+										{JSON.stringify(gig.oztix, null, 2)}
+									</div>
+								{/if}
 							</td>
 							<td class="px-4 py-2">
 								<div class="max-h-[200px] overflow-y-auto">{gig.soldOut}</div>
