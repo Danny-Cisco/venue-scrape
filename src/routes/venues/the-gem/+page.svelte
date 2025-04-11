@@ -82,6 +82,7 @@
 			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
+			gig.bands = [];
 
 			gigs = [...gigs, gig];
 		}
@@ -115,6 +116,7 @@
 	}
 
 	async function getBands(question) {
+		console.log('🍄 ~ getBands ~ question:', question);
 		const systemPrompt =
 			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }';
 
@@ -147,6 +149,8 @@
 
 		readOut = '✅ Done!';
 		loading = false;
+
+		return finalJson.bands;
 	}
 
 	async function scrapeInsta(url) {
@@ -223,10 +227,24 @@
 
 	$: console.log('bands: ', bands);
 
-	$: if (gigs.length > 0) {
-		const lastGig = gigs[gigs.length - 1];
+	let lastGigIndex = 0;
+	let commencedIndex = 99999;
+	$: console.log('🚀 ~ lastGigIndex:', lastGigIndex);
+	$: console.log('🚀 ~ gigs:', gigs);
+
+	async function updateBandForLastGig() {
+		commencedIndex = lastGigIndex;
+		console.log('🚀 ~ updateBandForLastGig ~ lastGigIndex:', lastGigIndex);
+		const lastGig = gigs[lastGigIndex];
 		const question = lastGig.title + lastGig.description;
-		getBands(question);
+		gigs[lastGigIndex].bands = await getBands(question);
+	}
+
+	$: if (gigs.length > 0) {
+		lastGigIndex = gigs.length - 1 || 0;
+		// checks first to see if the job is already commenced
+		if (commencedIndex !== lastGigIndex)
+			if (gigs[lastGigIndex].bands.length == 0) updateBandForLastGig();
 	}
 </script>
 
@@ -351,6 +369,7 @@
 						<th class="px-4 py-2">Title</th>
 						<th class="px-4 py-2">Date</th>
 						<th class="px-4 py-2">Time</th>
+						<th class="px-4 py-2">Bands</th>
 						<th class="px-4 py-2">Description</th>
 						<th class="px-4 py-2">Image</th>
 						<th class="px-4 py-2">Ticket Price</th>
@@ -367,6 +386,13 @@
 							<td class="px-4 py-2">{gig.title}</td>
 							<td class="px-4 py-2">{gig.date}</td>
 							<td class="px-4 py-2">{gig.time}</td>
+							<td class="px-4 py-2"
+								>{#if gig.bands?.length > 0}
+									{#each gig.bands || [] as band}
+										<div class="block">{band}</div>
+									{/each}
+								{/if}
+							</td>
 							<td class="px-4 py-2 text-xs">{gig.description}</td>
 							<td class="px-4 py-2">
 								{#if gig.imageUrl}
