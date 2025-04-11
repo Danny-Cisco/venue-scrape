@@ -84,6 +84,9 @@
 			const gig = await useCheerio(link);
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
+			gig.instaCaptions = []; // add some blank fields ready for the ui
+			gig.instaHashtags = []; // add some blank fields ready for the ui
+			gig.oztix = {};
 
 			gigs = [...gigs, gig];
 		}
@@ -138,18 +141,26 @@
 		const finalJson = await JSON.parse(responseJson);
 
 		for (const band of finalJson.bands) {
-			let bandOject = { bandName: band, socialUrls: await getSocialUrls(band) };
-			// let bandOject = { bandName: band, socialUrls: ['perplexity disabled'] };
-			console.log('🚀✅ ~ getBands ~ bandOject.socialUrls:', bandOject.socialUrls); // lets peek at the socialUrls here
+			let bandObject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
+			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 
-			for (const url of bandOject.socialUrls) {
+			for (const url of bandObject.socialUrls) {
 				if (url.match(instaProfileRegex)) {
-					bandOject.instagram = await scrapeInsta(url);
-					gigs[gigIndex].bios = [...(gigs[gigIndex].bios || []), bandOject.instagram.biography]; // spread bios into gig
+					bandObject.instagram = await scrapeInsta(url);
+					gigs[gigIndex].bios = [...(gigs[gigIndex].bios || []), bandObject.instagram.biography]; // spread bios into gig
+					gigs[gigIndex].instaCaptions = [
+						...(gigs[gigIndex]?.instaCaptions || []),
+						...bandObject.instagram.latestPosts.map((post) => post.caption)
+					];
+					gigs[gigIndex].instaHashtags = [
+						...(gigs[gigIndex]?.instaHashtags || []),
+						...bandObject.instagram.latestPosts.map((post) => post.hashtags).flat() // use flat to turn array of arrays into a single array
+					];
 				}
 			}
 
-			bands = [...bands, bandOject || {}];
+			bands = [...bands, bandObject || {}];
 		}
 
 		readOut = '✅ Done!';
@@ -233,22 +244,23 @@
 	$: console.log('bands: ', bands);
 
 	let lastGigIndex = 0;
-	let commencedIndex = 99999;
+	let commencedIndexGetBands = 99999;
+
 	$: console.log('🚀 ~ lastGigIndex:', lastGigIndex);
 	$: console.log('🚀 ~ gigs:', gigs);
 
 	async function updateBandForLastGig() {
-		commencedIndex = lastGigIndex;
-		console.log('🚀 ~ updateBandForLastGig ~ commencedIndex:', commencedIndex);
-		const lastGig = gigs[commencedIndex];
+		commencedIndexGetBands = lastGigIndex;
+		console.log('🚀 ~ updateBandForLastGig ~ commencedIndexGetBands:', commencedIndexGetBands);
+		const lastGig = gigs[commencedIndexGetBands];
 		const question = lastGig.title + lastGig.description;
-		gigs[commencedIndex].bands = await getBands(question, commencedIndex);
+		gigs[commencedIndexGetBands].bands = await getBands(question, commencedIndexGetBands);
 	}
 
 	$: if (gigs.length > 0) {
 		lastGigIndex = gigs.length - 1 || 0;
 		// checks first to see if the job is already commenced
-		if (commencedIndex !== lastGigIndex)
+		if (commencedIndexGetBands !== lastGigIndex)
 			if (gigs[lastGigIndex].bands.length == 0) updateBandForLastGig();
 	}
 </script>
@@ -377,6 +389,8 @@
 						<th class="px-4 py-2">Bands</th>
 						<th class="px-4 py-2">Description</th>
 						<th class="px-4 py-2">Bios</th>
+						<th class="px-4 py-2">InstaCaptions</th>
+						<th class="px-4 py-2">InstaHashtags</th>
 						<th class="px-4 py-2">Image</th>
 						<th class="px-4 py-2">Ticket Price</th>
 						<th class="px-4 py-2">Ticket Link</th>
@@ -386,48 +400,90 @@
 				<tbody>
 					{#each gigs as gig}
 						<tr
-							class="hover:bg-gray-900 max-h-[2.5rem] rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500 overflow-hidden"
+							class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
 							on:click={handleGigRowClick(gig)}
 						>
-							<td class="px-4 py-2">{gig.title}</td>
-							<td class="px-4 py-2">{gig.date}</td>
-							<td class="px-4 py-2">{gig.time}</td>
-							<td class="px-4 py-2"
-								>{#if gig.bands?.length > 0}
-									{#each gig.bands || [] as band}
-										<div class="block">{band}</div>
-									{/each}
-								{/if}
-							</td>
-							<td class="px-4 py-2 text-xs">{gig.description}</td>
-							<td class="px-4 py-2"
-								>{#if gig.bios?.length > 0}
-									{#each gig.bios || [] as bio}
-										<div class="block">{bio}</div>
-									{/each}
-								{/if}
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">{gig.title}</div>
 							</td>
 							<td class="px-4 py-2">
-								{#if gig.imageUrl}
-									<img src={gig.imageUrl} alt="Gig Image" class="object-cover w-20 h-20 rounded" />
-								{:else}
-									<span class="text-sm italic text-gray-400">No image</span>
-								{/if}
+								<div class="max-h-[200px] overflow-y-auto">{gig.date}</div>
 							</td>
-							<td class="px-4 py-2">{gig.ticketPrice}</td>
 							<td class="px-4 py-2">
-								{#if gig.ticketUrl}
-									<a
-										href={gig.ticketUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-blue-600 underline">Buy Ticket</a
-									>
-								{:else}
-									<span class="text-sm italic text-gray-400">N/A</span>
-								{/if}
+								<div class="max-h-[200px] overflow-y-auto">{gig.time}</div>
 							</td>
-							<td class="px-4 py-2">{gig.soldOut}</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.bands?.length > 0}
+										{#each gig.bands || [] as band}
+											<div class="block">{band}</div>
+										{/each}
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2 text-xs">
+								<div class="max-h-[200px] overflow-y-auto">{gig.description}</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.bios?.length > 0}
+										{#each gig.bios || [] as bio}
+											<div class="block">{bio}</div>
+										{/each}
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.instaCaptions?.length > 0}
+										{#each gig.instaCaptions || [] as caption}
+											<div class="block">{caption}</div>
+										{/each}
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.instaHashtags?.length > 0}
+										{#each gig.instaHashtags || [] as hashtag}
+											<div class="block">{hashtag}</div>
+										{/each}
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.imageUrl}
+										<img
+											src={gig.imageUrl}
+											alt="Gig Image"
+											class="object-cover w-20 h-20 rounded"
+										/>
+									{:else}
+										<span class="text-sm italic text-gray-400">No image</span>
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">{gig.ticketPrice}</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">
+									{#if gig.ticketUrl}
+										<a
+											href={gig.ticketUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-blue-600 underline">Buy Ticket</a
+										>
+									{:else}
+										<span class="text-sm italic text-gray-400">N/A</span>
+									{/if}
+								</div>
+							</td>
+							<td class="px-4 py-2">
+								<div class="max-h-[200px] overflow-y-auto">{gig.soldOut}</div>
+							</td>
 						</tr>
 					{/each}
 				</tbody>

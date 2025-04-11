@@ -45,7 +45,7 @@
 	async function useCheerio() {
 		copied = false;
 		try {
-			const res = await fetch(`/api/cheerio/gem-gig?url=${input}`);
+			const res = await fetch(`/api/cheerio/oztix?url=${input}`);
 
 			if (res.ok) {
 				const json = await res.json();
