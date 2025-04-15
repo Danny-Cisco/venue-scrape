@@ -9,6 +9,12 @@
 		{ category: 'Jazz', value: 10 },
 		{ category: 'Electronic', value: 20 }
 	];
+
+	let missingGenres = ['Punk', 'Rave', 'Rockerbilly'];
+
+	function handleMissingGenreClick(genre) {
+		console.log('Missing Genre Click = ', genre);
+	}
 </script>
 
 <div class="page isolate" in:fade>
@@ -20,6 +26,21 @@
 			All Genres
 		</h1>
 	</div>
-
-	<D3Donut {donutData} />
+	<div class="flex w-screen p-4">
+		<D3Donut {donutData} />
+		<div class="flex flex-col w-xs">
+			<div class="border-white mb-4 whitespace-nowrap border-b-[1px]">MISSING GENRES</div>
+			{#each missingGenres as missingGenre}
+				<div class="row">
+					-
+					<div
+						class="hover:cursor-pointer hover:underline"
+						on:click={() => handleMissingGenreClick(missingGenre)}
+					>
+						{missingGenre}
+					</div>
+				</div>
+			{/each}
+		</div>
+	</div>
 </div>
