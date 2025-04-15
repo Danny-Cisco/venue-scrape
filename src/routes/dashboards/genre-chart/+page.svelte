@@ -27,12 +27,12 @@
 		<h1
 			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
 		>
-			All Genres
+			Genre Chart
 		</h1>
 	</div>
 	<div class="flex w-screen p-4">
 		<D3Donut {donutData} />
-		<div class="flex flex-col w-xs">
+		<div class="flex flex-col h-full p-4 border-l-[3px] border-white border-dotted w-xs">
 			<div class="border-white mb-4 whitespace-nowrap border-b-[1px]">MISSING GENRES</div>
 			{#each missingGenres as missingGenre}
 				<div class="row">
