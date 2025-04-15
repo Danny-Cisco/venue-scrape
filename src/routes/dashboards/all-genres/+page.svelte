@@ -1,6 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import D3Donut from '$lib/components/outputs/D3Donut.svelte';
+	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 
 	export let donutData = [
 		{ category: 'Rock', value: 30 },
@@ -11,6 +12,9 @@
 	];
 
 	let missingGenres = ['Punk', 'Rave', 'Rockerbilly'];
+
+	let gigs = {};
+	let bands = {};
 
 	function handleMissingGenreClick(genre) {
 		console.log('Missing Genre Click = ', genre);
@@ -43,4 +47,5 @@
 			{/each}
 		</div>
 	</div>
+	<GigsBandsTable {gigs} {bands} />
 </div>
