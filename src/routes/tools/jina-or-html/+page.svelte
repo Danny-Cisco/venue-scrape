@@ -1,4 +1,5 @@
 <script>
+	import { fade } from 'svelte/transition';
 	import CopyClipboard from '$lib/components/ui/CopyClipboard.svelte';
 	let input;
 	let output;
@@ -60,7 +61,7 @@
 	}
 </script>
 
-<div class="mb-4 space-y-4 page">
+<div class="mb-4 space-y-4 page" in:fade>
 	<h1>JINA or HTML</h1>
 
 	<input type="text" class="w-full" bind:value={input} />

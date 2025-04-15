@@ -1,9 +1,14 @@
 <script>
 	import { onMount, afterUpdate } from 'svelte';
 	import * as d3 from 'd3';
-	import { searchTermStore } from '$lib/stores/transcriptionStore';
 
-	export let data = [];
+	export let donutData = [
+		{ category: 'Rock', value: 30 },
+		{ category: 'Pop', value: 25 },
+		{ category: 'Hip Hop', value: 15 },
+		{ category: 'Jazz', value: 10 },
+		{ category: 'Electronic', value: 20 }
+	];
 	export let valueKey = 'value';
 	export let width = 500;
 
@@ -13,13 +18,17 @@
 	let color;
 	let mounted = false;
 
+	function handleLabelClick(d) {
+		console.log('handleLabelClick: ', d);
+	}
+
 	onMount(() => {
-		width = window.innerWidth / 2;
+		width = Math.max(300, window.innerWidth / 2); // Ensure minimum width
 		const height = Math.min(500, width * 0.614);
 		const outerRadius = (height / 2) * 0.8;
 		const innerRadius = outerRadius * 0.667;
 
-		color = d3.scaleOrdinal(d3.schemeCategory10);
+		color = d3.scaleOrdinal(d3.schemeTableau10); // Updated for D3 v7
 		arc = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
 
 		const labelArc = d3
@@ -35,6 +44,7 @@
 		svg = d3.select('#donut-chart').attr('viewBox', [-width / 2, -height / 2, width, height]);
 
 		mounted = true;
+		updateChart(donutData); // Call updateChart immediately to render
 	});
 
 	function arcTween(a) {
@@ -47,16 +57,13 @@
 		return d.startAngle + (d.endAngle - d.startAngle) / 2;
 	}
 
-	function handleLabelClick(text) {
-		searchTermStore.set(text);
-	}
-
 	function updateChart(newData) {
 		if (!svg || !mounted || !newData?.length) return;
 
 		console.log('Updating chart with data:', newData);
 
 		const pieData = pie(newData);
+		console.log('Pie data:', pieData); // Debug pie output
 		const outerRadius = (Math.min(500, width * 0.614) / 2) * 0.8;
 		const labelArc = d3
 			.arc()
@@ -78,6 +85,7 @@
 
 		// Update paths
 		paths
+			.merge(enterPaths)
 			.attr('fill', (d, i) => color(i))
 			.transition()
 			.duration(750)
@@ -139,15 +147,15 @@
 				d3.select(this).style('text-decoration', 'none');
 			})
 			.style('font-family', 'Monospace')
-			.style('fill', '#000')
+			.style('fill', '#ffffff')
 			.style('text-anchor', (d) => {
 				const angle = midAngle(d);
 				return angle < Math.PI ? 'start' : 'end';
 			})
-			.style('pointer-events', 'all') // Enable pointer events
-			.style('cursor', 'pointer') // Show pointer cursor
+			.style('pointer-events', 'all')
+			.style('cursor', 'pointer')
 			.attr('opacity', 0)
-			.on('click', (event, d) => handleLabelClick(d.data.category)) // Add click handler
+			.on('click', (event, d) => handleLabelClick(d.data.category))
 			.call(createTspans);
 
 		// Update existing labels
@@ -171,7 +179,8 @@
 				const angle = midAngle(d);
 				pos[0] = pos[0] + (angle < Math.PI ? 5 : -5);
 				const lineCount = d.lineCount || 1;
-				pos[1] = pos[1] - (lineCount - 1) * 6;
+				// Simplify for debugging
+				// pos[1] = pos[1] - (lineCount - 1) * 6;
 				return `translate(${pos})`;
 			})
 			.attr('opacity', 1);
@@ -187,9 +196,9 @@
 			.enter()
 			.append('polyline')
 			.style('fill', 'none')
-			.style('stroke', '#000')
+			.style('stroke', '#ffffff')
 			.style('stroke-width', '1px')
-			.style('opacity', 0.0);
+			.style('opacity', 0.5); // Reduced opacity for debugging
 
 		// Update polylines
 		polylines
@@ -206,19 +215,18 @@
 					midRadius * Math.sin(midAngle(d) - Math.PI / 2)
 				];
 				return [arc.centroid(d), midPoint, pos];
-			});
+			})
+			.style('opacity', 0.5);
 
 		// Exit polylines
 		polylines.exit().remove();
 	}
 
 	// Watch for data changes
-	$: {
-		console.log('Data changed:', data);
-		if (mounted && data) {
-			updateChart(data);
-		}
+	$: if (mounted && donutData) {
+		console.log('BOOOP: ', donutData);
+		updateChart(donutData);
 	}
 </script>
 
-<svg id="donut-chart" class=""></svg>
+<svg id="donut-chart"></svg>
