@@ -71,6 +71,8 @@
 
 <div class="flex flex-1 h-full">
 	<!-- Main Content -->
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class="relative w-full h-full overflow-y-auto pt-[100px]" on:click={handleOutsideClick}>
 		<main class="h-full max-w-[80ch] mx-auto">
 			<slot />
@@ -78,10 +80,13 @@
 	</div>
 	<!-- Left Sidebar -->
 	{#if $showLeftSidebar}
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<aside
 			bind:this={leftSidebarContainer}
 			class="w-[250px] p-4 pt-16 bg-black top-[100px] isolate absolute z-[99999] left-0 h-full"
 			transition:slide={{ axis: 'x' }}
+			on:click={() => ($showLeftSidebar = false)}
 		>
 			<div class="h-[101px]"></div>
 			<h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Venue Scrape</h2>
