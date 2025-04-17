@@ -32,7 +32,7 @@
 
 	let url = 'https://www.thegembar.com.au/gigs';
 
-	async function getLinks() {
+	async function beginCrawl() {
 		loading = true;
 		readOut = '✋ Cheerio is finding links';
 
@@ -46,11 +46,11 @@
 		const json = await res.json(); // ✅ this is already your array
 
 		output = JSON.stringify(json, null, 2); // ✅ this is just for visual logging or display
-		console.log('👀👀🤖🥸 ~ getLinks ~ 🔥output:', output);
+		console.log('👀👀🤖🥸 ~ beginCrawl ~ 🔥output:', output);
 
 		// ✅ assign json directly to links
 		links = [...new Set(json)];
-		console.log('👀👀🤖🥸 ~ getLinks ~ links:', links);
+		console.log('👀👀🤖🥸 ~ beginCrawl ~ links:', links);
 
 		loading = false;
 		readOut = '✅ Done';
@@ -325,7 +325,7 @@
 		<div class="w-full max-w-xl min-w-xl center">
 			<button
 				class="w-full max-w-xl mt-2 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white text-white focus:ring-4 focus:outline-none focus:ring-purple-800"
-				on:click={getLinks}
+				on:click={beginCrawl}
 			>
 				<span
 					class="relative px-5 py-2.5 transition-all h-[3rem] row items-center justify-center ease-in duration-75 w-full bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent"
@@ -353,9 +353,3 @@
 
 	<GigsBandsTable {gigs} {bands} />
 </div>
-
-<style>
-	.rowfx {
-		transition: color, 200ms;
-	}
-</style>

@@ -214,3 +214,9 @@
 		</table>
 	</div>
 {/if}
+
+<style>
+	.rowfx {
+		transition: color, 200ms;
+	}
+</style>
