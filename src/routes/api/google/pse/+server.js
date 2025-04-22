@@ -2,7 +2,7 @@ import { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
 export async function GET({ url }) {
-	const query = url.searchParams.get('q');
+	const query = url.searchParams.get('query');
 
 	if (!query) {
 		return json({ error: 'Missing search query' }, { status: 400 });

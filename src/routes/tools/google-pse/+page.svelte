@@ -3,7 +3,7 @@
 	let results = [];
 
 	async function search() {
-		const res = await fetch(`/api/google/pse?q=${encodeURIComponent(query)}`);
+		const res = await fetch(`/api/google/pse?query=${encodeURIComponent(query)}`);
 		const data = await res.json();
 		console.log(data);
 
