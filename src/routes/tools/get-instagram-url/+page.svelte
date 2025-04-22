@@ -1,16 +1,10 @@
 <script>
-	let google = '';
-	let ai = '';
 	let result = '';
 	let band = '';
 
-	$: google = `${band} + band instagram`;
-	$: ai = `what is the url for ${band} + band instagram profile. If unsure, prioritise Melbourne Bands.`;
-
 	async function search() {
-		const res = await fetch(
-			`/api/google/pse-plus-ai?google=${encodeURIComponent(google)}&ai=${encodeURIComponent(ai)}`
-		);
+		result = 'searching...';
+		const res = await fetch(`/api/google/get-instagram-url?band=${encodeURIComponent(band)}`);
 		const data = await res.json();
 		console.log(data);
 
