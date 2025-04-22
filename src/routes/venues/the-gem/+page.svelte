@@ -153,7 +153,7 @@
 		const finalJson = await JSON.parse(responseJson);
 
 		for (const band of finalJson.bands) {
-			let bandObject = { bandName: band, socialUrls: await getSocialUrls(band) };
+			let bandObject = { bandName: band, socialUrls: await getInstagramUrl(band) };
 			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 
@@ -243,6 +243,31 @@
 		try {
 			const json = JSON.parse(cleanMessage);
 			socialUrls = json.socialUrls || [];
+			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
+		} catch (err) {
+			console.error('❌ Failed to parse message as JSON:', err);
+		}
+
+		loading = false;
+		readOut = '✅ Done';
+		return socialUrls || [];
+	}
+
+	async function getInstagramUrl(bandName) {
+		loading = true;
+
+		readOut = `💀 Google is finding Instagram url for ${bandName}`;
+
+		const response = await fetch(
+			`/api/google/get-instagram-url?band=${encodeURIComponent(bandName)}`
+		);
+
+		const body = await response.json();
+		console.log('🚀 ~ getSocialUrls ~ body.message:', body.answer);
+
+		let socialUrls = [];
+		try {
+			socialUrls = [body.answer];
 			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
 		} catch (err) {
 			console.error('❌ Failed to parse message as JSON:', err);
