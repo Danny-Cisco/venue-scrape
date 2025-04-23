@@ -134,7 +134,7 @@
 	async function getBands(question, gigIndex) {
 		console.log('🍄 ~ getBands ~ question:', question);
 		const systemPrompt =
-			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }';
+			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }. ';
 
 		loading = true;
 		readOut = '😛 ChatGPT is finding band names';
@@ -213,6 +213,7 @@
 	}
 
 	async function getSocialUrls(bandName) {
+		// this function uses perplexity to gather social media links for a band
 		const systemPrompt =
 			' You are to act as a simple tool to return as a json array of social media links in the following format { "socialUrls": []}, do not say anything else. do not enclose the result in backticks';
 		loading = true;
