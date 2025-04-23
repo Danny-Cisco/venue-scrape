@@ -268,7 +268,7 @@
 
 		let socialUrls = [];
 		try {
-			socialUrls = [body.answer];
+			socialUrls = [...socialUrls, body.answer];
 			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
 		} catch (err) {
 			console.error('❌ Failed to parse message as JSON:', err);
