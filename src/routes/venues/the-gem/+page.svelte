@@ -172,7 +172,13 @@
 				}
 			}
 
+			// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex]
+
+			// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
+
 			bands = [...bands, bandObject || {}];
+
+			// HERE IS WHERE I CAN SAVE THE bandObject TO THE BANDS SUPABASE
 		}
 
 		readOut = '✅ Done!';
