@@ -115,14 +115,6 @@
 	];
 
 	let upsetPlotData = movieGenreData; // Assign the data
-
-	// --- Optional: Control the solo set mode ---
-	let upsetSoloMode = 'outersect'; // 'all', 'outersect', 'none'
-
-	function handleMissingGenreClick(genre) {
-		console.log('Missing Genre Click = ', genre);
-		// Add logic here if you want to do something with the click
-	}
 </script>
 
 <div class="page isolate" in:fade>
@@ -145,7 +137,7 @@
 
 	<!-- Table Area (Optional) -->
 	<div class="p-4 mt-4">
-		<h2 class="mb-2 text-xl font-semibold text-gray-700">Gigs & Bands Data</h2>
+		<!-- <h2 class="mb-2 text-xl font-semibold text-gray-700">Gigs & Bands Data</h2> -->
 		{#if Object.keys(gigs).length === 0 && Object.keys(bands).length === 0}
 			<p class="italic text-gray-500">No gigs or bands data loaded.</p>
 		{:else}
@@ -153,23 +145,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	.page {
-		min-height: 100vh;
-	}
-
-	/* Ensure buttons look like text until hovered/focused */
-	button {
-		background: none;
-		border: none;
-		padding: 0;
-		margin: 0;
-		/* color: inherit; */ /* Let specific classes handle color */
-		font: inherit;
-		cursor: pointer;
-	}
-
-	/* Add styles for the plot container if needed */
-	/* .plot-container { ... } */
-</style>
