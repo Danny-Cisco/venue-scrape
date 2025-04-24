@@ -139,15 +139,13 @@
 	<div class="flex flex-col w-screen gap-6 p-4 lg:flex-row">
 		<!-- Upset Plot Area -->
 		<div class="flex-grow overflow-hidden">
-			<div class="" style="overflow-x: auto;">
-				<UpsetPlot
-					data={upsetPlotData}
-					setPlotWidth={180}
-					intersectionBarWidth={10}
-					circleRadius={4}
-					setRowHeight={18}
-				/>
-			</div>
+			<UpsetPlot
+				data={upsetPlotData}
+				setPlotWidth={180}
+				intersectionBarWidth={10}
+				circleRadius={4}
+				setRowHeight={18}
+			/>
 		</div>
 	</div>
 
