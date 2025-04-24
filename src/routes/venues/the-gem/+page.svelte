@@ -53,7 +53,7 @@
 		console.log('👀👀🤖🥸 ~ beginCrawl ~ links:', links);
 
 		loading = false;
-		readOut = '✅ Done';
+		readOut = '✅ Done!';
 		crawlGemGigs();
 	}
 
@@ -112,7 +112,7 @@
 
 			gigs = [...gigs, gig];
 		}
-		readOut = '✅ Done';
+		readOut = '✅ Done!';
 		loading = false;
 	}
 
@@ -250,7 +250,7 @@
 		}
 
 		loading = false;
-		readOut = '✅ Done';
+		readOut = '✅ Done!';
 		return socialUrls || [];
 	}
 
@@ -275,7 +275,7 @@
 		}
 
 		loading = false;
-		readOut = '✅ Done';
+		readOut = '✅ Done!';
 		return socialUrls || [];
 	}
 
