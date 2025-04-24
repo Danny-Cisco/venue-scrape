@@ -17,9 +17,9 @@
 	export let color = 'hsl(210, 60%, 60%)';
 	export let inactiveColor = '#555';
 	export let setPlotWidth = 150;
-	export let intersectionPlotHeight = 200;
-	export let circleRadius = 5;
-	export let setRowHeight = 24;
+	export let intersectionPlotHeight = 250;
+	export let circleRadius = 6;
+	export let setRowHeight = 20;
 	export let intersectionBarWidth = 12;
 
 	// --- Internal State ---
