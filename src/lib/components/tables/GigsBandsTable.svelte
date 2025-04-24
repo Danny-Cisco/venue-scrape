@@ -74,6 +74,7 @@
 					<th class="px-4 py-2">Ticket Link</th>
 					<th class="px-4 py-2">Oztix</th>
 					<th class="px-4 py-2">Sold Out</th>
+					<th class="px-4 py-2">Genres</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -169,6 +170,15 @@
 						</td>
 						<td class="px-4 py-2">
 							<div class="max-h-[200px] overflow-y-auto">{gig.soldOut}</div>
+						</td>
+						<td class="px-4 py-2">
+							<div class="max-h-[200px] overflow-y-auto">
+								{#if gig.genres?.length > 0}
+									{#each gig.genres || [] as genre}
+										<div class="block font-bold">{genre}</div>
+									{/each}
+								{/if}
+							</div>
 						</td>
 					</tr>
 				{/each}
