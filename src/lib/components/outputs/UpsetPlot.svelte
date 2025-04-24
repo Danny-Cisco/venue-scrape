@@ -1,7 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import * as d3 from 'd3';
-
+	import { slide } from 'svelte/transition';
 	// --- Default Data ---
 	const defaultData = [
 		{ name: 'Set A', values: ['a', 'b', 'c', 'd', 'x'] },
@@ -14,7 +14,7 @@
 	/** Input data: Array<{name: string, values: any[]}> */
 	export let data = defaultData;
 	/** How to handle solo sets: 'all', 'outersect', 'none' */
-	export let soloSetMode = 'outersect';
+	export let soloSetMode = 'all';
 	/** Optional CSS class */
 	export let className = '';
 	/** Base color for active elements */
@@ -36,6 +36,8 @@
 	let container;
 	let tooltipCleanup = null;
 
+	let showSingleDotsSelection = false;
+
 	// --- Constants ---
 	const MARGIN = { top: 10, right: 200, bottom: 10, left: 100 }; // Margins *around* the entire compound plot
 	const MATRIX_AXIS_GAP = 30; // Gap between matrix/set plot and intersection plot/axis
@@ -43,130 +45,148 @@
 
 	// --- Data Formatting Logic ---
 	const formatIntersectionData = (inputData) => {
-		// compiling solo set data - how many values per set
-		const soloSets = [];
-		// Handle potential large number of sets (though unlikely for UpSet)
-		const nameStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.substr(
-			0,
-			inputData.length
-		);
-		if (inputData.length > nameStr.length) {
+		// --- Initial Setup & Validation ---
+		if (!inputData || !Array.isArray(inputData) || inputData.length === 0) {
+			console.warn('UpsetPlotStyled: Invalid or empty input data.');
+			return { intersections: [], soloSetsWithTotals: [] };
+		}
+		if (
+			!inputData.every(
+				(item) =>
+					typeof item === 'object' &&
+					item !== null &&
+					'name' in item &&
+					'values' in item &&
+					Array.isArray(item.values)
+			)
+		) {
+			console.error(
+				'UpsetPlotStyled: Invalid data format. Expected [{name: string, values: any[]}].'
+			);
+			// Provide minimal valid output to avoid downstream errors
+			const validSoloTotals = inputData
+				.filter(
+					(item) =>
+						typeof item === 'object' &&
+						item !== null &&
+						'name' in item &&
+						'values' in item &&
+						Array.isArray(item.values)
+				)
+				.map((x, i) => ({
+					name: x.name,
+					setName: `S${i}`, // Simple naming if default fails
+					num: x.values.length,
+					values: x.values
+				}));
+			return { intersections: [], soloSetsWithTotals: validSoloTotals };
+		}
+
+		const setInternalNameChars =
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.substr(0, inputData.length);
+		if (inputData.length > setInternalNameChars.length) {
 			console.warn(
 				'UpSet Plot: More sets than available characters for internal naming. Plot might be incorrect.'
 			);
 		}
-		inputData.forEach((x, i) => {
-			soloSets.push({
-				name: x.name,
-				setName: nameStr.substr(i, 1),
-				num: Array.isArray(x.values) ? x.values.length : 0, // Calculate total size here
-				values: Array.isArray(x.values) ? x.values : [] // Ensure values is array
-			});
-		});
 
-		// Generate all combinations (subsets) of set characters
-		const setChars = nameStr.split('');
-		let allCombinations = [];
-		for (let i = 1; i < 1 << setChars.length; i++) {
-			let subset = [];
-			for (let j = 0; j < setChars.length; j++) {
-				if ((i >> j) & 1) {
-					subset.push(setChars[j]);
+		const allSetData = inputData.map((x, i) => ({
+			name: x.name,
+			setName: setInternalNameChars.substr(i, 1),
+			valuesSet: new Set(Array.isArray(x.values) ? x.values : []), // Use Sets for efficiency
+			originalNum: Array.isArray(x.values) ? x.values.length : 0,
+			originalValues: Array.isArray(x.values) ? x.values : [] // Keep original array too
+		}));
+
+		const allValues = new Set(allSetData.flatMap((s) => Array.from(s.valuesSet)));
+
+		// --- 1. Calculate All Exclusive Intersection Segments ---
+		let allExclusiveSegments = [];
+		allValues.forEach((value) => {
+			const belongingSetChars = [];
+			allSetData.forEach((set) => {
+				if (set.valuesSet.has(value)) {
+					belongingSetChars.push(set.setName);
+				}
+			});
+
+			if (belongingSetChars.length > 0) {
+				const combinationSetName = belongingSetChars.sort().join('');
+				let existing = allExclusiveSegments.find((d) => d.setName === combinationSetName);
+				if (existing) {
+					existing.values.push(value);
+					existing.num++;
+				} else {
+					const originalNames = belongingSetChars
+						.map((setChar) => {
+							const set = allSetData.find((s) => s.setName === setChar);
+							return set ? set.name : '?';
+						})
+						.join(' + '); // Name reflects the combination
+
+					allExclusiveSegments.push({
+						name: originalNames, // Derived name for the combination
+						setName: combinationSetName,
+						num: 1,
+						values: [value],
+						isSolo: belongingSetChars.length === 1 // Flag for easier filtering
+					});
 				}
 			}
-			allCombinations.push(subset.sort().join(''));
-		}
-
-		// Process all combinations (including solos initially)
-		let processedCombinations = [];
-		allCombinations.forEach((combName) => {
-			const setsToIntersect = combName.split('');
-			const valuesArrays = setsToIntersect.map((setChar) => {
-				const set = soloSets.find((x) => x.setName === setChar);
-				return set ? set.values : undefined;
-			});
-
-			if (valuesArrays.some((v) => v === undefined)) {
-				console.warn(`Could not find values for combination: ${combName}`);
-				return;
-			}
-			if (valuesArrays.length === 0) return;
-
-			// Calculate intersection
-			const result = valuesArrays.reduce((accumulator, currentArray) => {
-				const currentSet = new Set(currentArray);
-				return accumulator.filter((element) => currentSet.has(element));
-			});
-
-			const originalNames = setsToIntersect
-				.map((setChar) => {
-					const set = soloSets.find((x) => x.setName === setChar);
-					return set ? set.name : '?';
-				})
-				.join(' + ');
-
-			processedCombinations.push({
-				name: originalNames,
-				setName: combName,
-				num: result.length,
-				values: result
-			});
 		});
 
-		// Filter out combinations with zero members
-		processedCombinations = processedCombinations.filter((d) => d.num > 0);
+		// Filter out zero-count segments (shouldn't happen here, but good practice)
+		allExclusiveSegments = allExclusiveSegments.filter((d) => d.num > 0);
 
-		// Now, separate based on soloSetMode logic if needed (for outersect)
-		// And prepare the final intersections array
-		let intersections = []; // This will hold the data for the top bar chart & matrix columns
+		// --- 2. Separate Exclusive Solos and Multisets ---
+		const exclusiveSolos = allExclusiveSegments.filter((d) => d.isSolo);
+		const exclusiveMultisets = allExclusiveSegments.filter((d) => !d.isSolo);
 
-		if (soloSetMode === 'outersect') {
-			// Calculate outersect values for solos
-			const soloOutersects = soloSets
-				.map((solo) => {
-					const otherSetValues = soloSets
-						.filter((y) => y.setName !== solo.setName)
-						.flatMap((y) => y.values);
-					const otherUniqueValues = new Set(otherSetValues);
-					const outersectValues = solo.values.filter((val) => !otherUniqueValues.has(val));
-					return {
-						name: solo.name, // Keep original name for display
-						setName: solo.setName,
-						num: outersectValues.length,
-						values: outersectValues
-					};
-				})
-				.filter((d) => d.num > 0); // Keep only non-empty outersects
+		// --- 3 & 4. Process based on soloSetMode ---
+		let finalIntersectionsForPlot = [...exclusiveMultisets]; // Start with multisets (always exclusive)
 
-			// Keep actual intersections (length > 1)
-			const actualIntersections = processedCombinations.filter((d) => d.setName.length > 1);
-			intersections = [...soloOutersects, ...actualIntersections];
-		} else if (soloSetMode === 'all') {
-			// Use all processed combinations (solos will have their full count from processedCombinations)
-			// Make sure solo names display correctly
-			intersections = processedCombinations.map((d) => {
-				if (d.setName.length === 1) {
-					const soloInfo = soloSets.find((s) => s.setName === d.setName);
-					return { ...d, name: soloInfo ? soloInfo.name : d.name }; // Ensure solo name is correct
+		if (soloSetMode === 'all') {
+			// Use TOTAL counts for solo sets
+			allSetData.forEach((setInfo) => {
+				// Check if this set actually has any elements (edge case)
+				if (setInfo.originalNum > 0) {
+					// Add an entry representing the *total* size of the set
+					finalIntersectionsForPlot.push({
+						name: setInfo.name, // Original name
+						setName: setInfo.setName,
+						num: setInfo.originalNum, // TOTAL number
+						values: setInfo.originalValues, // All original values
+						isSolo: true // Mark it as a solo representation
+					});
+				}
+			});
+		} else if (soloSetMode === 'outersect') {
+			// Use EXCLUSIVE counts for solo sets (already calculated)
+			// Add the non-empty exclusive solos back
+			finalIntersectionsForPlot.push(...exclusiveSolos.filter((s) => s.num > 0));
+			// Ensure the name is the original set name for these solos
+			finalIntersectionsForPlot = finalIntersectionsForPlot.map((d) => {
+				if (d.isSolo && d.setName.length === 1) {
+					const soloInfo = allSetData.find((s) => s.setName === d.setName);
+					return { ...d, name: soloInfo ? soloInfo.name : d.name };
 				}
 				return d;
 			});
-		} else {
-			// 'none'
-			// Only keep actual intersections (length > 1)
-			intersections = processedCombinations.filter((d) => d.setName.length > 1);
-		}
+		} // else soloSetMode === 'none', do nothing, solos are excluded
 
-		// We still need the original soloSets data (with total counts) for the left bar chart
-		const soloSetsWithTotals = inputData.map((x, i) => ({
-			name: x.name,
-			setName: nameStr.substr(i, 1),
-			num: Array.isArray(x.values) ? x.values.length : 0, // Total count
-			values: Array.isArray(x.values) ? x.values : []
+		// --- 5. Prepare Data for Left Bars (Always Total Size) ---
+		const soloSetsWithTotals = allSetData.map((s) => ({
+			name: s.name,
+			setName: s.setName,
+			num: s.originalNum, // Use the original total count
+			values: s.originalValues // Use original values array
 		}));
 
-		// Return both the data for the main plot and the separate total counts
-		return { intersections, soloSetsWithTotals };
+		// --- Return final data structures ---
+		// Filter final plot data again just in case a mode resulted in zero counts being added
+		finalIntersectionsForPlot = finalIntersectionsForPlot.filter((d) => d.num > 0);
+
+		return { intersections: finalIntersectionsForPlot, soloSetsWithTotals };
 	};
 
 	// --- Plotting Logic ---
@@ -469,17 +489,42 @@
 </script>
 
 <!-- Controls Section -->
-<div class="flex items-center justify-end gap-4 p-4">
-	<label for="solo-mode-select" class="font-medium text-gray-200">Single Dots?</label>
-	<select
-		id="solo-mode-select"
-		class="p-1 border border-gray-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500"
-		bind:value={soloSetMode}
+<div class="relative h-[35px] flex items-center justify-end gap-2 p-4">
+	<button
+		on:click={() => {
+			showSingleDotsSelection = !showSingleDotsSelection;
+		}}
+		transition:slide={{ axis: 'x' }}
 	>
-		<option value="outersect">Unique (Default)</option>
-		<option value="all">Total Size</option>
-		<option value="none">None</option>
-	</select>
+		<label for="solo-mode-select" class="text-xs text-gray-400 row"
+			><svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1"
+				stroke="currentColor"
+				class="size-5"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+				/>
+			</svg>Single Dots
+		</label>
+	</button>
+	{#if showSingleDotsSelection}
+		<select
+			id="solo-mode-select"
+			class="p-1 border rounded shadow-sm border-gray-300/20 focus:ring-blue-500 focus:border-blue-500/20"
+			bind:value={soloSetMode}
+			transition:slide={{ axis: 'x' }}
+		>
+			<option value="outersect">Exclusive</option>
+			<option value="all">Inclusive</option>
+			<option value="none">None</option>
+		</select>
+	{/if}
 </div>
 <!-- Container div where the plot will be rendered -->
 {#key soloSetMode}

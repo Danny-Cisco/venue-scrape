@@ -142,7 +142,6 @@
 			<div class="" style="overflow-x: auto;">
 				<UpsetPlot
 					data={upsetPlotData}
-					soloSetMode={upsetSoloMode}
 					setPlotWidth={180}
 					intersectionBarWidth={10}
 					circleRadius={4}
