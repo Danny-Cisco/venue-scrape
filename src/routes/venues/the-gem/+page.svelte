@@ -3,6 +3,7 @@
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
+	import { genreClassifier } from '$lib/utils/prompts';
 
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
@@ -129,6 +130,14 @@
 
 	async function getTixUrl(markdown) {
 		return markdown.match(tixUrlRegex) || '';
+	}
+
+	async function getGenres(gig) {
+		const systemPrompt = genreClassifier;
+		const question = gig.description + gig.bios + gig.tags; // look into this more
+
+		// fetch from openai qa endpoint
+		// recieve a json with a field called genres
 	}
 
 	async function getBands(question, gigIndex) {
