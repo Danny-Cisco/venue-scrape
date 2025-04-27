@@ -134,10 +134,30 @@
 
 	async function getGenres(gig) {
 		const systemPrompt = genreClassifier;
-		const question = gig.description + gig.bios + gig.tags; // look into this more
+		const question = gig.description + gig.bios + gig.tags + gigs.oztix; // look into this more
 
 		// fetch from openai qa endpoint
+
+		loading = true;
+		readOut = '🤪 ChatGPT is genre classifying a gig...';
+
+		const jsonBody = await JSON.stringify({ question, systemPrompt });
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application./json'
+			},
+			body: jsonBody
+		});
+
+		const data = await response.json();
+		const answerJson = data.answer;
+		const genres = await JSON.parse(answerJson);
+		console.log('✅🚀✅ ~ getGenres ~ genres:', genres);
+
 		// recieve a json with a field called genres
+
+		return genres;
 	}
 
 	async function getBands(question, gigIndex) {
@@ -147,13 +167,13 @@
 
 		loading = true;
 		readOut = '😛 ChatGPT is finding band names';
-		const parsedBody = await JSON.stringify({ question, systemPrompt });
+		const jsonBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: parsedBody
+			body: jsonBody
 		});
 
 		const data = await response.json();
@@ -182,6 +202,7 @@
 			}
 
 			// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex]
+			gigs[gigIndex].genres = await getGenres(gigs[gigIndex]);
 
 			// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
