@@ -345,7 +345,7 @@
 
 <!-- Header -->
 <header
-	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-dark"
+	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-gradient-to-br from-purple-500 to-pink-500"
 >
 	<!-- Logo -->
 	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl font-light font-bold">
