@@ -23,6 +23,8 @@ export const genres = [
 	'Metal',
 	'Punk',
 	'World Music',
+	'Ska & Reggae',
+	'Indie',
 	'Religious',
 	"Kid's Music"
 ];

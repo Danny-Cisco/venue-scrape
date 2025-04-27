@@ -134,7 +134,7 @@
 
 	async function getGenres(gig) {
 		const systemPrompt = genreClassifier;
-		const question = gig.description + gig.bios + gig.tags + gigs.oztix; // look into this more
+		const question = gig.description + gig.bios + gig.tags + gigs.oztix + gigs.instaCaptions; // look into this more
 
 		// fetch from openai qa endpoint
 
@@ -202,7 +202,9 @@
 			}
 
 			// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex]
-			gigs[gigIndex].genres = await getGenres(gigs[gigIndex]);
+			const genreObject = await getGenres(gigs[gigIndex]);
+			gigs[gigIndex].genres = genreObject.genres;
+			gigs[gigIndex].thinking = genreObject.thinking;
 
 			// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 

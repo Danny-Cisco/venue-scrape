@@ -75,6 +75,7 @@
 					<th class="px-4 py-2">Oztix</th>
 					<th class="px-4 py-2">Sold Out</th>
 					<th class="px-4 py-2">Genres</th>
+					<th class="px-4 py-2">Thinking</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -175,10 +176,13 @@
 							<div class="max-h-[200px] overflow-y-auto">
 								{#if gig.genres?.length > 0}
 									{#each gig.genres || [] as genre}
-										<div class="block font-bold">{genre}</div>
+										<div class="block font-bold whitespace-nowrap">{genre}</div>
 									{/each}
 								{/if}
 							</div>
+						</td>
+						<td class="px-4 py-2">
+							<div class="max-h-[200px] overflow-y-auto">{gig.thinking}</div>
 						</td>
 					</tr>
 				{/each}
