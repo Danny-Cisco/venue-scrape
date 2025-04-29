@@ -208,7 +208,7 @@
 		gigs[gigIndex].thinking = genreObject.thinking;
 
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
-		gigs[gigIndex].bands = bands;
+		gigs[gigIndex].bands = finalJson.bands;
 
 		await insertGigToSupabase(gigs[gigIndex]);
 
