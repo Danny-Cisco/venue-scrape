@@ -18,7 +18,7 @@ export async function PATCH({ request, locals, url }) {
 			return new Response(
 				JSON.stringify({
 					success: false,
-					message: 'Oztix url is required for updating records'
+					message: 'a key (previously oztixUrl) is required for updating records'
 				}),
 				{ status: 400 }
 			);
