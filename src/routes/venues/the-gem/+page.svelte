@@ -201,17 +201,17 @@
 				}
 			}
 
-			// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex]
-			const genreObject = await getGenres(gigs[gigIndex]);
-			gigs[gigIndex].genres = genreObject.genres;
-			gigs[gigIndex].thinking = genreObject.thinking;
-
-			// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
-
 			bands = [...bands, bandObject || {}];
 
-			// HERE IS WHERE I CAN SAVE THE bandObject TO THE BANDS SUPABASE
+			// HERE IS WHERE I CAN SAVE THE bandObject TO THE BANDS SUPABASE note... bands wont have a genre here
 		}
+
+		// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex] ... getGenres is for a gig, not a band
+		const genreObject = await getGenres(gigs[gigIndex]);
+		gigs[gigIndex].genres = genreObject.genres;
+		gigs[gigIndex].thinking = genreObject.thinking;
+
+		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
 		readOut = '✅ Done!';
 		loading = false;
