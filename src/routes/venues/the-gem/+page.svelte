@@ -5,6 +5,8 @@
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import { genreClassifier } from '$lib/utils/prompts';
 
+	import { convertStringToDatetime } from '$lib/utils/date.ts';
+
 	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
@@ -94,6 +96,7 @@
 			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
+			gig.datetime = convertStringToDatetime(gig.date, gig.time);
 			gig.venue = venueName;
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
@@ -205,6 +208,7 @@
 		gigs[gigIndex].thinking = genreObject.thinking;
 
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
+		gigs[gigIndex].bands = bands;
 
 		await insertGigToSupabase(gigs[gigIndex]);
 
