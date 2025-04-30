@@ -345,24 +345,20 @@
 
 <!-- Header -->
 <header
-	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] items-center justify-between px-4 py-2 isolate bg-gradient-to-br from-purple-500 to-pink-500"
+	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-extrabold leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-gradient-to-br from-purple-500 to-pink-500"
 >
 	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl font-light font-bold">
+	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl">
 		<img src="/icon.svg" class="size-10" alt="" />
-		<span
-			class="text-2xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400"
-		>
-			Venue Scrape
-		</span>
+		<span class="text-2xl uppercase"> Venue Scrape </span>
 	</strong>
 
 	<!-- User Authentication -->
 	{#if !$loading}
-		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 rounded-md">
+		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-white rounded-md">
 			{#if session}
 				<a href="/account" class="flex items-center gap-4"
-					><p class="font-bold">
+					><p class="font-bold text-white">
 						{profile?.username || session.user.email || session.user.displayName}
 					</p>
 

@@ -93,8 +93,8 @@
 <!-- UI -->
 <div class="page isolate" in:fade>
 	<div class="w-screen text-center">
-		<h1 class="mt-4 mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-300">
-			Genre Chart - Filtered Gigs
+		<h1 class="mt-4 mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-300">
+			Genre Chart
 		</h1>
 	</div>
 

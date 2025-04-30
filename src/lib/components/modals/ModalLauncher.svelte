@@ -28,11 +28,17 @@
 
 	// Add event listener on mount and remove on destroy
 	onMount(() => {
-		window.addEventListener('keydown', handleKeydown);
+		// Only add event listener if we're in the browser
+		if (typeof window !== 'undefined') {
+			window.addEventListener('keydown', handleKeydown);
+		}
 	});
 
 	onDestroy(() => {
-		window.removeEventListener('keydown', handleKeydown);
+		// Only remove event listener if we're in the browser
+		if (typeof window !== 'undefined') {
+			window.removeEventListener('keydown', handleKeydown);
+		}
 	});
 </script>
 
