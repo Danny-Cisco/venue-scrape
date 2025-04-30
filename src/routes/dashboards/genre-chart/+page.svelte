@@ -3,6 +3,7 @@
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	// Ensure this path points to your styled UpsetPlot component file
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
+	import { gigsStore, gigsGenreStore } from '$lib/stores/gigsStore.js';
 
 	let gigs = {}; // Placeholder
 	let bands = {}; // Placeholder
@@ -15,8 +16,11 @@
 
 	$: if (gigsData.success) gigsRecords = gigsData.records;
 
+	$: $gigsStore = gigsRecords;
+
 	$: console.log('data on the page...', data);
 	$: console.log('gigsRecords on the page...', gigsRecords);
+	$: console.log('gigsStore...', $gigsStore);
 
 	// --- Define MOVIE data for the Upset Plot ---
 	// Structure: { name: Genre, values: [Movie Titles] }
@@ -125,7 +129,8 @@
 		}
 	];
 
-	let upsetPlotData = movieGenreData; // Assign the data
+	let upsetPlotData;
+	$: upsetPlotData = $gigsGenreStore; // Assign the data
 </script>
 
 <div class="page isolate" in:fade>
