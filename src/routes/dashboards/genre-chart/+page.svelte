@@ -7,6 +7,17 @@
 	let gigs = {}; // Placeholder
 	let bands = {}; // Placeholder
 
+	let gigsRecords;
+
+	export let data;
+
+	$: ({ gigsData, profile, session } = data);
+
+	$: if (gigsData.success) gigsRecords = gigsData.records;
+
+	$: console.log('data on the page...', data);
+	$: console.log('gigsRecords on the page...', gigsRecords);
+
 	// --- Define MOVIE data for the Upset Plot ---
 	// Structure: { name: Genre, values: [Movie Titles] }
 	// This is a sample dataset, replace with your actual data source/loading.
@@ -119,7 +130,7 @@
 
 <div class="page isolate" in:fade>
 	<!-- header with gradient -->
-	<div class="w-screen text-center bg-gradient-to-br from-blue-600 to-teal-400">
+	<div class="w-screen text-center">
 		<h1
 			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
 		>
