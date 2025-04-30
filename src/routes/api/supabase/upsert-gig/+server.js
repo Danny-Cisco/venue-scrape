@@ -1,69 +1,53 @@
-export async function PATCH({ request, locals, url }) {
-	const { supabase } = locals;
+// src/routes/api/gigs/+server.js
+import { json } from '@sveltejs/kit';
+
+export async function PATCH({ request, locals }) {
+	const table = 'gigs';
+
+	// ── 1. require authentication ───────────────────────────────
+	if (!locals.user?.id)
+		return json({ success: false, message: 'Authentication required.' }, { status: 401 });
+
 	try {
-		const tableName = 'gigs';
-		const data = await request.json();
+		// ── 2. parse & validate body ────────────────────────────
+		/** @type {{ key?: string } & Record<string, unknown>} */
+		const body = await request.json();
 
-		if (!data || Object.keys(data).length === 0) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					message: 'Please send at least one piece of data'
-				}),
+		if (!body || Object.keys(body).length === 0)
+			return json({ success: false, message: 'Body cannot be empty.' }, { status: 400 });
+
+		if (!body.key)
+			return json(
+				{ success: false, message: '`key` (formerly oztixUrl) is required.' },
 				{ status: 400 }
 			);
-		}
 
-		if (!data.key) {
-			return new Response(
-				JSON.stringify({
-					success: false,
-					message: 'a key (previously oztixUrl) is required for updating records'
-				}),
-				{ status: 400 }
-			);
-		}
+		const { key, ...patch } = body;
 
-		// Separate key from the data to update
-		const { key, ...dataToUpdate } = data;
+		// ── 3. build camelCase object to upsert ─────────────────
+		const toUpsert = {
+			...patch, // whatever client sent (camel)
+			key, // primary/unique key
+			userId: locals.user.id, // wrapper → user_id
+			updatedAt: new Date() // wrapper → updated_at  (add column or ignore)
+		};
 
-		// Perform the upsert
-		const { data: result, error } = await supabase
-			.from(tableName)
-			.upsert([{ key, ...dataToUpdate }], { onConflict: ['key'] });
+		// ── 4. perform upsert via the wrapper ───────────────────
+		const { data: record, error } = await locals.db.upsert(table, toUpsert, {
+			onConflict: ['key'] // Postgres column name (snake after conversion)
+		});
+		if (error) throw error;
 
-		if (error) {
-			console.error(`Error updating ${tableName}:`, error);
-			return new Response(
-				JSON.stringify({
-					success: false,
-					message: error.message,
-					table: tableName,
-					what_we_tried_to_update: dataToUpdate
-				}),
-				{ status: 500 }
-			);
-		}
-
-		return new Response(
-			JSON.stringify({
-				success: true,
-				table: tableName,
-				updated_data: {
-					key,
-					...dataToUpdate
-				}
-			}),
-			{ status: 200 }
-		);
+		// ── 5. success ──────────────────────────────────────────
+		return json({ success: true, table, record }, { status: 200 });
 	} catch (err) {
-		console.error('Unexpected error:', err);
-		return new Response(
-			JSON.stringify({
+		console.error('PATCH /api/supabase/upsert-gig error:', err);
+		return json(
+			{
 				success: false,
-				message: 'Oops, something went wrong',
-				table: url.searchParams.get('table') || 'main'
-			}),
+				message: err?.message ?? 'Unexpected server error.',
+				table
+			},
 			{ status: 500 }
 		);
 	}

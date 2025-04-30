@@ -19,5 +19,14 @@ export const db = (sb: SupabaseClient) => ({
 		const { data, error } = await q;
 		if (error) throw error; // bubble up to endpoint
 		return (data as unknown[]).map(fromDb<T>);
-	}
+	},
+	upsert: async <T>(table: string, record: T, opts: { onConflict: string[] }) =>
+		sb
+			.from(table)
+			.upsert(toDb(record), opts) // camel ➜ snake
+			.select()
+			.single()
+			.then(({ data, error }) =>
+				error ? { data: null, error } : { data: fromDb<T>(data), error: null }
+			)
 });
