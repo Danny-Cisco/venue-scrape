@@ -4,6 +4,7 @@
 	import BandModal from '$lib/components/modals/BandModal.svelte';
 	import ModalCloseButton from '$lib/components/modals/ModalCloseButton.svelte';
 	import { fade, fly } from 'svelte/transition';
+	import { onMount, onDestroy } from 'svelte';
 
 	$: $showGigModal = $showGigModal;
 	$: console.log('🚀 ~ showGigModal:', $showGigModal);
@@ -11,6 +12,28 @@
 	$: console.log('🚀 ~ lastClicked:', $lastClicked);
 	$: $showBandModal = $showBandModal;
 	$: console.log('🚀 ~ showBandModal:', $showBandModal);
+
+	// Function to close all modals
+	function closeModals() {
+		$showGigModal = false;
+		$showBandModal = false;
+	}
+
+	// Handle ESC key press
+	function handleKeydown(event) {
+		if (event.key === 'Escape') {
+			closeModals();
+		}
+	}
+
+	// Add event listener on mount and remove on destroy
+	onMount(() => {
+		window.addEventListener('keydown', handleKeydown);
+	});
+
+	onDestroy(() => {
+		window.removeEventListener('keydown', handleKeydown);
+	});
 </script>
 
 {#if $showGigModal && $lastClicked}
