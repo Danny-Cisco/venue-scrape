@@ -3,6 +3,9 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
 
+// src/hooks.server.ts
+import { db as makeDb } from '$lib/server/db'; // 👈 import wrapper
+
 export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
 		cookies: {
@@ -14,6 +17,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 			}
 		}
 	});
+
+	// NEW: attach the wrapped helpers
+	event.locals.db = makeDb(event.locals.supabase);
 
 	event.locals.safeGetSession = async () => {
 		const {

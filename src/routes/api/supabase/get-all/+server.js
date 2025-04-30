@@ -1,44 +1,21 @@
+import { json } from '@sveltejs/kit'; // convenient helper
+
 export async function GET({ locals, url }) {
-	const { supabase } = locals;
+	const table = url.searchParams.get('table') || 'main';
+
 	try {
-		const tableName = url.searchParams.get('table') || 'main';
+		// Wraps supabase + converts snake→camel
+		const records = await locals.db.all(table, (q) => q.order('created_at', { ascending: false }));
 
-		console.log('🚀 ~ GET ~ locals.user.id;:', locals.user.id);
-		// Fetch records for the current user
-		const { data: records, error } = await supabase
-			.from(tableName)
-			.select('*')
-			// .eq('user_id', locals.user.id) dont check for user for a single client app
-			.order('created_at', { ascending: false });
-
-		if (error) {
-			console.error(`Error reading from ${tableName}:`, error);
-			return new Response(
-				JSON.stringify({
-					success: false,
-					message: error.message,
-					table: tableName
-				}),
-				{ status: 500 }
-			);
-		}
-
-		return new Response(
-			JSON.stringify({
-				success: true,
-				table: tableName,
-				records
-			}),
-			{ status: 200 }
-		);
+		return json({ success: true, table, records }); // already camelCase
 	} catch (err) {
 		console.error('Unexpected error:', err);
-		return new Response(
-			JSON.stringify({
+		return json(
+			{
 				success: false,
-				message: 'Oops, something went wrong',
-				table: url.searchParams.get('table') || 'main'
-			}),
+				message: err?.message ?? 'Oops, something went wrong',
+				table
+			},
 			{ status: 500 }
 		);
 	}

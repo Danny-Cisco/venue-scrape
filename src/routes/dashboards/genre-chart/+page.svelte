@@ -136,10 +136,8 @@
 <div class="page isolate" in:fade>
 	<!-- header with gradient -->
 	<div class="w-screen text-center">
-		<h1
-			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
-		>
-			Genre Chart
+		<h1 class="mt-4 mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-300">
+			Genre Chart - All Gigs
 		</h1>
 	</div>
 
@@ -154,10 +152,10 @@
 	<!-- Table Area (Optional) -->
 	<div class="p-4 mt-4">
 		<!-- <h2 class="mb-2 text-xl font-semibold text-gray-700">Gigs & Bands Data</h2> -->
-		{#if Object.keys(gigs).length === 0 && Object.keys(bands).length === 0}
+		{#if Object.keys($gigsStore).length === 0 && Object.keys(bands).length === 0}
 			<p class="italic text-gray-500">No gigs or bands data loaded.</p>
 		{:else}
-			<GigsBandsTable {gigs} {bands} />
+			<GigsBandsTable gigs={$gigsStore} {bands} />
 		{/if}
 	</div>
 </div>
