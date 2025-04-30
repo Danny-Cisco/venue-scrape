@@ -8,6 +8,19 @@ import { genres as allPossibleGenres } from '$lib/utils/prompts.ts';
 // Initialize with an empty array or potentially load initial data
 // Example structure: { id: number | string, title: string, genres: string[] }
 export const gigsStore = writable([]);
+export const filteredGigIds = writable([]);
+
+export const gigsStoreFiltered = derived(
+	[gigsStore, filteredGigIds],
+	([$gigsStore, $filteredGigIds]) => {
+		if (!$filteredGigIds || $filteredGigIds.length === 0) {
+			// No filter set — return all gigs
+			return $gigsStore;
+		}
+		// Filter based on the list of IDs
+		return $gigsStore.filter((gig) => $filteredGigIds.includes(gig.id));
+	}
+);
 
 // The derived store that transforms the data
 export const gigsGenreStore = derived(

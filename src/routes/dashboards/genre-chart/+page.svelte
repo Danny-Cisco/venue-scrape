@@ -3,7 +3,7 @@
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	// Ensure this path points to your styled UpsetPlot component file
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
-	import { gigsStore, gigsGenreStore } from '$lib/stores/gigsStore.js';
+	import { gigsStore, gigsGenreStore, gigsStoreFiltered } from '$lib/stores/gigsStore.js';
 
 	let gigs = {}; // Placeholder
 	let bands = {}; // Placeholder
@@ -17,6 +17,7 @@
 	$: if (gigsData.success) gigsRecords = gigsData.records;
 
 	$: $gigsStore = gigsRecords;
+	$: $gigsStoreFiltered;
 
 	$: console.log('data on the page...', data);
 	$: console.log('gigsRecords on the page...', gigsRecords);
@@ -155,7 +156,7 @@
 		{#if Object.keys($gigsStore).length === 0 && Object.keys(bands).length === 0}
 			<p class="italic text-gray-500">No gigs or bands data loaded.</p>
 		{:else}
-			<GigsBandsTable gigs={$gigsStore} {bands} />
+			<GigsBandsTable gigs={$gigsStoreFiltered} {bands} />
 		{/if}
 	</div>
 </div>

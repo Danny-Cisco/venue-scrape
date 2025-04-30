@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import * as d3 from 'd3';
 	import { slide, fade } from 'svelte/transition';
+	import { filteredGigIds } from '$lib/stores/gigsStore.js';
 	// --- Default Data ---
 	const defaultData = [
 		{ name: 'Set A', values: ['a', 'b', 'c', 'd', 'x'] },
@@ -176,6 +177,7 @@
 
 	// --- Plotting Logic ---
 	const plotUpsetStyled = (plotData, soloSetsInfo, containerElement) => {
+		// ... (Initial setup, data prep, dimensions, SVG, scales - remain the same) ...
 		d3.select(containerElement).select('svg').remove();
 		d3.select(containerElement).select('p').remove();
 
@@ -187,61 +189,51 @@
 
 		// --- Data Prep ---
 		const sortedIntersections = [...plotData].sort((a, b) => b.num - a.num);
-		const sortedSets = [...soloSetsInfo].sort((a, b) => a.name.localeCompare(b.name));
+		const sortedSets = [...soloSetsInfo].sort((a, b) => a.name.localeCompare(b.name)); // soloSetsInfo contains total set sizes
 		const setNames = sortedSets.map((d) => d.name);
 
 		// --- Dimensions Recalculation ---
-		// ... (rest of dimensions code) ...
 		const matrixWidth = sortedIntersections.length * (intersectionBarWidth * 1.8);
 		const matrixHeight = sortedSets.length * setRowHeight;
-
-		// Define starting positions for each section
-		const barPlotStartX = MARGIN.left; // Bars start after left margin
+		const barPlotStartX = MARGIN.left;
 		const barPlotEndX = barPlotStartX + setPlotWidth;
-		const nameLabelStartX = barPlotEndX + BAR_LABEL_GAP; // Labels start after bars+gap
+		const nameLabelStartX = barPlotEndX + BAR_LABEL_GAP;
 		const nameLabelEndX = nameLabelStartX + SET_LABEL_WIDTH;
-		const matrixStartX = nameLabelEndX + LABEL_MATRIX_GAP; // Matrix starts after labels+gap
-
+		const matrixStartX = nameLabelEndX + LABEL_MATRIX_GAP;
 		const totalWidth = matrixStartX + matrixWidth + MARGIN.right;
 		const totalHeight =
 			MARGIN.top + intersectionPlotHeight + MATRIX_AXIS_GAP + matrixHeight + MARGIN.bottom;
 
 		// --- SVG Setup ---
-		// ... (svg setup code) ...
 		const svg = d3
 			.select(containerElement)
 			.append('svg')
 			.attr('width', totalWidth)
 			.attr('height', totalHeight)
 			.attr('class', 'upset-plot-styled-svg');
-
 		const mainGroup = svg.append('g').attr('transform', `translate(0, ${MARGIN.top})`);
 
 		// --- Scales ---
-		// ... (scales code) ...
 		const xIntersectionScale = d3
 			.scaleBand()
 			.domain(d3.range(sortedIntersections.length))
 			.range([0, matrixWidth])
 			.paddingInner(0.3)
 			.paddingOuter(0.15);
-
 		const yIntersectionScale = d3
 			.scaleLinear()
 			.domain([0, d3.max(sortedIntersections, (d) => d.num) || 1])
 			.range([intersectionPlotHeight, 0])
 			.nice();
-
 		const xSetScale = d3
 			.scaleLinear()
-			.domain([0, d3.max(sortedSets, (d) => d.num) || 1])
-			.range([setPlotWidth, 0]) // Relative to barPlotStartX
+			.domain([0, d3.max(sortedSets, (d) => d.num) || 1]) // Use sortedSets max for this scale
+			.range([setPlotWidth, 0])
 			.nice();
-
 		const ySetScale = d3.scaleBand().domain(setNames).range([0, matrixHeight]).paddingInner(0.1);
 
 		// --- Axes ---
-		// ... (axes code) ...
+		// ... (Axes code remains the same) ...
 		const yIntersectionAxis = d3.axisLeft(yIntersectionScale).ticks(5).tickSizeOuter(0);
 		mainGroup
 			.append('g')
@@ -260,6 +252,22 @@
 			.call((g) => g.select('.domain').remove())
 			.call((g) => g.selectAll('.tick line').attr('stroke-opacity', 0.2).attr('y2', 5));
 
+		// --- Tooltip Setup (Define once) ---
+		let tooltip = d3.select('body').select('.upset-tooltip-styled');
+		if (tooltip.empty()) {
+			tooltip = d3.select('body').append('div').attr('class', 'upset-tooltip-styled');
+		}
+		tooltip
+			.style('position', 'absolute')
+			.style('z-index', '10')
+			.style('visibility', 'hidden')
+			.style('background-color', 'rgba(0, 0, 0, 0.85)')
+			.style('color', 'white')
+			.style('padding', '4px 8px')
+			.style('border-radius', '4px')
+			.style('font-size', '11px')
+			.text('');
+
 		// --- Plot Elements ---
 
 		// 1. Intersection Size Plot (Top Right)
@@ -267,7 +275,7 @@
 			.append('g')
 			.attr('id', 'intersection-plot')
 			.attr('transform', `translate(${matrixStartX}, 0)`);
-
+		// ... (baseline) ...
 		intersectionPlotG
 			.append('line')
 			.attr('class', 'base-line')
@@ -280,63 +288,86 @@
 			.selectAll('.intersection-bar')
 			.data(sortedIntersections, (d) => d.setName)
 			.join('rect')
-			.attr('class', 'intersection-bar') // Keep the class for styling/selection
+			// ... (intersection bar attributes and existing handlers - remain the same) ...
+			.attr('class', 'intersection-bar')
 			.attr('x', (d, i) => xIntersectionScale(i))
 			.attr('y', (d) => yIntersectionScale(d.num))
 			.attr('width', intersectionBarWidth)
 			.attr('height', (d) => Math.max(0, yIntersectionScale(0) - yIntersectionScale(d.num)))
 			.attr('fill', color)
-			// --- ADD CLICK HANDLER HERE ---
+			.style('cursor', 'pointer') // Add cursor
 			.on('click', function (event, d) {
-				// 'd' is the data object for the clicked bar
-				console.log(`Clicked Intersection: ${d.name} (${d.num} items)`);
-				console.log('Associated values:', d.values);
-
-				// Optional: Add visual feedback on click
-				// You might want to manage a 'selected' state if you need persistent highlighting
-				// For now, just a brief flash or console log is fine.
-				// d3.select(this).attr('fill', 'red').transition().duration(150).attr('fill', color);
-
-				// --- THIS IS WHERE YOU WOULD UPDATE YOUR STORE ---
-				// import { filteredGigIds } from './stores.js'; // Assuming you have a store file
-				// filteredGigIds.set(d.values);
+				// console.log(`Clicked Intersection: ${d.name} (${d.num} items)`);
+				// console.log('Intersection values:', d.values);
+				filteredGigIds.set(d.values);
+			})
+			.on('mouseover', (event, d) => {
+				tooltip.html(`${d.name}: <b>${d.num}</b>`); // Clarify tooltip source
+				tooltip.style('visibility', 'visible');
+				d3.select(event.currentTarget).attr('fill', d3.color(color).darker(0.7));
+			})
+			.on('mousemove', (event) => {
+				tooltip.style('top', `${event.pageY - 28}px`).style('left', `${event.pageX + 5}px`);
+			})
+			.on('mouseout', (event) => {
+				tooltip.style('visibility', 'hidden');
+				d3.select(event.currentTarget).attr('fill', color);
 			});
 
-		// Intersection Count Labels (Keep as is)
+		// Intersection Count Labels
+		// ... (Intersection labels remain the same) ...
 		intersectionPlotG
 			.selectAll('.intersection-label')
 			.data(sortedIntersections, (d) => d.setName)
 			.join('text')
-			// ... (label attributes) ...
 			.attr('class', 'intersection-label')
 			.attr('x', (d, i) => xIntersectionScale(i) + intersectionBarWidth / 2)
 			.attr('y', (d) => yIntersectionScale(d.num) - INTERSECTION_LABEL_OFFSET)
 			.attr('text-anchor', 'middle')
 			.text((d) => d.num);
 
-		// 2. Set Size Plot (Bars) (Keep as is)
-		// ... (set plot code) ...
+		// 2. Set Size Plot (Left Bars) - ADD INTERACTIONS HERE
 		const setPlotG = mainGroup
 			.append('g')
 			.attr('id', 'set-plot')
 			.attr(
 				'transform',
 				`translate(${barPlotStartX}, ${intersectionPlotHeight + MATRIX_AXIS_GAP})`
-			); // Position after left margin
+			);
 
-		setPlotG
+		const setBars = setPlotG // Assign selection to a variable
 			.selectAll('.set-bar')
-			.data(sortedSets, (d) => d.setName)
+			.data(sortedSets, (d) => d.setName) // Data is from sortedSets (total set info)
 			.join('rect')
 			.attr('class', 'set-bar')
-			.attr('x', (d) => xSetScale(d.num))
-			.attr('y', (d) => ySetScale(d.name) + SET_BAR_V_OFFSET) // Apply offset
-			.attr('width', (d) => Math.max(0, xSetScale(0) - xSetScale(d.num)))
-			.attr('height', Math.max(0, ySetScale.bandwidth() - SET_BAR_V_REDUCTION)) // Apply reduction
-			.attr('fill', color);
+			.attr('x', (d) => xSetScale(d.num)) // X depends on the total number
+			.attr('y', (d) => ySetScale(d.name) + SET_BAR_V_OFFSET)
+			.attr('width', (d) => Math.max(0, xSetScale(0) - xSetScale(d.num))) // Width depends on total number
+			.attr('height', Math.max(0, ySetScale.bandwidth() - SET_BAR_V_REDUCTION))
+			.attr('fill', color)
+			.style('cursor', 'pointer') // Add cursor
+			.on('click', function (event, d) {
+				// console.log(`Clicked Set: ${d.name} (${d.num} items)`);
+				// console.log('Set values:', d.values);
+				//Update store with the full set's values
+				filteredGigIds.set(d.values);
+			})
+			.on('mouseover', (event, d) => {
+				// 'd' is from sortedSets
+				tooltip.html(`${d.name}: <b>${d.num}</b>`); // Clarify tooltip source
+				tooltip.style('visibility', 'visible');
+				d3.select(event.currentTarget).attr('fill', d3.color(color).darker(0.7));
+			})
+			.on('mousemove', (event) => {
+				tooltip.style('top', `${event.pageY - 28}px`).style('left', `${event.pageX + 5}px`);
+			})
+			.on('mouseout', (event) => {
+				tooltip.style('visibility', 'hidden');
+				d3.select(event.currentTarget).attr('fill', color);
+			});
 
-		// 3. Set Name & Count Labels (Between Bars and Matrix) (Keep as is)
-		// ... (set label code) ...
+		// 3. Set Name & Count Labels
+		// ... (Set labels remain the same) ...
 		const setLabelG = mainGroup
 			.append('g')
 			.attr('id', 'set-labels') // Changed ID back
@@ -356,10 +387,9 @@
 			.attr('text-anchor', 'start')
 			// .text((d) => `(${d.num}) ${d.name}`);
 			.text((d) => `${d.name}`);
-		// .text((d) => `${d.name}`);
 
-		// 4. Membership Matrix (Bottom Right) (Keep as is)
-		// ... (matrix code) ...
+		// 4. Membership Matrix (Bottom Right)
+		// ... (Matrix dots and lines - revert to original simpler version without interactions) ...
 		const matrixG = mainGroup
 			.append('g')
 			.attr('id', 'membership-matrix')
@@ -370,7 +400,6 @@
 			.selectAll('.matrix-bg-stripe')
 			.data(d3.range(sortedSets.length))
 			.join('rect')
-			// ... (stripe attributes same as before) ...
 			.attr('class', 'matrix-bg-stripe')
 			.attr('x', 0)
 			.attr('y', (d, i) => ySetScale(sortedSets[i].name))
@@ -379,18 +408,18 @@
 			.attr('fill', (d, i) => (i % 2 === 0 ? '#22272e' : 'transparent'))
 			.attr('opacity', 0.6);
 
-		// Dots and Lines
+		// Dots and Lines (Original loop structure)
 		sortedIntersections.forEach((intersectionData, i) => {
 			const intersectionX = xIntersectionScale(i) + intersectionBarWidth / 2;
 			const participatingSetNames = sortedSets
 				.filter((set) => intersectionData.setName.includes(set.setName))
 				.map((set) => set.name);
 
+			// Draw dots for this intersection column
 			sortedSets.forEach((set) => {
 				const isActive = participatingSetNames.includes(set.name);
 				matrixG
 					.append('circle')
-					// ... (dot attributes same as before) ...
 					.attr('class', 'matrix-dot')
 					.attr('cx', intersectionX)
 					.attr('cy', ySetScale(set.name) + ySetScale.bandwidth() / 2)
@@ -399,13 +428,13 @@
 					.attr('opacity', isActive ? 1 : 0.7);
 			});
 
+			// Draw connecting line if needed
 			if (participatingSetNames.length > 1) {
 				const yPositions = participatingSetNames.map(
 					(name) => ySetScale(name) + ySetScale.bandwidth() / 2
 				);
 				matrixG
 					.append('line')
-					// ... (line attributes same as before) ...
 					.attr('class', 'matrix-line')
 					.attr('x1', intersectionX)
 					.attr('x2', intersectionX)
@@ -416,42 +445,7 @@
 			}
 		});
 
-		// --- Tooltip ---
-		// Important: Ensure the tooltip handlers don't interfere negatively
-		// with the click handler. Placing the click handler *before* the
-		// mouseover/out handlers is generally fine.
-		let tooltip = d3.select('body').select('.upset-tooltip-styled');
-		if (tooltip.empty()) {
-			tooltip = d3.select('body').append('div').attr('class', 'upset-tooltip-styled');
-		}
-		// ... (tooltip setup) ...
-		tooltip
-			.style('position', 'absolute')
-			.style('z-index', '10')
-			.style('visibility', 'hidden')
-			.style('background-color', 'rgba(0, 0, 0, 0.85)')
-			.style('color', 'white')
-			.style('padding', '4px 8px')
-			.style('border-radius', '4px')
-			.style('font-size', '11px')
-			.text('');
-
-		intersectionBars // Re-select to add tooltip handlers
-			.on('mouseover', (event, d) => {
-				tooltip.html(`${d.name}: <b>${d.num}</b>`);
-				tooltip.style('visibility', 'visible');
-				// Make sure hover doesn't override a potential 'selected' style if you add one
-				d3.select(event.currentTarget).attr('fill', d3.color(color).darker(0.7));
-			})
-			.on('mousemove', (event) => {
-				tooltip.style('top', `${event.pageY - 28}px`).style('left', `${event.pageX + 5}px`);
-			})
-			.on('mouseout', (event) => {
-				tooltip.style('visibility', 'hidden');
-				// Reset to base color on mouseout
-				d3.select(event.currentTarget).attr('fill', color);
-			});
-
+		// --- Return Cleanup Function ---
 		return () => {
 			tooltip.style('visibility', 'hidden');
 		};
