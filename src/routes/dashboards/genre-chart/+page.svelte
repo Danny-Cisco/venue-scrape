@@ -1,162 +1,154 @@
 <script>
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
-	// Ensure this path points to your styled UpsetPlot component file
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
-	import { gigsStore, gigsGenreStore, gigsStoreFiltered } from '$lib/stores/gigsStore.js';
 
-	let gigs = {}; // Placeholder
-	let bands = {}; // Placeholder
+	import {
+		gigsStore,
+		gigsGenreStore,
+		gigsStoreFiltered,
+		dateRangeStore,
+		gigsStoreDateFiltered,
+		filteredGigIds
+	} from '$lib/stores/gigsStore.js';
 
+	let gigs = {};
+	let bands = {};
 	let gigsRecords;
-
 	export let data;
 
+	// Handle data updates
 	$: ({ gigsData, profile, session } = data);
+	$: if (gigsData?.success) gigsRecords = gigsData.records;
+	$: if (gigsRecords) $gigsStore = gigsRecords;
 
-	$: if (gigsData.success) gigsRecords = gigsData.records;
+	// Debugging logs
+	$: console.log('✅ data:', data);
+	$: console.log('✅ gigsRecords:', gigsRecords);
+	$: console.log('✅ gigsStore:', $gigsStore);
+	$: console.log('✅ gigsStoreDateFiltered:', $gigsStoreDateFiltered);
+	$: console.log('✅ dateRangeStore:', $dateRangeStore);
 
-	$: $gigsStore = gigsRecords;
-	$: $gigsStoreFiltered;
-
-	$: console.log('data on the page...', data);
-	$: console.log('gigsRecords on the page...', gigsRecords);
-	$: console.log('gigsStore...', $gigsStore);
-
-	// --- Define MOVIE data for the Upset Plot ---
-	// Structure: { name: Genre, values: [Movie Titles] }
-	// This is a sample dataset, replace with your actual data source/loading.
-	const movieGenreData = [
-		{
-			name: 'Action',
-			values: [
-				'The Dark Knight',
-				'Mad Max: Fury Road',
-				'John Wick',
-				'Gladiator',
-				'Die Hard',
-				'Mission: Impossible',
-				'Inception',
-				'Avengers: Endgame',
-				'Extraction'
-			]
-		},
-		{
-			name: 'Adventure',
-			values: [
-				'Mad Max: Fury Road',
-				'Gladiator',
-				'Mission: Impossible',
-				'Inception',
-				'Avengers: Endgame',
-				'Indiana Jones',
-				'Pirates of the Caribbean',
-				'Lord of the Rings'
-			]
-		},
-		{
-			name: 'Sci-Fi',
-			values: [
-				'The Dark Knight',
-				'Mad Max: Fury Road',
-				'Inception',
-				'Avengers: Endgame',
-				'Blade Runner 2049',
-				'Arrival',
-				'Interstellar',
-				'Extraction',
-				'Star Wars'
-			]
-		},
-		{
-			name: 'Thriller',
-			values: [
-				'The Dark Knight',
-				'John Wick',
-				'Inception',
-				'Blade Runner 2049',
-				'Parasite',
-				'Gone Girl',
-				'Prisoners',
-				'Extraction',
-				'Star Wars'
-			]
-		},
-		{
-			name: 'Comedy',
-			values: [
-				'Parasite',
-				'The Grand Budapest Hotel',
-				'Superbad',
-				'Booksmart',
-				'Paddington 2',
-				'Deadpool'
-			]
-		},
-		{
-			name: 'Drama',
-			values: [
-				'The Dark Knight',
-				'Gladiator',
-				'Inception',
-				'Blade Runner 2049',
-				'Arrival',
-				'Interstellar',
-				'Parasite',
-				'Gone Girl',
-				'Prisoners',
-				'The Grand Budapest Hotel',
-				'Forrest Gump'
-			]
-		},
-		{
-			name: 'Romance',
-			values: [
-				'Gone Girl',
-				'The Grand Budapest Hotel',
-				'Forrest Gump',
-				'La La Land',
-				'Pride & Prejudice'
-			]
-		},
-		{ name: 'Horror', values: ['Get Out', 'Hereditary', 'A Quiet Place', 'It Follows'] },
-		// {
-		// 	name: 'Animation',
-		// 	values: ['Spider-Man: Into the Spider-Verse', 'Spirited Away', 'Your Name']
-		// }
-		{
-			name: 'Animation',
-			values: [] // checking that zero values will display
+	// Format date as yyyy-mm-dd
+	function formatDateForInput(date) {
+		if (!(date instanceof Date) || isNaN(date.getTime())) {
+			console.warn('Invalid date passed to formatDateForInput:', date);
+			const today = new Date();
+			return today.toISOString().split('T')[0];
 		}
-	];
+		const formattedDate = date.toISOString().split('T')[0];
+		console.log('🚀 ~ formatDateForInput ~ formattedDate:', formattedDate);
+		return formattedDate;
+	}
+
+	let startDateInput = '';
+	let endDateInput = '';
+
+	function updateDateRange(type, event) {
+		$filteredGigIds = [];
+		const newDateString = event.target.value;
+		console.log(`🟡 updateDateRange: ${type} =`, newDateString);
+		if (!newDateString) {
+			console.warn(`⚠️ Tried to set ${type} date to an empty string.`);
+			return;
+		}
+
+		try {
+			const newDate = new Date(newDateString + 'T00:00:00Z');
+			if (isNaN(newDate.getTime())) {
+				console.error(`❌ Invalid ${type} date:`, newDateString);
+				return;
+			}
+
+			const currentRange = $dateRangeStore || { start: null, end: null };
+			let updatedRange = { ...currentRange };
+
+			if (type === 'start') {
+				if (currentRange.end && newDate > currentRange.end) {
+					console.warn('Start date > end date. Syncing them.');
+					updatedRange = { start: newDate, end: newDate };
+				} else {
+					updatedRange = { ...currentRange, start: newDate };
+				}
+			} else if (type === 'end') {
+				if (currentRange.start && newDate < currentRange.start) {
+					console.warn('End date < start date. Syncing them.');
+					updatedRange = { start: newDate, end: newDate };
+				} else {
+					updatedRange = { ...currentRange, end: newDate };
+				}
+			}
+
+			dateRangeStore.set(updatedRange);
+		} catch (e) {
+			console.error(`❌ Error processing ${type} date:`, e);
+		}
+	}
 
 	let upsetPlotData;
-	$: upsetPlotData = $gigsGenreStore; // Assign the data
+	$: upsetPlotData = $gigsGenreStore;
 </script>
 
+<!-- UI -->
 <div class="page isolate" in:fade>
-	<!-- header with gradient -->
 	<div class="w-screen text-center">
 		<h1 class="mt-4 mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-300">
-			Genre Chart - All Gigs
+			Genre Chart - Filtered Gigs
 		</h1>
 	</div>
 
-	<!-- Main content area -->
+	<!-- Date Range Inputs -->
+	<div class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300">
+		<label for="startDate">Start Date:</label>
+		<input
+			type="date"
+			id="startDate"
+			bind:value={startDateInput}
+			on:change={(e) => {
+				console.log('🔁 Start date changed:', e.target.value);
+				updateDateRange('start', e);
+			}}
+			class="px-2 py-1 text-white border border-gray-600 rounded"
+		/>
+
+		<label for="endDate">End Date:</label>
+		<input
+			type="date"
+			id="endDate"
+			bind:value={endDateInput}
+			on:change={(e) => {
+				console.log('🔁 End date changed:', e.target.value);
+				updateDateRange('end', e);
+			}}
+			class="px-2 py-1 text-white border border-gray-600 rounded"
+		/>
+	</div>
+
+	<!-- Main content -->
 	<div class="flex flex-col w-screen gap-6 p-4 lg:flex-row">
-		<!-- Upset Plot Area -->
 		<div class="flex-grow overflow-hidden">
-			<UpsetPlot data={upsetPlotData} />
+			{#key upsetPlotData}
+				<UpsetPlot data={upsetPlotData} />
+			{/key}
 		</div>
 	</div>
 
-	<!-- Table Area (Optional) -->
+	<!-- Filtered gigs -->
 	<div class="p-4 mt-4">
-		<!-- <h2 class="mb-2 text-xl font-semibold text-gray-700">Gigs & Bands Data</h2> -->
-		{#if Object.keys($gigsStore).length === 0 && Object.keys(bands).length === 0}
-			<p class="italic text-gray-500">No gigs or bands data loaded.</p>
+		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
+			<p class="italic text-gray-500">No gigs match the current filters.</p>
 		{:else}
-			<GigsBandsTable gigs={$gigsStoreFiltered} {bands} />
+			<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
 		{/if}
 	</div>
 </div>
+
+<style>
+	.page {
+		min-height: 100vh;
+	}
+	input[type='date'] {
+		color-scheme: dark;
+	}
+</style>

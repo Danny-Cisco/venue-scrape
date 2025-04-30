@@ -10,22 +10,49 @@ import { genres as allPossibleGenres } from '$lib/utils/prompts.ts';
 export const gigsStore = writable([]);
 export const filteredGigIds = writable([]);
 
-export const gigsStoreFiltered = derived(
-	[gigsStore, filteredGigIds],
-	([$gigsStore, $filteredGigIds]) => {
-		if (!$filteredGigIds || $filteredGigIds.length === 0) {
-			// No filter set — return all gigs
-			return $gigsStore;
-		}
-		// Filter based on the list of IDs
-		return $gigsStore.filter((gig) => $filteredGigIds.includes(gig.id));
+export const dateRangeStore = writable({
+	start: '',
+	end: ''
+});
+
+// Derived store that filters gigs based on the selected date range
+export const gigsStoreDateFiltered = derived(
+	[gigsStore, dateRangeStore],
+	([$gigsStore, $dateRangeStore]) => {
+		const { start, end } = $dateRangeStore || {};
+
+		// If no valid range, return all gigs
+		if (!start || !end) return $gigsStore;
+
+		// Ensure comparison is done with Dates
+		const startDate = new Date(start);
+		const endDate = new Date(end);
+
+		// Filter gigs by date
+		return $gigsStore.filter((gig) => {
+			if (!gig.datetime) return false;
+			const gigDate = new Date(gig.datetime);
+			return gigDate >= startDate && gigDate <= endDate;
+		});
 	}
 );
 
-// The derived store that transforms the data
+export const gigsStoreFiltered = derived(
+	[gigsStoreDateFiltered, filteredGigIds],
+	([$gigsStoreDateFiltered, $filteredGigIds]) => {
+		if (!$filteredGigIds || $filteredGigIds.length === 0) {
+			// No filter set — return all gigs
+			return $gigsStoreDateFiltered;
+		}
+		// Filter based on the list of IDs
+		return $gigsStoreDateFiltered.filter((gig) => $filteredGigIds.includes(gig.id));
+	}
+);
+
+// The derived store that transforms the records into the genre data the table requires
 export const gigsGenreStore = derived(
-	gigsStore, // The store(s) this derived store depends on
-	($gigsStore) => {
+	gigsStoreDateFiltered, // The store(s) this derived store depends on
+	($gigsStoreDateFiltered) => {
 		// Callback function receives the latest value(s)
 		// Initialize the result structure with all genres having empty values arrays
 		// Using a Map for efficient lookups by genre name
@@ -34,12 +61,12 @@ export const gigsGenreStore = derived(
 			genreMap.set(genreName, { name: genreName, values: [] });
 		});
 
-		// Iterate through each gig in the gigsStore
-		$gigsStore.forEach((gig) => {
+		// Iterate through each gig in the gigsStoreDateFiltered
+		$gigsStoreDateFiltered.forEach((gig) => {
 			// ---- SAFETY CHECKS ----
 			// Ensure the gig object exists
 			if (!gig) {
-				console.warn('Encountered undefined/null entry in gigsStore');
+				console.warn('Encountered undefined/null entry in gigsStoreDateFiltered');
 				return; // Skip this entry
 			}
 			// Ensure the gig has an ID
@@ -85,6 +112,6 @@ export const gigsGenreStore = derived(
 		return result;
 	},
 	// Optional: Initial value while the first computation runs.
-	// Provides the structure immediately, even if gigsStore is initially empty.
+	// Provides the structure immediately, even if gigsStoreDateFiltered is initially empty.
 	allPossibleGenres.map((name) => ({ name: name, values: [] }))
 );
