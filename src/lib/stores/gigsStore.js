@@ -15,20 +15,17 @@ export const dateRangeStore = writable({
 	end: ''
 });
 
-// Derived store that filters gigs based on the selected date range
 export const gigsStoreDateFiltered = derived(
 	[gigsStore, dateRangeStore],
 	([$gigsStore, $dateRangeStore]) => {
 		const { start, end } = $dateRangeStore || {};
 
-		// If no valid range, return all gigs
 		if (!start || !end) return $gigsStore;
 
-		// Ensure comparison is done with Dates
 		const startDate = new Date(start);
 		const endDate = new Date(end);
+		endDate.setHours(23, 59, 59, 999); // make end date inclusive
 
-		// Filter gigs by date
 		return $gigsStore.filter((gig) => {
 			if (!gig.datetime) return false;
 			const gigDate = new Date(gig.datetime);

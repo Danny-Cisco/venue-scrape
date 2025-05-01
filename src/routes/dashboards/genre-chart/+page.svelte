@@ -4,6 +4,8 @@
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
 
+	import { dateRangePrompt } from '$lib/utils/prompts.ts';
+
 	import {
 		gigsStore,
 		gigsGenreStore,
@@ -55,6 +57,8 @@
 	let startDateInput = '';
 	let endDateInput = '';
 
+	let timeRangePrompt = '';
+
 	function updateDateRange(type, event) {
 		$filteredGigIds = [];
 		const newDateString = event.target.value;
@@ -96,8 +100,52 @@
 		}
 	}
 
+	async function getDateRange(timeRangePrompt) {
+		const systemPrompt = `The current date, day and time is ${nowForChat}. ${dateRangePrompt} `;
+		const question = timeRangePrompt;
+		// fetch from openai qa endpoint
+
+		// loading = true;
+
+		const jsonBody = await JSON.stringify({ question, systemPrompt });
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application./json'
+			},
+			body: jsonBody
+		});
+
+		const data = await response.json();
+		const answerJson = data.answer;
+		const dateRangeJson = await JSON.parse(answerJson);
+		console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
+
+		dateRangeStore.set({ start: dateRangeJson.startDate, end: dateRangeJson.endDate });
+
+		return;
+	}
+
 	let upsetPlotData;
 	$: upsetPlotData = $gigsGenreStore;
+
+	let nowForChat = '';
+
+	onMount(() => {
+		const now = new Date();
+		const formatter = new Intl.DateTimeFormat('en-AU', {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true,
+			timeZoneName: 'short'
+		});
+		nowForChat = formatter.format(now);
+		console.log('🕰️ nowForChat =', nowForChat);
+	});
 </script>
 
 <!-- UI -->
@@ -132,6 +180,21 @@
 				updateDateRange('end', e);
 			}}
 			class="px-2 py-1 text-white border border-gray-600 rounded"
+		/>
+	</div>
+
+	<!-- chat input -->
+	<div class="flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
+		<input
+			type="text"
+			bind:value={timeRangePrompt}
+			on:keydown={(e) => {
+				if (e.key === 'Enter') {
+					getDateRange(timeRangePrompt);
+				}
+			}}
+			placeholder="Enter a TimeRange..."
+			class="w-full px-5 rounded-full"
 		/>
 	</div>
 

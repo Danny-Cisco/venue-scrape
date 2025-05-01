@@ -1,5 +1,9 @@
 <script>
 	export let gig = {};
+
+	function openBandModal(band) {
+		console.log('band clicked 👉 ', band);
+	}
 </script>
 
 <div class="overflow-y-auto gig-card">
@@ -20,6 +24,12 @@
 		{:else}
 			<p class="gig-ticket-free">Free Entry</p>
 		{/if}
+		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Bands</h3>
+		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
+			{#each gig.bands as band}
+				<button on:click={openBandModal(band)}>{band}</button>
+			{/each}
+		</div>
 	</div>
 </div>
 
