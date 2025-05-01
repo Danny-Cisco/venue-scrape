@@ -33,7 +33,8 @@
 	// Handle data updates
 	$: ({ gigsData, profile, session } = data);
 	$: if (gigsData?.success) gigsRecords = gigsData.records;
-	$: if (gigsRecords) $gigsStore = gigsRecords;
+	$: if (gigsRecords)
+		$gigsStore = gigsRecords.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
 	// Debugging logs
 	$: console.log('✅ data:', data);
