@@ -480,7 +480,7 @@
 			} else {
 				d3.select(container).select('svg').remove();
 				d3.select(container).select('p').remove();
-				d3.select(container).append('p').text('No non-empty sets or intersections to display.');
+				d3.select(container).append('p').text('No gigs found... = (');
 			}
 		} catch (error) {
 			console.error('Error processing or plotting styled UpSet data:', error);

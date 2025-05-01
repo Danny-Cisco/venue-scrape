@@ -21,6 +21,9 @@
 	export let data;
 
 	let tableSectionRef;
+	let chartSectionRef;
+
+	let firstIsBlocked = false;
 
 	let showDatePickerText = 'need an old-school date-picker';
 
@@ -32,6 +35,16 @@
 		setTimeout(() => {
 			tableSectionRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}, 50);
+	}
+
+	// Auto-scroll when `filteredGigIds` changes and has values
+	$: if ($gigsStoreDateFiltered?.length > 0 && chartSectionRef) {
+		if (!firstIsBlocked) firstIsBlocked = true;
+		else
+			// Slight delay can help with reactivity
+			setTimeout(() => {
+				chartSectionRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}, 50);
 	}
 
 	// Handle data updates
@@ -192,7 +205,7 @@
 					/></svg
 				>
 			{:else}
-				loading..
+				<p class="font-semibold text-green-400">loading..</p>
 			{/if}
 		</div>
 	</div>
@@ -236,7 +249,7 @@
 	{/if}
 
 	<!-- Main content -->
-	<div class="flex flex-col w-screen gap-6 p-4 lg:flex-row">
+	<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
 		<div class="flex-grow overflow-hidden">
 			{#key upsetPlotData}
 				<UpsetPlot data={upsetPlotData} />
@@ -249,7 +262,7 @@
 	<!-- Add this above your GigsBandsTable -->
 	<div class="p-4 mt-4" bind:this={tableSectionRef}>
 		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
-			<p class="italic text-gray-500">No gigs match the current filters.</p>
+			<p class="italic text-gray-500">Click on chart to see those gigs</p>
 		{:else}
 			<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
 		{/if}
