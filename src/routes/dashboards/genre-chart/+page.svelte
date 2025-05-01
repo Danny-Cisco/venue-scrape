@@ -18,6 +18,16 @@
 	let gigsRecords;
 	export let data;
 
+	let tableSectionRef;
+
+	// Auto-scroll when `filteredGigIds` changes and has values
+	$: if ($filteredGigIds?.length > 0 && tableSectionRef) {
+		// Slight delay can help with reactivity
+		setTimeout(() => {
+			tableSectionRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		}, 50);
+	}
+
 	// Handle data updates
 	$: ({ gigsData, profile, session } = data);
 	$: if (gigsData?.success) gigsRecords = gigsData.records;
@@ -135,7 +145,9 @@
 	</div>
 
 	<!-- Filtered gigs -->
-	<div class="p-4 mt-4">
+
+	<!-- Add this above your GigsBandsTable -->
+	<div class="p-4 mt-4" bind:this={tableSectionRef}>
 		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 			<p class="italic text-gray-500">No gigs match the current filters.</p>
 		{:else}
