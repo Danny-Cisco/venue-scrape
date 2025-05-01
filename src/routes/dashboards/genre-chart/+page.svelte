@@ -169,11 +169,11 @@
 
 <!-- UI -->
 <div class="page isolate" in:fade>
-	<div class="w-screen text-center">
+	<!-- <div class="w-screen text-center">
 		<h1 class="mt-4 mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-300">
 			Genre Chart
 		</h1>
-	</div>
+	</div> -->
 
 	<!-- TimeRange chatGpt input -->
 	<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
@@ -185,7 +185,7 @@
 					getDateRange(timeRangePrompt);
 				}
 			}}
-			placeholder="Enter a TimeRange..."
+			placeholder="Ask for a date range..."
 			class="w-full px-5 rounded-full"
 		/>
 
