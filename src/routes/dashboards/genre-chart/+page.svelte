@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, slide } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
 
@@ -21,6 +21,10 @@
 	export let data;
 
 	let tableSectionRef;
+
+	let showDatePickerText = 'need an old-school date-picker';
+
+	let showDatePicker = false;
 
 	// Auto-scroll when `filteredGigIds` changes and has values
 	$: if ($filteredGigIds?.length > 0 && tableSectionRef) {
@@ -59,6 +63,7 @@
 	let endDateInput = '';
 
 	let timeRangePrompt = '';
+	let loading = false;
 
 	function updateDateRange(type, event) {
 		$filteredGigIds = [];
@@ -106,7 +111,7 @@
 		const question = timeRangePrompt;
 		// fetch from openai qa endpoint
 
-		// loading = true;
+		loading = true;
 
 		const jsonBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
@@ -123,7 +128,7 @@
 		console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
 
 		dateRangeStore.set({ start: dateRangeJson.startDate, end: dateRangeJson.endDate });
-
+		loading = false;
 		return;
 	}
 
@@ -157,35 +162,8 @@
 		</h1>
 	</div>
 
-	<!-- Date Range Inputs -->
-	<div class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300">
-		<label for="startDate">Start Date:</label>
-		<input
-			type="date"
-			id="startDate"
-			bind:value={startDateInput}
-			on:change={(e) => {
-				console.log('🔁 Start date changed:', e.target.value);
-				updateDateRange('start', e);
-			}}
-			class="px-2 py-1 text-white border border-gray-600 rounded"
-		/>
-
-		<label for="endDate">End Date:</label>
-		<input
-			type="date"
-			id="endDate"
-			bind:value={endDateInput}
-			on:change={(e) => {
-				console.log('🔁 End date changed:', e.target.value);
-				updateDateRange('end', e);
-			}}
-			class="px-2 py-1 text-white border border-gray-600 rounded"
-		/>
-	</div>
-
-	<!-- chat input -->
-	<div class="flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
+	<!-- TimeRange chatGpt input -->
+	<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
 		<input
 			type="text"
 			bind:value={timeRangePrompt}
@@ -197,7 +175,65 @@
 			placeholder="Enter a TimeRange..."
 			class="w-full px-5 rounded-full"
 		/>
+
+		<div class="absolute text-gray-500 right-10 row">
+			{#if !loading}
+				enter
+
+				<svg
+					fill="none"
+					height="24"
+					viewBox="0 0 20 20"
+					width="24"
+					xmlns="http://www.w3.org/2000/svg"
+					><path
+						d="m3.76072 12 3.33197 3.136c.20108.1893.21067.5057.02141.7068s-.5057.2107-.70679.0214l-4.25-4c-.10039-.0945-.15731-.2263-.15731-.3641 0-.1379.05693-.2697.15732-.3641l4.25-3.99998c.20109-.18926.51753-.17967.70678.02142.18926.20109.17967.51753-.02142.70678l-3.33182 3.13578h11.23914c1.1046 0 2-.8954 2-2v-4.5c0-.27614.2239-.5.5-.5s.5.22386.5.5v4.5c0 1.6569-1.3431 3-3 3z"
+						fill="currentColor"
+					/></svg
+				>
+			{:else}
+				loading..
+			{/if}
+		</div>
 	</div>
+	<button
+		class="text-xs text-left text-gray-500"
+		on:click={() => {
+			showDatePicker = !showDatePicker;
+		}}>{showDatePickerText}?</button
+	>
+	{#if showDatePicker}
+		<!-- Date Range Inputs -->
+		<div class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300" transition:slide>
+			<div class="block">
+				<label for="startDate">Start</label>
+				<input
+					type="date"
+					id="startDate"
+					bind:value={startDateInput}
+					on:change={(e) => {
+						console.log('🔁 Start date changed:', e.target.value);
+						updateDateRange('start', e);
+					}}
+					class="px-2 py-1 text-white border border-gray-600 rounded"
+				/>
+			</div>
+
+			<div class="block">
+				<label for="endDate">End</label>
+				<input
+					type="date"
+					id="endDate"
+					bind:value={endDateInput}
+					on:change={(e) => {
+						console.log('🔁 End date changed:', e.target.value);
+						updateDateRange('end', e);
+					}}
+					class="px-2 py-1 text-white border border-gray-600 rounded"
+				/>
+			</div>
+		</div>
+	{/if}
 
 	<!-- Main content -->
 	<div class="flex flex-col w-screen gap-6 p-4 lg:flex-row">
