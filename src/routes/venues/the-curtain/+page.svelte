@@ -7,7 +7,7 @@
 
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
 
-	let venueName = 'The Tote';
+	let venueName = 'The Curtain';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
@@ -431,7 +431,7 @@
 	</div>
 
 	<!-- lower section of output -->
-	<!-- <div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
+	<div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
 		{#if links.length > 0}
 			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
 				{#each links as link}
@@ -451,7 +451,7 @@
 
 			<button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button>
 		{/if}
-	</div> -->
+	</div>
 	<div class="flex items-center w-screen pb-4 mb-4 bg-black">
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
