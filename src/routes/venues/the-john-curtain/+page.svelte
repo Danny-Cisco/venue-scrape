@@ -7,7 +7,7 @@
 
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
 
-	let venueName = 'The Curtain';
+	let venueName = 'The John Curtain';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
@@ -18,20 +18,19 @@
 
 	let bands = [];
 
-	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
 	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
 
 	let instaProfileRegex = /https:\/\/www\.instagram\.com\/(?!reel\/)[\w\.\-]+\/?/gi;
 
 	let output = '';
 
-	let url = 'https://thetotehotel.oztix.com.au/';
+	let url = 'https://www.johncurtinhotel.com/gigs';
 
 	async function beginCrawl() {
 		loading = true;
 		readOut = '✋ Cheerio is finding links';
 
-		const res = await fetch(`/api/cheerio/tote-links?url=${url}`);
+		const res = await fetch(`/api/cheerio/john-curtain-links?url=${url}`);
 
 		if (!res.ok) {
 			readOut = await res.text();
@@ -54,23 +53,6 @@
 		crawlOztixGigs();
 	}
 
-	async function useCheerio(link) {
-		// copied = false;
-		try {
-			const res = await fetch(`/api/cheerio/gem-gig?url=${link}`);
-
-			if (res.ok) {
-				const json = await res.json();
-				return json;
-			} else {
-				const errText = await res.text();
-				readOut = `Error ${res.status}: ${errText}`;
-			}
-		} catch (err) {
-			readOut = `Network error: ${err.message}`;
-		}
-	}
-
 	async function getOztix(link) {
 		loading = true;
 		readOut = `✋ Cheerio is scraping Oztix event : ${link}`;
@@ -89,31 +71,6 @@
 		} catch (err) {
 			readOut = `Network error: ${err.message}`;
 		}
-		loading = false;
-	}
-
-	async function crawlGemGigs() {
-		loading = true;
-
-		if (links.length === 0) return;
-		for (const link of links) {
-			readOut = `✋ Cheerio is fetching :   ${link}`;
-
-			const gig = await useCheerio(link);
-			gig.datetime = convertStringToDatetime(gig.date, gig.time);
-			gig.venue = venueName;
-			gig.bands = []; // add some blank fields ready for the ui
-			gig.bios = []; // add some blank fields ready for the ui
-			gig.instaCaptions = []; // add some blank fields ready for the ui
-			gig.instaHashtags = []; // add some blank fields ready for the ui
-			gig.oztix = {};
-			if (gig.ticketUrl != '#' || false) {
-				gig.oztix = await getOztix(gig.ticketUrl);
-			}
-
-			gigs = [...gigs, gig];
-		}
-		readOut = '✅ Done!';
 		loading = false;
 	}
 
@@ -147,21 +104,6 @@
 		}
 		readOut = '✅ Done!';
 		loading = false;
-	}
-
-	async function getGig(link) {
-		const jinaLink = 'https://r.jina.ai/' + link;
-		const res = await fetch(jinaLink);
-		if (res.ok) {
-			return await res.text();
-		} else {
-			output = 'Failed to get gig';
-			return;
-		}
-	}
-
-	async function getTixUrl(markdown) {
-		return markdown.match(tixUrlRegex) || '';
 	}
 
 	async function getGenres(gig) {
@@ -326,48 +268,6 @@
 		return data.data[0];
 	}
 
-	async function getSocialUrls(bandName) {
-		// this function uses perplexity to gather social media links for a band
-		const systemPrompt =
-			' You are to act as a simple tool to return as a json array of social media links in the following format { "socialUrls": []}, do not say anything else. do not enclose the result in backticks';
-		loading = true;
-
-		readOut = `💀 Perplexity is finding social media links for ${bandName}`;
-
-		const prompt = `what are all the social media links you can find for the band called ${bandName}.`;
-		const parsedBody = await JSON.stringify({ prompt, systemPrompt });
-		const response = await fetch('/api/perplexity/sonar-pro', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: parsedBody
-		});
-
-		const body = await response.json();
-		console.log('🚀 ~ getSocialUrls ~ body.message:', body.message);
-
-		// Remove ```json or ``` and trim the string
-		const cleanMessage = body.message
-			.replace(/^```json\s*/i, '') // Remove starting ```json (case-insensitive)
-			.replace(/^```\s*/i, '') // Or just ```
-			.replace(/```$/, '') // Remove ending ```, at end of string
-			.trim();
-
-		let socialUrls = [];
-		try {
-			const json = JSON.parse(cleanMessage);
-			socialUrls = json.socialUrls || [];
-			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
-		} catch (err) {
-			console.error('❌ Failed to parse message as JSON:', err);
-		}
-
-		loading = false;
-		readOut = '✅ Done!';
-		return socialUrls || [];
-	}
-
 	async function getInstagramUrl(bandName) {
 		loading = true;
 
@@ -449,7 +349,7 @@
 				{/each}
 			</div>
 
-			<button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button>
+			<!-- <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> -->
 		{/if}
 	</div>
 	<div class="flex items-center w-screen pb-4 mb-4 bg-black">
