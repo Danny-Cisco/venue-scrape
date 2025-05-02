@@ -16,6 +16,27 @@
 		$lastClicked = band;
 		$showBandModal = true;
 	}
+
+	function convertToTimeString(datetime) {
+		const date = new Date(datetime);
+		let hours = date.getHours();
+		const minutes = date.getMinutes().toString().padStart(2, '0');
+		const ampm = hours >= 12 ? 'PM' : 'AM';
+		hours = hours % 12;
+		hours = hours ? hours : 12; // 0 becomes 12
+		return `${hours}:${minutes} ${ampm}`;
+	}
+	function convertToDateString(datetime) {
+		const date = new Date(datetime);
+		const options = { year: 'numeric', month: 'long', day: 'numeric' };
+		return date.toLocaleDateString(undefined, options);
+	}
+
+	function convertToDayOfWeek(datetime) {
+		const date = new Date(datetime);
+		const options = { weekday: 'long' };
+		return date.toLocaleDateString(undefined, options);
+	}
 </script>
 
 <!-- Tab buttons -->
@@ -61,6 +82,7 @@
 		<table class="min-w-full overflow-hidden table-auto rounded-xl">
 			<thead class="text-left bg-black border-b-[2px] border-white">
 				<tr>
+					<th class="px-4 py-2">Venue</th>
 					<th class="px-4 py-2">Title</th>
 					<th class="px-4 py-2">Date</th>
 					<th class="px-4 py-2">Time</th>
@@ -85,13 +107,25 @@
 						on:click={handleGigRowClick(gig)}
 					>
 						<td class="px-4 py-2">
+							<div class="max-h-[200px] font-bold uppercase whitespace-nowrap overflow-y-auto">
+								{gig.venue}
+							</div>
+						</td>
+						<td class="px-4 py-2">
 							<div class="max-h-[200px] overflow-y-auto">{gig.title}</div>
 						</td>
 						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.date}</div>
+							<div class="max-h-[200px] block overflow-y-auto">
+								{convertToDayOfWeek(gig.datetime)}
+							</div>
+							<div class="max-h-[200px] block whitespace-nowrap overflow-y-auto">
+								{convertToDateString(gig.datetime)}
+							</div>
 						</td>
 						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.time}</div>
+							<div class="max-h-[200px] whitespace-nowrap overflow-y-auto">
+								{convertToTimeString(gig.datetime)}
+							</div>
 						</td>
 						<td class="px-4 py-2">
 							<div class="max-h-[200px] overflow-y-auto">
