@@ -188,7 +188,16 @@
 		}
 
 		// --- Data Prep ---
-		const sortedIntersections = [...plotData].sort((a, b) => b.num - a.num);
+		// const sortedIntersections = [...plotData].sort((a, b) => b.num - a.num);
+		const sortedIntersections = [...plotData].sort((a, b) => {
+			// Primary sort: descending by count
+			if (b.num !== a.num) return b.num - a.num;
+
+			// Secondary sort: by number of participating sets (more sets = higher rank)
+			const aSetCount = a.setName.length;
+			const bSetCount = b.setName.length;
+			return aSetCount - bSetCount;
+		});
 		const sortedSets = [...soloSetsInfo].sort((a, b) => a.name.localeCompare(b.name)); // soloSetsInfo contains total set sizes
 		const setNames = sortedSets.map((d) => d.name);
 
