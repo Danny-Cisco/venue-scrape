@@ -25,13 +25,13 @@
 
 	let output = '';
 
-	let url = 'https://www.thegembar.com.au/gigs';
+	let url = 'https://thetotehotel.oztix.com.au/';
 
 	async function beginCrawl() {
 		loading = true;
 		readOut = '✋ Cheerio is finding links';
 
-		const res = await fetch(`/api/cheerio/gem-links?url=${url}`);
+		const res = await fetch(`/api/cheerio/tote-links?url=${url}`);
 
 		if (!res.ok) {
 			readOut = await res.text();
@@ -49,7 +49,9 @@
 
 		loading = false;
 		readOut = '✅ Done!';
-		crawlGemGigs();
+		// crawlGemGigs(); // this time for the tote, I will jump straight to the 'getOztix' tool
+
+		crawlOztixGigs();
 	}
 
 	async function useCheerio(link) {
@@ -70,6 +72,7 @@
 	}
 
 	async function getOztix(link) {
+		loading = true;
 		readOut = `✋ Cheerio is scraping Oztix event : ${link}`;
 
 		// copied = false;
@@ -86,6 +89,7 @@
 		} catch (err) {
 			readOut = `Network error: ${err.message}`;
 		}
+		loading = false;
 	}
 
 	async function crawlGemGigs() {
@@ -106,6 +110,35 @@
 			if (gig.ticketUrl != '#' || false) {
 				gig.oztix = await getOztix(gig.ticketUrl);
 			}
+
+			gigs = [...gigs, gig];
+		}
+		readOut = '✅ Done!';
+		loading = false;
+	}
+
+	async function crawlOztixGigs() {
+		loading = true;
+
+		if (links.length === 0) return;
+		for (const link of links) {
+			readOut = `✋ Cheerio is fetching :   ${link}`;
+
+			// const gig = await useCheerio(link);
+			const gig = {};
+			gig.ticketUrl = link;
+			gig.oztix = {};
+			if (gig.ticketUrl != '#' || false) {
+				gig.oztix = await getOztix(gig.ticketUrl);
+			}
+			console.log('✅🚀 ~ crawlOztixGigs ~ gig.oztix:', gig.oztix);
+
+			gig.datetime = convertStringToDatetime(gig.date, gig.time);
+			gig.venue = venueName;
+			gig.bands = []; // add some blank fields ready for the ui
+			gig.bios = []; // add some blank fields ready for the ui
+			gig.instaCaptions = []; // add some blank fields ready for the ui
+			gig.instaHashtags = []; // add some blank fields ready for the ui
 
 			gigs = [...gigs, gig];
 		}
@@ -395,7 +428,7 @@
 	</div>
 
 	<!-- lower section of output -->
-	<!-- <div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
+	<div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
 		{#if links.length > 0}
 			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
 				{#each links as link}
@@ -413,9 +446,9 @@
 				{/each}
 			</div>
 
-			 <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> 
+			<button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button>
 		{/if}
-	</div> -->
+	</div>
 	<div class="flex items-center w-screen pb-4 mb-4 bg-black">
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
