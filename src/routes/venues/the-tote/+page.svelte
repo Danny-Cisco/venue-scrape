@@ -126,15 +126,18 @@
 
 			// const gig = await useCheerio(link);
 			const gig = {};
+			gig.venue = venueName;
 			gig.ticketUrl = link;
 			gig.oztix = {};
 			if (gig.ticketUrl != '#' || false) {
 				gig.oztix = await getOztix(gig.ticketUrl);
 			}
 			console.log('✅🚀 ~ crawlOztixGigs ~ gig.oztix:', gig.oztix);
+			const oztixObj = gig.oztix;
+			gig.title = oztixObj.title;
+			gig.description = oztixObj.description;
+			gig.datetime = oztixObj.startDate;
 
-			gig.datetime = convertStringToDatetime(gig.date, gig.time);
-			gig.venue = venueName;
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
 			gig.instaCaptions = []; // add some blank fields ready for the ui
