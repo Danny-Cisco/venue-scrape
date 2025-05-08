@@ -14,12 +14,7 @@
 	let links = [];
 	let gigs = [];
 
-	let socialUrls = [];
-
 	let bands = [];
-
-	let regex = /https?:\/\/www\.thegembar\.com\.au\/gigs\/[\w\-0-9]+/gi;
-	let tixUrlRegex = /https?:\/\/tickets.oztix.com.au[\w\-0-9\/]+/gi;
 
 	let instaProfileRegex = /https:\/\/www\.instagram\.com\/(?!reel\/)[\w\.\-]+\/?/gi;
 
@@ -111,21 +106,6 @@
 		}
 		readOut = '✅ Done!';
 		loading = false;
-	}
-
-	async function getGig(link) {
-		const jinaLink = 'https://r.jina.ai/' + link;
-		const res = await fetch(jinaLink);
-		if (res.ok) {
-			return await res.text();
-		} else {
-			output = 'Failed to get gig';
-			return;
-		}
-	}
-
-	async function getTixUrl(markdown) {
-		return markdown.match(tixUrlRegex) || '';
 	}
 
 	async function getGenres(gig) {
@@ -289,48 +269,6 @@
 		return data.data[0];
 	}
 
-	async function getSocialUrls(bandName) {
-		// this function uses perplexity to gather social media links for a band
-		const systemPrompt =
-			' You are to act as a simple tool to return as a json array of social media links in the following format { "socialUrls": []}, do not say anything else. do not enclose the result in backticks';
-		loading = true;
-
-		readOut = `💀 Perplexity is finding social media links for ${bandName}`;
-
-		const prompt = `what are all the social media links you can find for the band called ${bandName}.`;
-		const parsedBody = await JSON.stringify({ prompt, systemPrompt });
-		const response = await fetch('/api/perplexity/sonar-pro', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: parsedBody
-		});
-
-		const body = await response.json();
-		console.log('🚀 ~ getSocialUrls ~ body.message:', body.message);
-
-		// Remove ```json or ``` and trim the string
-		const cleanMessage = body.message
-			.replace(/^```json\s*/i, '') // Remove starting ```json (case-insensitive)
-			.replace(/^```\s*/i, '') // Or just ```
-			.replace(/```$/, '') // Remove ending ```, at end of string
-			.trim();
-
-		let socialUrls = [];
-		try {
-			const json = JSON.parse(cleanMessage);
-			socialUrls = json.socialUrls || [];
-			console.log('🚀 ~ getSocialUrls ~ socialUrls:', socialUrls);
-		} catch (err) {
-			console.error('❌ Failed to parse message as JSON:', err);
-		}
-
-		loading = false;
-		readOut = '✅ Done!';
-		return socialUrls || [];
-	}
-
 	async function getInstagramUrl(bandName) {
 		loading = true;
 
@@ -393,28 +331,6 @@
 		{/key}
 	</div>
 
-	<!-- lower section of output -->
-	<!-- <div class="w-screen bg-black h-[200px] py-4 overflow-y-auto">
-		{#if links.length > 0}
-			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
-				{#each links as link}
-					<p>
-						{link}
-					</p>
-				{/each}
-			</div>
-			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
-				{#each bands as band}
-					<p>
-						{band.bandName}
-						{band.socialUrls}
-					</p>
-				{/each}
-			</div>
-
-			 <button class="w-full btn" on:click={crawlGemGigs}>Crawl Gigs</button> 
-		{/if}
-	</div> -->
 	<div class="flex items-center w-screen pb-4 mb-4 bg-black">
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
@@ -444,17 +360,6 @@
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
 	</div>
-
-	<!-- <h1>JINA OUT</h1>
-	<div>{output}</div> -->
-
-	<!-- header with gradient -->
-	<!-- <div class="w-screen text-center bg-gradient-to-br from-purple-500 to-pink-500">
-		<h1
-			class="mt-4 mb-4 text-4xl font-extrabold leading-none tracking-tight text-white md:text-5xl lg:text-6xl"
-		>
-		</h1>
-	</div> -->
 
 	<GigsBandsTable {gigs} {bands} />
 </div>
