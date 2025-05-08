@@ -3,7 +3,7 @@
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
-	import { genreClassifier } from '$lib/utils/prompts';
+	import { genreClassifier, bandnameExtractor } from '$lib/utils/prompts';
 
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
 
@@ -158,8 +158,7 @@
 
 	async function getBands(question, gigIndex) {
 		console.log('🍄 ~ getBands ~ question:', question);
-		const systemPrompt =
-			' You are to act as a simple tool. extract all the bands from the following information and return as a json array. do not enclose in any backticks, just the json array in the following format { "bands": [] }. ';
+		const systemPrompt = bandnameExtractor;
 
 		loading = true;
 		readOut = '😛 ChatGPT is finding band names';
