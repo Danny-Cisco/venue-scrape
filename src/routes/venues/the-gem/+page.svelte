@@ -189,12 +189,39 @@
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 		gigs[gigIndex].bands = finalJson.bands;
 
-		await insertGigToSupabase(gigs[gigIndex]);
+		const gigDupeId = await checkSupabaseForDuplicate(gigs[gigIndex]);
+		console.log('🌼 gigDupeId : ', gigDupeId);
+		if (!gigDupeId.matchId) await insertGigToSupabase(gigs[gigIndex]);
+		// if (!gigDupeId.matchId) console.log('🌼 BOOOOOPPPPP no match!');
+		else await upsertGigToSupabase(gigDupeId, gigs[gigIndex]);
 
 		readOut = '✅ Done!';
 		loading = false;
 
 		return finalJson.bands;
+	}
+
+	async function checkSupabaseForDuplicate(gig) {
+		loading = true;
+		const body = { datetime: gig.datetime, venue: gig.venue, bands: gig.bands };
+		console.log('📦 checking gig for a match in Supabase:', body);
+
+		const response = await fetch('/api/supabase/match-gig', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+
+		if (!response.ok) {
+			const errText = await response.text();
+			console.error('❌ Match check failed:', errText);
+			throw new Error(`Supabase match check failed: ${response.statusText}`);
+		}
+
+		const result = await response.json();
+		return result;
 	}
 
 	async function insertGigToSupabase(gig) {
@@ -238,6 +265,45 @@
 		}
 	}
 
+	async function upsertGigToSupabase(id, gig) {
+		loading = true;
+		console.log('📦 Sending gig to Supabase:', gig);
+		try {
+			// Merge `id` as `key` (required by the server)
+			const body = {
+				key: id, // your PATCH handler requires this
+				...gig
+			};
+
+			const response = await fetch('/api/supabase/upsert-gig', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(body)
+			});
+
+			if (!response.ok) {
+				const responseBody = await response.text();
+				console.error('❌ Fetch failed:');
+				console.error('Status:', response.status);
+				console.error('Status Text:', response.statusText);
+				console.error('Response Body:', responseBody);
+				throw new Error(`Upsert failed with status ${response.status}`);
+			}
+
+			const data = await response.json();
+			console.log('🚀 Upsert successful:', data);
+			return data;
+		} catch (error) {
+			console.error('❌ Upsert Error:', error);
+			console.error('🔎 Gig data that caused error:', gig);
+			return null;
+		} finally {
+			loading = false;
+		}
+	}
+
 	async function scrapeInsta(url) {
 		loading = true;
 		console.log('👀👀👀 scrapeInsta function has url:', url);
@@ -262,7 +328,7 @@
 		});
 
 		const data = await response.json();
-		console.log('🌼 Received data:', data);
+		console.log('🌼 Received Instagram data:', data);
 
 		loading = false;
 		readOut = '✅ Done!';
