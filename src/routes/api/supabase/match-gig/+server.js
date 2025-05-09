@@ -4,32 +4,49 @@ import { json } from '@sveltejs/kit';
 export async function POST({ request, locals }) {
 	const { supabase } = locals;
 
+	// Normalize venue and bands for comparison
+	const normalize = (inputStr) => {
+		if (typeof inputStr !== 'string') {
+			return '';
+		}
+		let str = inputStr;
+		// 1. Remove content in parentheses at the end of the string, and surrounding spaces. eg Dickshits (SYDNEY)
+		str = str.replace(/\s*\([^)]*\)\s*$/, '').trim();
+		// 2. Convert to lowercase
+		str = str.toLowerCase();
+		// 3. Remove all remaining whitespace
+		str = str.replace(/\s+/g, '');
+		// 4. Remove all non-alphanumeric characters
+		str = str.replace(/[^\w]/g, '');
+		return str;
+	};
+
 	try {
 		const reqBody = await request.json();
-		console.log('🔍 Incoming match request body:', reqBody);
+		// console.log('🔍 Incoming match request body:', reqBody);
 
 		const { datetime, venue, bands } = reqBody;
 
-		if (!datetime || !venue || !bands || !Array.isArray(bands)) {
+		if (!datetime || !venue || !bands || !Array.isArray(bands) || typeof venue !== 'string') {
 			return json({ error: 'Missing or invalid datetime, venue, or bands' }, { status: 400 });
 		}
 
 		// Get full-day range in UTC
 		const inputDate = new Date(datetime);
+		if (isNaN(inputDate.getTime())) {
+			return json({ error: 'Invalid datetime format' }, { status: 400 });
+		}
 
-		// Create a new Date object for dayStart calculation
 		const dayStart = new Date(inputDate.getTime());
-		dayStart.setUTCHours(0, 0, 0, 0); // Set to midnight UTC of the inputDate's UTC date
+		dayStart.setUTCHours(0, 0, 0, 0);
 
-		const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000); // Next day at 00:00:00.000Z
+		const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-		// Optional: Log the calculated range for debugging
 		// console.log('Input datetime string:', datetime);
 		// console.log('Parsed inputDate (ISO):', inputDate.toISOString());
 		// console.log('Calculated dayStart (ISO):', dayStart.toISOString());
 		// console.log('Calculated dayEnd (ISO):', dayEnd.toISOString());
 
-		// Fetch all gigs for that day (date filter only)
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
 			.select('id, datetime, venue, bands')
@@ -41,35 +58,49 @@ export async function POST({ request, locals }) {
 			return json({ error: 'Supabase query failed' }, { status: 500 });
 		}
 
-		// Normalize venue and bands for comparison
-		const normalize = (str) => str.toLowerCase().replace(/\s+/g, '').replace(/[^\w]/g, '');
 		const normalizedVenue = normalize(venue);
-		const inputBands = bands.map(normalize).filter((b) => b.length > 0); // Added filter for empty strings
+		// Ensure bands are strings before normalizing, then filter empty strings
+		const inputBands = bands
+			.filter((b) => typeof b === 'string') // Ensure elements are strings
+			.map(normalize)
+			.filter((b) => b.length > 0);
 
 		for (const match of potentialMatches) {
+			if (typeof match.venue !== 'string' || !Array.isArray(match.bands)) {
+				// console.warn('Skipping potential match with invalid structure:', match);
+				continue; // Skip malformed data from DB
+			}
 			const matchVenue = normalize(match.venue);
-			const matchBands = match.bands.map(normalize).filter((b) => b.length > 0); // Added filter
+			const matchBands = match.bands
+				.filter((b) => typeof b === 'string') // Ensure elements are strings
+				.map(normalize)
+				.filter((b) => b.length > 0);
 
-			// Ensure there are bands to compare after filtering
-			if (
-				inputBands.length === 0 &&
-				matchBands.length === 0 &&
-				match.bands.length === 0 &&
-				bands.length === 0
-			) {
-				// If both input and match have no bands, consider it an overlap if you want.
-				// Or, require at least one band. For now, let's assume band overlap requires non-empty band lists.
-			} else if (inputBands.length === 0 || matchBands.length === 0) {
-				// If one has bands and the other doesn't (after normalization/filtering), no overlap.
-			} else {
+			// Venue must match
+			if (matchVenue !== normalizedVenue || matchVenue === '') continue; // Also skip if venue becomes empty after normalization
+
+			// Band matching logic:
+			// If both inputBands and matchBands are empty AFTER normalization,
+			// it means there were no "significant" bands to compare.
+			// This could be a match if you only care about venue on a given day,
+			// or not a match if bands are crucial.
+			// Current logic: if one list is empty and the other is not, no band overlap.
+			// If both are empty, no band overlap according to `hasBandOverlap`.
+
+			if (inputBands.length > 0 && matchBands.length > 0) {
 				const hasBandOverlap = matchBands.some((b) => inputBands.includes(b));
-				if (matchVenue === normalizedVenue && hasBandOverlap) {
-					return json({ matchId: match.id });
+				if (hasBandOverlap) {
+					return json({ matchId: match.id, reason: 'Venue and band overlap' });
 				}
 			}
+			// Optional: If you want to match even if one or both band lists are empty AFTER normalization,
+			// (e.g. only venue matters, or a gig with no listed bands matches another with no listed bands)
+			// you might add logic here. For instance:
+			// else if (inputBands.length === 0 && matchBands.length === 0) {
+			//     return json({ matchId: match.id, reason: "Venue overlap, no significant bands for either" });
+			// }
 		}
 
-		// No match found
 		return json({ matchId: null, requested: reqBody, potentials: potentialMatches });
 	} catch (err) {
 		console.error('❌ Unexpected error:', err);
