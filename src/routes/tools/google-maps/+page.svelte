@@ -24,16 +24,17 @@
 		const googleMaps = await loadGoogleMapsScript();
 
 		const brunswickCoords = { lat: -37.7706, lng: 144.9614 };
+		const thegembar = { lat: -37.796170897005005, lng: 144.9877218897404 };
 
 		const map = new googleMaps.Map(mapDiv, {
-			center: brunswickCoords,
-			zoom: 15
+			center: thegembar,
+			zoom: 11
 		});
 
 		new googleMaps.Marker({
-			position: brunswickCoords,
+			position: thegembar,
 			map,
-			title: 'Brunswick, Melbourne VIC'
+			title: 'The Gem Bar'
 		});
 	});
 </script>
