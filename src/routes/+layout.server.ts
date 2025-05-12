@@ -18,7 +18,7 @@ export const load = async ({ locals: { supabase, safeGetSession } }) => {
 	// Fetch user profile
 	const { data: profile, error: profileError } = await supabase
 		.from('profiles')
-		.select('username, avatar_url')
+		.select('*')
 		.eq('id', session.user.id)
 		.single();
 

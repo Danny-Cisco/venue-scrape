@@ -33,7 +33,7 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 	if (session) {
 		const { data, error } = await supabase
 			.from('profiles')
-			.select('username, avatar_url')
+			.select('*')
 			.eq('id', session.user.id)
 			.single();
 

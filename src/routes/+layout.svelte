@@ -17,11 +17,24 @@
 	import ModalLauncher from '$lib/components/modals/ModalLauncher.svelte';
 	let email = '';
 
+	let showContactTips = false;
+
 	let leftSidebarContainer;
 
 	let isSubmitting = false;
 	let { supabase, session, profile } = data;
 	$: ({ supabase, session, profile } = data);
+
+	$: console.log('profile: ', profile);
+
+	$: if ($showLeftSidebar) {
+		if (profile?.read_only)
+			setTimeout(() => {
+				showContactTips = true;
+			}, 300);
+	}
+
+	$: if ($showLeftSidebar == false) showContactTips = false;
 
 	async function submitMagicLink() {
 		isSubmitting = true;
@@ -189,199 +202,215 @@
 				</li>
 			</ul>
 
-			<a href="/venues">
-				<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
-					Venues
-				</h2></a
-			>
+			{#if !profile?.read_only}
+				<a href="/venues">
+					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+						Venues
+					</h2></a
+				>
 
-			<ul class="justify-start ml-0 whitespace-nowrap">
-				<li class="mb-2 row">
-					<a
-						href="/venues/the-gem"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+				<ul class="justify-start ml-0 whitespace-nowrap">
+					<li class="mb-2 row">
+						<a
+							href="/venues/the-gem"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						The Gem
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/venues/the-tote"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							The Gem
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/venues/the-tote"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						The Tote
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/venues/the-john-curtain"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							The Tote
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/venues/the-john-curtain"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						The John Curtain
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/venues/the-jazzlab"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							The John Curtain
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/venues/the-jazzlab"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						The Jazzlab
-					</a>
-				</li>
-			</ul>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							The Jazzlab
+						</a>
+					</li>
+				</ul>
+			{/if}
 
-			<a href="/venues">
-				<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
-					Tools
-				</h2></a
-			>
+			{#if profile?.dev_mode}
+				<a href="/tools">
+					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+						Tools
+					</h2></a
+				>
 
-			<ul class="justify-start ml-0 whitespace-nowrap">
-				<li class="mb-2 row">
-					<a
-						href="/tools/jina-or-html"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+				<ul class="justify-start ml-0 whitespace-nowrap">
+					<li class="mb-2 row">
+						<a
+							href="/tools/jina-or-html"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						Jina or HTML
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/tools/google-pse"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							Jina or HTML
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/tools/google-pse"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						Google PSE
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/tools/google-pse-plus-ai"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							Google PSE
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/tools/google-pse-plus-ai"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						Google PSE plus AI
-					</a>
-				</li>
-				<li class="mb-2 row">
-					<a
-						href="/tools/get-instagram-url"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							Google PSE plus AI
+						</a>
+					</li>
+					<li class="mb-2 row">
+						<a
+							href="/tools/get-instagram-url"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
 						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						Get Instagram Url
-					</a>
-				</li>
-			</ul>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							Get Instagram Url
+						</a>
+					</li>
+				</ul>
+			{/if}
+			<div class="h-[15dvh]"></div>
+
+			{#if $showLeftSidebar}
+				{#if showContactTips}
+					<div class="w-full text-gray-600 whitespace-nowrap" in:fade={{ delay: 1000 }}>
+						<p>Want more tools?</p>
+						<p>Contact the</p>
+						<p>developer to upgrade</p>
+						<p>your account</p>
+					</div>
+				{/if}
+			{/if}
 		</aside>
 	{/if}
 
