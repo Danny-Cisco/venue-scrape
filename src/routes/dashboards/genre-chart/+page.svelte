@@ -3,6 +3,7 @@
 	import { fade, slide } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
+	import GoogleMaps from '$lib/components/outputs/GoogleMaps.svelte';
 
 	import { dateRangePrompt } from '$lib/utils/prompts.ts';
 
@@ -255,6 +256,8 @@
 				<UpsetPlot data={upsetPlotData} />
 			{/key}
 		</div>
+
+		<GoogleMaps gigs={$gigsStoreFiltered} />
 	</div>
 
 	<!-- Filtered gigs -->

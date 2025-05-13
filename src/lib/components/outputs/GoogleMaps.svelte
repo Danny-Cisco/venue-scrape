@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_API_KEY } from '$env/static/public';
+	import { parseWKT } from '$lib/utils/coords.js';
 
 	export let gigs = [];
 
@@ -8,10 +9,8 @@
 
 	const loadGoogleMapsScript = () => {
 		return new Promise((resolve, reject) => {
-			if (window.google && window.google.maps) {
-				resolve(window.google.maps);
-				return;
-			}
+			if (window.google && window.google.maps) return resolve(window.google.maps);
+
 			const script = document.createElement('script');
 			script.src = `https://maps.googleapis.com/maps/api/js?key=${PUBLIC_GOOGLE_API_KEY}`;
 			script.async = true;
@@ -22,14 +21,21 @@
 		});
 	};
 
-	const groupGigsByVenue = (gigs) => {
+	// Groups gigs by venue coordinates
+	function groupGigsByVenue(gigs) {
 		const map = new Map();
 
 		for (const gig of gigs) {
-			const key = `${gig.venue.lat},${gig.venue.lng}`;
+			if (!gig.location) continue;
+
+			const coords = parseWKT(gig.location);
+			if (!coords) continue;
+
+			const key = `${coords.lat},${coords.lng}`;
 			if (!map.has(key)) {
 				map.set(key, {
-					venue: gig.venue,
+					coords,
+					venueName: gig.venue || gig.oztix?.venue || 'Unknown Venue',
 					gigs: []
 				});
 			}
@@ -37,61 +43,67 @@
 		}
 
 		return Array.from(map.values());
-	};
+	}
 
 	onMount(async () => {
 		const googleMaps = await loadGoogleMapsScript();
 
 		const venueGroups = groupGigsByVenue(gigs);
 
-		const defaultCenter = venueGroups[0]?.venue ?? { lat: 0, lng: 0 };
+		const defaultCenter = venueGroups[0]?.coords || { lat: -37.81, lng: 144.96 };
 
 		const map = new googleMaps.Map(mapDiv, {
 			center: defaultCenter,
 			zoom: 12
 		});
 
-		venueGroups.forEach(({ venue, gigs }) => {
+		venueGroups.forEach(({ coords, venueName, gigs }) => {
 			const marker = new googleMaps.Marker({
-				position: { lat: venue.lat, lng: venue.lng },
+				position: coords,
 				map,
-				title: venue.name
+				title: venueName
 			});
 
 			const content = `
-        <div style="
-          background-color: black;
-          color: white;
-          padding: 10px;
-          border-radius: 8px;
-          font-family: sans-serif;
-          max-width: 250px;
-        ">
-          <strong>${venue.name}</strong><br/>
-          <ul style="margin: 0; padding-left: 1em;">
-            ${gigs.map((g) => `<li><b>${g.title}</b> <i>(${g.genre})</i></li>`).join('')}
-          </ul>
-        </div>
-      `;
+				<div style="
+					background: black;
+					color: white;
+					padding: 12px;
+					border-radius: 8px;
+					font-family: sans-serif;
+					max-width: 280px;
+				">
+					<strong style="font-size: 16px;">${venueName}</strong>
+					<ul style="padding-left: 1em; margin-top: 6px;">
+						${gigs
+							.map(
+								(gig) => `
+							<li style="margin-bottom: 6px;">
+								<div><b>${gig.title}</b></div>
+								<div>🎵 ${gig.genres?.join(', ') || 'Unknown Genre'}</div>
+								<div>👥 ${gig.bands?.join(', ') || 'Unknown Band(s)'}</div>
+								${gig.ticketUrl ? `<div><a href="${gig.ticketUrl}" target="_blank" style="color:#4FC3F7;">🎫 Tickets</a></div>` : ''}
+							</li>
+						`
+							)
+							.join('')}
+					</ul>
+				</div>
+			`;
 
 			const infoWindow = new googleMaps.InfoWindow({ content });
 
-			marker.addListener('mouseover', () => {
-				infoWindow.open(map, marker);
-			});
-
-			marker.addListener('click', () => {
-				infoWindow.open(map, marker); // optional: click-to-open
-			});
+			marker.addListener('mouseover', () => infoWindow.open(map, marker));
+			marker.addListener('click', () => infoWindow.open(map, marker));
 		});
 	});
 </script>
 
-<div bind:this={mapDiv} class="map-container"></div>
+<div bind:this={mapDiv} class="mx-auto map-container rounded-2xl"></div>
 
 <style>
 	.map-container {
-		width: 100%;
-		height: 100%;
+		width: 70%;
+		height: 50dvh;
 	}
 </style>
