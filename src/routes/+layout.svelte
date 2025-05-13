@@ -102,7 +102,7 @@
 			on:click={() => ($showLeftSidebar = false)}
 		>
 			<div class="h-[101px]"></div>
-			<h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Venue Scrape</h2>
+			<h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Melbourne Music Scene</h2>
 			<ul>
 				<li class="mb-2 row">
 					<a
@@ -467,7 +467,7 @@
 	<!-- Logo -->
 	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl">
 		<img src="/icon.svg" class="size-10" alt="" />
-		<span class="text-2xl uppercase"> Venue Scrape </span>
+		<span class="text-2xl uppercase"> Melbourne Music Scene </span>
 	</strong>
 
 	<!-- User Authentication -->
