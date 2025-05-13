@@ -256,14 +256,15 @@
 				<UpsetPlot data={upsetPlotData} />
 			{/key}
 		</div>
-
-		<GoogleMaps gigs={$gigsStoreFiltered} />
 	</div>
 
 	<!-- Filtered gigs -->
 
 	<!-- Add this above your GigsBandsTable -->
 	<div class="p-4 mt-4" bind:this={tableSectionRef}>
+		{#key $gigsStoreFiltered}
+			<GoogleMaps gigs={$gigsStoreFiltered} />
+		{/key}
 		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 			<p class="italic text-gray-500">Click on chart to see those gigs</p>
 		{:else}

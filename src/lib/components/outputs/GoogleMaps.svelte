@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import { PUBLIC_GOOGLE_API_KEY } from '$env/static/public';
-	import { parseWKT } from '$lib/utils/coords.js';
 
 	export let gigs = [];
 
@@ -21,24 +20,26 @@
 		});
 	};
 
-	// Groups gigs by venue coordinates
 	function groupGigsByVenue(gigs) {
 		const map = new Map();
 
 		for (const gig of gigs) {
-			if (!gig.location) continue;
+			if (!gig.location?.coordinates) {
+				console.warn('❌ Missing location for gig:', gig);
+				continue;
+			}
 
-			const coords = parseWKT(gig.location);
-			if (!coords) continue;
+			const [lng, lat] = gig.location.coordinates;
+			const key = `${lng},${lat}`;
 
-			const key = `${coords.lat},${coords.lng}`;
 			if (!map.has(key)) {
 				map.set(key, {
-					coords,
+					coords: { lat, lng },
 					venueName: gig.venue || gig.oztix?.venue || 'Unknown Venue',
 					gigs: []
 				});
 			}
+
 			map.get(key).gigs.push(gig);
 		}
 
@@ -47,7 +48,6 @@
 
 	onMount(async () => {
 		const googleMaps = await loadGoogleMapsScript();
-
 		const venueGroups = groupGigsByVenue(gigs);
 
 		const defaultCenter = venueGroups[0]?.coords || { lat: -37.81, lng: 144.96 };
@@ -99,7 +99,7 @@
 	});
 </script>
 
-<div bind:this={mapDiv} class="mx-auto map-container rounded-2xl"></div>
+<div bind:this={mapDiv} class="mx-auto mb-8 map-container rounded-2xl"></div>
 
 <style>
 	.map-container {

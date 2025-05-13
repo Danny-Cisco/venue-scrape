@@ -1,3 +1,5 @@
+import { is } from 'date-fns/locale';
+
 export function parseWKT(wkt) {
 	if (typeof wkt !== 'string') return null; // prevent calling .match on non-strings
 	const match = wkt.match(/POINT\(([\d\.\-]+) ([\d\.\-]+)\)/);
