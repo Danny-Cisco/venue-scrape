@@ -265,8 +265,11 @@
 
 	<!-- Add this above your GigsBandsTable -->
 	<div class="p-4 mt-4" bind:this={tableSectionRef}>
-		<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
-
+		{#if !$clickedGenres && !timeRangePrompt}
+			<div class="text-center"><h2>NOW SHOWING: ALL GIGS</h2></div>
+		{:else}
+			<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
+		{/if}
 		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 			<p class="italic text-gray-500">Click on chart to see those gigs</p>
 		{:else}
