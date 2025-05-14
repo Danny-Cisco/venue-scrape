@@ -127,7 +127,8 @@
 				</div>`;
 
 			const infoWindow = new googleMaps.InfoWindow({ content });
-			marker.addListener('mouseover', () => infoWindow.open(map, marker));
+			// marker.addListener('mouseover', () => infoWindow.open(map, marker));
+			marker.addListener('click', () => infoWindow.open(map, marker));
 		});
 
 		// Static green anchor for ShotKickers
