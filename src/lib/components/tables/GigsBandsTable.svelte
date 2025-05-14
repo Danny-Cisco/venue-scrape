@@ -1,6 +1,7 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { lastClicked, showGigModal, showBandModal } from '$lib/stores/modalStores.js';
+	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 
 	export let gigs = {};
 	export let bands = {};
@@ -162,23 +163,8 @@
 						<!-- Tick Columns -->
 
 						<td class="px-2 py-2 text-center">
-							{#if gig.soldOut}
-								<span title="Sold out">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="inline w-4 h-4"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										stroke-width="1.5"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="m4.5 12.75 6 6 9-13.5"
-										/>
-									</svg>
-								</span>
+							{#if !gig.soldOut}
+								<SoldOut />
 							{/if}
 						</td>
 						<td class="px-2 py-2 text-center">
