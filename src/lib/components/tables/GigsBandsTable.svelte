@@ -28,7 +28,7 @@
 	}
 	function convertToDateString(datetime) {
 		const date = new Date(datetime);
-		const options = { year: 'numeric', month: 'long', day: 'numeric' };
+		const options = { month: 'short', day: 'numeric' };
 		return date.toLocaleDateString(undefined, options);
 	}
 
@@ -83,21 +83,20 @@
 			<thead class="text-left bg-black border-b-[2px] border-white">
 				<tr>
 					<th class="px-4 py-2">Venue</th>
+					<th class="px-4 py-2">Image</th>
 					<th class="px-4 py-2">Title</th>
 					<th class="px-4 py-2">Date</th>
 					<th class="px-4 py-2">Time</th>
-					<th class="px-4 py-2">Bands</th>
-					<th class="px-4 py-2">Description</th>
-					<th class="px-4 py-2">Bios</th>
-					<th class="px-4 py-2">InstaCaptions</th>
-					<th class="px-4 py-2">InstaHashtags</th>
-					<th class="px-4 py-2">Image</th>
-					<th class="px-4 py-2">Ticket Price</th>
-					<th class="px-4 py-2">Ticket Link</th>
-					<th class="px-4 py-2">Oztix</th>
-					<th class="px-4 py-2">Sold Out</th>
 					<th class="px-4 py-2">Genres</th>
-					<th class="px-4 py-2">Thinking</th>
+					<th class="px-4 py-2">Bands</th>
+					<th class="px-4 py-2">Price</th>
+					<th class="px-4 py-2">Sold Out?</th>
+					<th class="px-4 py-2">Descrip</th>
+					<th class="px-4 py-2">Bios</th>
+					<th class="px-4 py-2">Insta Caps</th>
+					<th class="px-4 py-2">Insta Tags</th>
+					<th class="px-4 py-2">Tix URL</th>
+					<th class="px-4 py-2">Oztix</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -106,117 +105,192 @@
 						class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
 						on:click={handleGigRowClick(gig)}
 					>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] font-bold uppercase whitespace-nowrap overflow-y-auto">
+						<td
+							class="px-4 py-2 font-bold uppercase whitespace-nowrap overflow-hidden max-w-[150px]"
+							><div class="min-h-[100px] flex flex-col justify-center">
 								{gig.venue}
 							</div>
 						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.title}</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] block overflow-y-auto">
-								{convertToDayOfWeek(gig.datetime)}
-							</div>
-							<div class="max-h-[200px] block whitespace-nowrap overflow-y-auto">
-								{convertToDateString(gig.datetime)}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] whitespace-nowrap overflow-y-auto">
-								{convertToTimeString(gig.datetime)}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.bands?.length > 0}
-									{#each gig.bands || [] as band}
-										<div class="block">{band}</div>
-									{/each}
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2 text-xs">
-							<div class="max-h-[200px] overflow-y-auto">{gig.description}</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.bios?.length > 0}
-									{#each gig.bios || [] as bio}
-										<div class="block">{bio}</div>
-									{/each}
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.instaCaptions?.length > 0}
-									{#each gig.instaCaptions || [] as caption}
-										<div class="block">{caption}</div>
-									{/each}
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.instaHashtags?.length > 0}
-									{#each gig.instaHashtags || [] as hashtag}
-										<div class="block">{hashtag}</div>
-									{/each}
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.imageUrl}
-									<img
-										src={gig.imageUrl}
-										alt="Poster for the gig"
-										class="object-cover w-20 h-20 rounded"
-									/>
-								{:else}
-									<span class="text-sm italic text-gray-400">No image</span>
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.ticketPrice}</div>
-						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.ticketUrl}
-									<a
-										href={gig.ticketUrl}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="text-blue-600 underline">Buy Ticket</a
-									>
-								{:else}
-									<span class="text-sm italic text-gray-400">N/A</span>
-								{/if}
-							</div>
-						</td>
-						<td class="px-4 py-2">
-							{#if gig.oztix}
-								<div class="max-h-[200px] overflow-y-auto">
-									{JSON.stringify(gig.oztix, null, 2)}
+						<td class="px-2 py-2 text-center">
+							{#if gig.imageUrl}
+								<div title={gig.description} class="overflow-hidden w-[100px] h-[100px] rounded-xl">
+									<img src={gig.imageUrl} alt="promotion poster of the event" />
 								</div>
 							{/if}
 						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.soldOut}</div>
+						<td title={gig.description} class="px-4 py-2 overflow-hidden max-w-[200px]"
+							>{gig.title}</td
+						>
+						<td class="px-4 py-2 whitespace-nowrap">
+							<div>{convertToDayOfWeek(gig.datetime)}</div>
+							<div>{convertToDateString(gig.datetime)}</div>
 						</td>
-						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">
-								{#if gig.genres?.length > 0}
-									{#each gig.genres || [] as genre}
-										<div class="block font-bold whitespace-nowrap">{genre}</div>
-									{/each}
-								{/if}
+						<td class="px-4 py-2 whitespace-nowrap">
+							<div>{convertToTimeString(gig.datetime)}</div>
+						</td>
+						<td class="px-4 py-2 text-center">
+							{#if gig.genres?.length > 0}
+								{#each gig.genres as genre}
+									<div title={gig.thinking} class="font-bold whitespace-nowrap">{genre}</div>
+								{/each}
+							{/if}
+						</td>
+
+						<td>
+							<div class="px-4 py-2 max-w-[200px] max-h-[100px] overflow-auto">
+								{#each gig.bands || [] as band}
+									<div>{band}</div>
+								{/each}
 							</div>
 						</td>
 						<td class="px-4 py-2">
-							<div class="max-h-[200px] overflow-y-auto">{gig.thinking}</div>
+							{#if gig.ticketPrice}
+								<div class="max-h-[200px] overflow-y-auto">${gig.ticketPrice}</div>
+							{/if}
+						</td>
+
+						<!-- Tick Columns -->
+
+						<td class="px-2 py-2 text-center">
+							{#if gig.soldOut}
+								<span title="Sold out">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+						<td class="px-2 py-2 text-center">
+							{#if gig.description}
+								<span title={gig.description}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+						<td class="px-2 py-2 text-center">
+							{#if gig.bios?.length}
+								<span title={gig.bios.join('\n')}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+						<td class="px-2 py-2 text-center">
+							{#if gig.instaCaptions?.length}
+								<span title={gig.instaCaptions.join('\n')}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+						<td class="px-2 py-2 text-center">
+							{#if gig.instaHashtags?.length}
+								<span title={gig.instaHashtags.join(' ')}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+
+						<td class="px-2 py-2 text-center">
+							{#if gig.ticketUrl}
+								<span title={gig.ticketUrl}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</td>
+						<td class="px-2 py-2 text-center">
+							{#if gig.oztix}
+								<span title={JSON.stringify(gig.oztix)}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="inline w-4 h-4"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="m4.5 12.75 6 6 9-13.5"
+										/>
+									</svg>
+								</span>
+							{/if}
 						</td>
 					</tr>
 				{/each}
