@@ -57,7 +57,7 @@
 			class="absolute inset-0 z-0 transition-opacity duration-200 opacity-0 bg-gradient-to-br from-purple-500 to-pink-500 group-hover:opacity-100 rounded-t-2xl"
 		></span>
 		<!-- Text layer -->
-		<span class="relative z-10">Gigs</span>
+		<span class="relative z-10">Gigs ({gigs.length})</span>
 	</button>
 
 	<button
@@ -76,7 +76,7 @@
 		>
 		</span>
 		<!-- Text layer -->
-		<span class="relative z-10">Bands</span>
+		<span class="relative z-10">Bands ({bands.length})</span>
 	</button>
 </div>
 {#if activeTab === 'gigs' && gigs.length > 0}
