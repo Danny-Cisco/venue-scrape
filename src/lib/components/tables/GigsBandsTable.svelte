@@ -155,7 +155,9 @@
 						</td>
 
 						<td class="px-4 py-2">
-							{#if gig.ticketPrice}
+							{#if gig.ticketPrice == undefined}{:else if gig.ticketPrice == 0}
+								<div class="max-h-[200px] whitespace-nowrap overflow-y-auto">FREE ENTRY</div>
+							{:else}
 								<div class="max-h-[200px] overflow-y-auto">${gig.ticketPrice}</div>
 							{/if}
 						</td>
@@ -163,7 +165,7 @@
 						<!-- Tick Columns -->
 
 						<td class="px-2 py-2 text-center">
-							{#if !gig.soldOut}
+							{#if gig.soldOut}
 								<SoldOut />
 							{/if}
 						</td>
