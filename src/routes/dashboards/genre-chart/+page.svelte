@@ -13,7 +13,8 @@
 		gigsStoreFiltered,
 		dateRangeStore,
 		gigsStoreDateFiltered,
-		filteredGigIds
+		filteredGigIds,
+		clickedGenres
 	} from '$lib/stores/gigsStore.js';
 
 	let gigs = {};
@@ -264,13 +265,15 @@
 
 	<!-- Add this above your GigsBandsTable -->
 	<div class="p-4 mt-4" bind:this={tableSectionRef}>
-		<!-- google maps -->
-		{#key $gigsStoreFiltered}
-			<GoogleMaps gigs={$gigsStoreFiltered} />
-		{/key}
+		<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
+
 		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 			<p class="italic text-gray-500">Click on chart to see those gigs</p>
 		{:else}
+			<!-- google maps -->
+			{#key $gigsStoreFiltered}
+				<GoogleMaps gigs={$gigsStoreFiltered} />
+			{/key}
 			<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
 		{/if}
 	</div>

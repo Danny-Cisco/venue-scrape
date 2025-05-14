@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import * as d3 from 'd3';
 	import { slide, fade } from 'svelte/transition';
-	import { filteredGigIds } from '$lib/stores/gigsStore.js';
+	import { filteredGigIds, clickedGenres } from '$lib/stores/gigsStore.js';
 	// --- Default Data ---
 	const defaultData = [
 		{ name: 'Set A', values: ['a', 'b', 'c', 'd', 'x'] },
@@ -309,6 +309,7 @@
 				// console.log(`Clicked Intersection: ${d.name} (${d.num} items)`);
 				// console.log('Intersection values:', d.values);
 				filteredGigIds.set(d.values);
+				clickedGenres.set(d.name);
 			})
 			.on('mouseover', (event, d) => {
 				tooltip.html(`${d.name}: <b>${d.num}</b>`); // Clarify tooltip source
@@ -360,6 +361,7 @@
 				// console.log('Set values:', d.values);
 				//Update store with the full set's values
 				filteredGigIds.set(d.values);
+				clickedGenres.set(d.name);
 			})
 			.on('mouseover', (event, d) => {
 				// 'd' is from sortedSets

@@ -34,6 +34,8 @@ export const gigsStoreDateFiltered = derived(
 	}
 );
 
+export const clickedGenres = writable('');
+
 export const gigsStoreFiltered = derived(
 	[gigsStoreDateFiltered, filteredGigIds],
 	([$gigsStoreDateFiltered, $filteredGigIds]) => {
