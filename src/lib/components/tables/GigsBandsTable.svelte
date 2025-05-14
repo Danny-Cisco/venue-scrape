@@ -61,7 +61,7 @@
 
 	<button
 		class="flex-1 px-4 py-2 font-medium transition-all duration-200 border-[1px] border-b-0 rounded-t-2xl overflow-hidden relative group"
-		class:!bg-pink-600={activeTab === 'bands'}
+		class:!bg-green-600={activeTab === 'bands'}
 		class:!text-white={activeTab === 'bands'}
 		class:bg-gray-800={activeTab !== 'bands'}
 		class:text-gray-300={activeTab !== 'bands'}
@@ -71,8 +71,9 @@
 	>
 		<!-- Gradient hover background -->
 		<span
-			class="absolute inset-0 z-0 transition-opacity duration-200 opacity-0 bg-gradient-to-br from-purple-500 to-pink-500 group-hover:opacity-100 rounded-t-2xl"
-		></span>
+			class="absolute inset-0 z-0 text-white transition-opacity duration-200 opacity-0 bg-gradient-to-br from-green-400 to-green-600 group-hover:opacity-100 rounded-t-2xl"
+		>
+		</span>
 		<!-- Text layer -->
 		<span class="relative z-10">Bands</span>
 	</button>
@@ -89,6 +90,7 @@
 					<th class="px-4 py-2">Time</th>
 					<th class="px-4 py-2">Genres</th>
 					<th class="px-4 py-2">Bands</th>
+					<th class="px-4 py-2">Followers</th>
 					<th class="px-4 py-2">Price</th>
 					<th class="px-4 py-2">Sold Out?</th>
 					<th class="px-4 py-2">Descrip</th>
@@ -118,7 +120,7 @@
 								</div>
 							{/if}
 						</td>
-						<td title={gig.description} class="px-4 py-2 overflow-hidden max-w-[200px]"
+						<td title={gig.description} class="px-4 py-2 overflow-hidden min-w-[200px]"
 							>{gig.title}</td
 						>
 						<td class="px-4 py-2 whitespace-nowrap">
@@ -128,10 +130,12 @@
 						<td class="px-4 py-2 whitespace-nowrap">
 							<div>{convertToTimeString(gig.datetime)}</div>
 						</td>
-						<td class="px-4 py-2 text-center">
+						<td class="px-4 py-2">
 							{#if gig.genres?.length > 0}
 								{#each gig.genres as genre}
-									<div title={gig.thinking} class="font-bold whitespace-nowrap">{genre}</div>
+									<div title={gig.thinking} class="block text-red-400 whitespace-nowrap">
+										{genre}
+									</div>
 								{/each}
 							{/if}
 						</td>
@@ -139,10 +143,16 @@
 						<td>
 							<div class="px-4 py-2 max-w-[200px] max-h-[100px] overflow-auto">
 								{#each gig.bands || [] as band}
-									<div>{band}</div>
+									<div class="block text-green-400 whitespace-nowrap">'{band}'</div>
 								{/each}
 							</div>
 						</td>
+						<td class="px-4 py-2">
+							{#if gig.instaFollowers}
+								<div class="max-h-[200px] overflow-y-auto">${gig.instaFollowers}</div>
+							{/if}
+						</td>
+
 						<td class="px-4 py-2">
 							{#if gig.ticketPrice}
 								<div class="max-h-[200px] overflow-y-auto">${gig.ticketPrice}</div>

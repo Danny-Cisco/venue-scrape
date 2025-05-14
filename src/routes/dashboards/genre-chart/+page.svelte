@@ -176,6 +176,15 @@
 		</h1>
 	</div> -->
 
+	<!-- Main content -->
+	<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
+		<div class="flex-grow overflow-hidden">
+			{#key upsetPlotData}
+				<UpsetPlot data={upsetPlotData} />
+			{/key}
+		</div>
+	</div>
+
 	<!-- TimeRange chatGpt input -->
 	<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
 		<input
@@ -210,6 +219,8 @@
 			{/if}
 		</div>
 	</div>
+
+	<!-- Old school datepicker -->
 	<button
 		class="text-xs text-left text-gray-500"
 		on:click={() => {
@@ -249,19 +260,11 @@
 		</div>
 	{/if}
 
-	<!-- Main content -->
-	<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
-		<div class="flex-grow overflow-hidden">
-			{#key upsetPlotData}
-				<UpsetPlot data={upsetPlotData} />
-			{/key}
-		</div>
-	</div>
-
 	<!-- Filtered gigs -->
 
 	<!-- Add this above your GigsBandsTable -->
 	<div class="p-4 mt-4" bind:this={tableSectionRef}>
+		<!-- google maps -->
 		{#key $gigsStoreFiltered}
 			<GoogleMaps gigs={$gigsStoreFiltered} />
 		{/key}
