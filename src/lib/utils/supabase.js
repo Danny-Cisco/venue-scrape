@@ -66,7 +66,7 @@ export async function insertGigToSupabase(gig) {
 		console.error('❌ Upsert Error:', error);
 		console.error('🔎 Gig data that caused error:', gig);
 	} finally {
-		loading = false;
+		// loading = false;
 	}
 }
 

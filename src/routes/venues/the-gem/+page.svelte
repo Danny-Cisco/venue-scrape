@@ -187,7 +187,8 @@
 		gigs[gigIndex].genres = genreObject.genres;
 		gigs[gigIndex].thinking = genreObject.thinking;
 
-		gigs[gigIndex].bands = finalJson.bands;
+		// gigs[gigIndex].bands = finalJson.bands;
+		gigs[gigIndex].bandObjects = bands; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
 		await gigsFuzzyDupeCheckWithUpdate(gigs[gigIndex]);
