@@ -189,6 +189,10 @@
 
 		gigs[gigIndex].followers = followersTotal;
 
+		if (gigs[gigIndex].oztix?.tickets?.[0]?.availability !== 'http://shema.org/InStock') {
+			gigs[gigIndex].soldout = true;
+		}
+
 		// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex] ... getGenres is for a gig, not a band
 		const genreObject = await getGenres(gigs[gigIndex]);
 		gigs[gigIndex].genres = genreObject.genres;
