@@ -143,8 +143,10 @@
 
 						<td>
 							<div class="px-4 py-2 max-w-[200px] max-h-[100px] overflow-auto">
-								{#each gig.bands || [] as band}
-									<div class="block text-green-400 whitespace-nowrap">'{band}'</div>
+								{#each gig.bandObjects || [] as bandObject}
+									<div class="block text-green-400 whitespace-nowrap">
+										'{bandObject.bandName}' {bandObject.instagram?.followersCount}
+									</div>
 								{/each}
 							</div>
 						</td>

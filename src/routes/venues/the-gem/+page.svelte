@@ -156,12 +156,13 @@
 		const responseJson = data.answer;
 
 		const finalJson = await JSON.parse(responseJson);
+		let bandObjects = [];
+		let followersTotal = 0;
 
 		for (const band of finalJson.bands) {
 			let bandObject = { bandName: band, socialUrls: await getInstagramUrl(band) };
 			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
-
 			for (const url of bandObject.socialUrls) {
 				if (url.match(instaProfileRegex)) {
 					bandObject.instagram = await scrapeInsta(url);
@@ -174,7 +175,11 @@
 						...(gigs[gigIndex]?.instaHashtags || []),
 						...bandObject.instagram.latestPosts.map((post) => post.hashtags).flat() // use flat to turn array of arrays into a single array
 					];
+
+					followersTotal = followersTotal + bandObject.instagram.followersCount;
 				}
+
+				bandObjects = [...bandObjects, bandObject || {}];
 			}
 
 			bands = [...bands, bandObject || {}];
@@ -182,13 +187,15 @@
 			// HERE IS WHERE I CAN SAVE THE bandObject TO THE BANDS SUPABASE note... bands wont have a genre here
 		}
 
+		gigs[gigIndex].followers = followersTotal;
+
 		// HERE IS WHERE I CAN ASK CHAT GPT FOR THE GENRES USING gigs[gigIndex] ... getGenres is for a gig, not a band
 		const genreObject = await getGenres(gigs[gigIndex]);
 		gigs[gigIndex].genres = genreObject.genres;
 		gigs[gigIndex].thinking = genreObject.thinking;
 
 		// gigs[gigIndex].bands = finalJson.bands;
-		gigs[gigIndex].bandObjects = bands; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
+		gigs[gigIndex].bandObjects = bandObjects; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
 		await gigsFuzzyDupeCheckWithUpdate(gigs[gigIndex]);
