@@ -198,7 +198,7 @@
 		gigs[gigIndex].genres = genreObject.genres;
 		gigs[gigIndex].thinking = genreObject.thinking;
 
-		// gigs[gigIndex].bands = finalJson.bands;
+		gigs[gigIndex].bands = finalJson.bands; // fuck it... ill save the bands too
 		gigs[gigIndex].bandObjects = bandObjects; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
