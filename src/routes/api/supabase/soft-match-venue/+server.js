@@ -19,7 +19,7 @@ export async function POST({ request, locals }) {
 	const supabase = locals.supabase;
 	const { scrapedName } = await request.json();
 
-	const { data: venues, error } = await supabase.from('venues').select('name');
+	const { data: venues, error } = await supabase.from('venues').select('id, name');
 	if (error || !venues?.length) {
 		console.error('❌ Supabase venue fetch failed:', error?.message);
 		return json({ error: 'Failed to load venues' }, { status: 500 });
@@ -27,21 +27,15 @@ export async function POST({ request, locals }) {
 
 	const venueList = venues.map((v) => `- ${v.name}`).join('\n');
 
-	if (!venueList || venueList.trim().length === 0) {
-		console.error('❌ Empty venue list');
-		return json({ error: 'No venues in list' }, { status: 500 });
-	}
-
 	const prompt = `
-You are matching venue names. Here is the list of known venues:
+Here is a list of known venue names:
 
 ${venueList}
 
-Now match the following venue name: "${scrapedName}"
+Match the following venue name: "${scrapedName}"
 
-If it closely matches one of the known venues, return the name of the closest match.
-If it does not match any, return "NO MATCH".
-If no list of venue names is given, return "ERROR - NO VENUE LIST"
+If one of the known venues is a good match, return ONLY its exact name.
+If none match, return "NO MATCH".
 `;
 
 	try {
@@ -51,11 +45,24 @@ If no list of venue names is given, return "ERROR - NO VENUE LIST"
 			messages: [{ role: 'user', content: prompt }]
 		});
 
-		const match = res.choices[0].message.content.trim();
-		console.log('✅ Match:', match);
-		return json({ match });
+		const matchedName = res.choices[0].message.content.trim();
+
+		if (matchedName === 'NO MATCH') {
+			return json({ match: 'NO MATCH' });
+		}
+
+		// Find venue_id for the matched name
+		const matchedVenue = venues.find((v) => v.name === matchedName);
+		if (!matchedVenue) {
+			return json({ error: 'LLM returned unknown venue name' }, { status: 404 });
+		}
+
+		return json({
+			match: matchedVenue.name,
+			venue_id: matchedVenue.id
+		});
 	} catch (err) {
-		console.error('❌ OpenAI error:', err.message);
+		console.error('❌ LLM Error:', err.message);
 		return json({ error: 'LLM match error: ' + err.message }, { status: 500 });
 	}
 }

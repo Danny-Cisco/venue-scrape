@@ -2,12 +2,13 @@
 	import { onMount } from 'svelte';
 	let knownVenues = [];
 	let scrapedName = '';
-	let matchResult = '';
+	let resultMatch = '';
+	let resultId = '';
 	let loading = false;
 
 	async function matchVenue() {
 		loading = true;
-		matchResult = '';
+		resultMatch = '';
 		const res = await fetch('/api/supabase/soft-match-venue', {
 			method: 'POST',
 			body: JSON.stringify({ scrapedName }),
@@ -15,7 +16,8 @@
 		});
 
 		const data = await res.json();
-		matchResult = data.match || data.error;
+		resultMatch = data.match || data.error;
+		resultId = data.venue_id;
 		loading = false;
 	}
 
@@ -42,10 +44,13 @@
 		{loading ? 'Matching...' : 'Match Venue'}
 	</button>
 
-	{#if matchResult}
-		<p class="mt-4 font-mono">
-			Result: <strong>{matchResult}</strong>
-		</p>
+	{#if resultMatch}
+		<div class="flex flex-col items-start mt-4 font-mono min-w-sm">
+			<p>
+				name: <strong>{resultMatch}</strong>
+			</p>
+			<p>id: <strong>{resultId}</strong></p>
+		</div>
 	{/if}
 
 	<details class="mt-6">
