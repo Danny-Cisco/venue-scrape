@@ -48,7 +48,7 @@ If none match, return "NO MATCH".
 		const matchedName = res.choices[0].message.content.trim();
 
 		if (matchedName === 'NO MATCH') {
-			return json({ match: 'NO MATCH' });
+			return json({ match: 'NO MATCH', venue_id: 'NULL' });
 		}
 
 		// Find venue_id for the matched name
@@ -59,7 +59,7 @@ If none match, return "NO MATCH".
 
 		return json({
 			match: matchedVenue.name,
-			venue_id: matchedVenue.id
+			venue_id: matchedVenue.id || 'NULL'
 		});
 	} catch (err) {
 		console.error('❌ LLM Error:', err.message);
