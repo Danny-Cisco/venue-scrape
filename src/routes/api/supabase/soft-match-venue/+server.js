@@ -19,6 +19,7 @@ export async function POST({ request, locals }) {
 	const supabase = locals.supabase;
 	const { scrapedName } = await request.json();
 
+	console.log('🚀✅✅✅✅ ~ POST ~ scrapedName:', scrapedName);
 	const { data: venues, error } = await supabase.from('venues').select('id, name');
 	if (error || !venues?.length) {
 		console.error('❌ Supabase venue fetch failed:', error?.message);

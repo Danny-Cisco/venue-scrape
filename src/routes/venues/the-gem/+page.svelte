@@ -21,10 +21,15 @@
 
 	let output = '';
 
+	let venueId = '';
+
 	let url = 'https://www.thegembar.com.au/gigs';
 
 	async function beginCrawl() {
 		loading = true;
+
+		venueId = await softMatchVenueName(venueName);
+
 		readOut = '✋ Cheerio is finding links';
 
 		const res = await fetch(`/api/cheerio/gem-links?url=${url}`);
@@ -46,6 +51,27 @@
 		loading = false;
 		readOut = '✅ Done!';
 		crawlGemGigs();
+	}
+
+	async function softMatchVenueName(scrapedName) {
+		readOut = `🧠 finding soft match venue_id for : ${scrapedName}`;
+
+		loading = true;
+		// resultMatch = '';
+		const res = await fetch('/api/supabase/soft-match-venue', {
+			method: 'POST',
+			body: JSON.stringify({ scrapedName }),
+			headers: { 'Content-Type': 'application/json' }
+		});
+
+		const data = await res.json();
+		console.log('🚀 ~ softMatchVenueName ~ data:', data);
+		// resultMatch = data.match || data.error;
+		// resultId = data.venue_id;
+		loading = false;
+		console.log('🚀 ~ softMatchVenueName ~ data.venue_id:', data.venue_id);
+
+		return data.venue_id;
 	}
 
 	async function useCheerio(link) {
@@ -94,6 +120,7 @@
 			const gig = await useCheerio(link);
 			gig.datetime = convertStringToDatetime(gig.date, gig.time);
 			gig.venue = venueName;
+			gig.venueId = venueId;
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
 			gig.instaCaptions = []; // add some blank fields ready for the ui
