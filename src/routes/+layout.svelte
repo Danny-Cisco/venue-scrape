@@ -97,7 +97,7 @@
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<aside
 			bind:this={leftSidebarContainer}
-			class="w-[250px] p-4 pt-16 bg-black top-[100px] isolate absolute z-[99999] left-0 h-full"
+			class="w-[270px] p-4 pt-16 bg-black top-0 isolate absolute z-[99999] left-0 h-full overflow-y-auto"
 			transition:slide={{ axis: 'x' }}
 			on:click={() => ($showLeftSidebar = false)}
 		>
@@ -574,5 +574,8 @@
 	.btn-hover:hover {
 		transform: translateY(-2px);
 		background: hsla(0deg, 0%, 100%, 0.2);
+	}
+	h2 {
+		margin-top: 1.2rem;
 	}
 </style>
