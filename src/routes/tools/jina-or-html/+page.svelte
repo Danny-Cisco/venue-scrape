@@ -46,7 +46,7 @@
 	async function useCheerio() {
 		copied = false;
 		try {
-			const res = await fetch(`/api/cheerio/gem-links?url=${input}`);
+			const res = await fetch(`/api/cheerio/eventbrite-json?url=${input}`);
 
 			if (res.ok) {
 				const json = await res.json();
