@@ -37,6 +37,7 @@ Match the following venue name: "${scrapedName}"
 
 If one of the known venues is a good match, return ONLY its exact name.
 If none match, return "NO MATCH".
+If the venue list is missing, return "VENUE LIST MISSING"
 `;
 
 	try {
@@ -50,6 +51,10 @@ If none match, return "NO MATCH".
 
 		if (matchedName === 'NO MATCH') {
 			return json({ match: 'NO MATCH', venue_id: 'NULL' });
+		}
+
+		if (matchedName === 'VENUE LIST MISSING') {
+			return json({ match: 'VENUE LIST MISSING', venue_id: 'NULL' });
 		}
 
 		// Find venue_id for the matched name
