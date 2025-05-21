@@ -47,7 +47,7 @@
 
 		<p class="w-full font-semibold">System Prompt:</p>
 		<textarea
-			class="w-full min-h-[150px] p-2 bg-white/5 border border-white/10 rounded"
+			class="w-full min-h-[150px] p-2 bg-white/15 border border-white/10 rounded"
 			on:keydown={(e) => {
 				if (e.key === 'Enter' && e.metaKey) sendQuestion();
 			}}
@@ -56,7 +56,7 @@
 
 		<p class="w-full mt-4 font-semibold">Question:</p>
 		<textarea
-			class="w-full min-h-[150px] p-2 bg-white/5 border border-white/10 rounded"
+			class="w-full min-h-[150px] p-2 bg-white/15 border border-white/10 rounded"
 			on:keydown={(e) => {
 				if (e.key === 'Enter' && e.metaKey) sendQuestion();
 			}}
@@ -74,7 +74,7 @@
 
 		{#if responseText}
 			<p class="w-full mt-6 font-semibold">Raw Response:</p>
-			<div class="p-4 text-sm whitespace-pre-wrap rounded bg-white/5">{responseText}</div>
+			<div class="p-4 text-sm whitespace-pre-wrap rounded bg-white/15">{responseText}</div>
 		{/if}
 
 		{#if parsed}
@@ -96,7 +96,7 @@
 				</thead>
 				<tbody>
 					{#each bands as band}
-						<tr class="odd:bg-white/5 even:bg-white/0">
+						<tr class="odd:bg-white/15 even:bg-white/0">
 							<td class="p-2">{band.bandname}</td>
 							<td class="p-2">{band.instagram ?? '—'}</td>
 							<td class="p-2">

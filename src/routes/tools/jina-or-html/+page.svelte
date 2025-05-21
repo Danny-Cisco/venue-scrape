@@ -71,7 +71,7 @@
 		<button class="btn" on:click={useCheerio}>Cheerio</button>
 	</div>
 </div>
-<div class="w-full p-4 bg-white/5 rounded-xl">
+<div class="w-full p-4 bg-white/15 rounded-xl">
 	<div class="flex items-center justify-between mb-2">
 		<h1>OUTPUT GOES HERE:</h1>
 		<CopyClipboard text={output} {copied} />

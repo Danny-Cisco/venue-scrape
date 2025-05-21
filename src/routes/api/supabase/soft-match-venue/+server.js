@@ -19,23 +19,28 @@ export async function POST({ request, locals }) {
 	const supabase = locals.supabase;
 	const { scrapedName } = await request.json();
 
-	console.log('🚀✅✅✅✅ ~ POST ~ scrapedName:', scrapedName);
+	console.log('🚀 Incoming scrapedName:', scrapedName);
+
+	// Fetch known venues
 	const { data: venues, error } = await supabase.from('venues').select('id, name');
 	if (error || !venues?.length) {
 		console.error('❌ Supabase venue fetch failed:', error?.message);
 		return json({ error: 'Failed to load venues' }, { status: 500 });
 	}
 
+	// Build prompt
 	const venueList = venues.map((v) => `- ${v.name}`).join('\n');
 
 	const prompt = `
-Here is a list of known venue names:
-
+	You are to act as a fuzzy matching system to find venues in their desired spellings from inputs that may have incorrect ar alternative spellings.
+Here is a list of known venue names, shown in the EXACT SPELLING you are to use in your output:
+[START VENUE LIST]
 ${venueList}
+[END VENUE LIST]
 
 Match the following venue name: "${scrapedName}"
 
-If one of the known venues is a good match, return ONLY its exact name.
+If one of the known venues is a good match, return ONLY the exact name AS SHOWN IT THE VENUE LIST. It is important you prioritise the exact spelling found in the venue list. The presence of words such as 'the' capitals etc.
 If none match, return "NO MATCH".
 If the venue list is missing, return "VENUE LIST MISSING"
 `;
@@ -47,25 +52,51 @@ If the venue list is missing, return "VENUE LIST MISSING"
 			messages: [{ role: 'user', content: prompt }]
 		});
 
+		// Log the full response for debugging
+		console.log('🧠 LLM full response:', JSON.stringify(res, null, 2));
+
+		if (!res.choices?.length || !res.choices[0].message?.content) {
+			console.error('❌ Invalid LLM response shape');
+			return json({ error: 'Invalid LLM response' }, { status: 500 });
+		}
+
 		const matchedName = res.choices[0].message.content.trim();
+		console.log('🎯 Matched name from LLM:', matchedName);
 
 		if (matchedName === 'NO MATCH') {
-			return json({ match: 'NO MATCH', venue_id: 'NULL' });
+			console.log('🟡 LLM result: NO MATCH');
+			return json({ match: 'NO MATCH', venue_id: null });
 		}
 
 		if (matchedName === 'VENUE LIST MISSING') {
-			return json({ match: 'VENUE LIST MISSING', venue_id: 'NULL' });
+			console.warn('⚠️ LLM result: VENUE LIST MISSING');
+			return json({ match: 'VENUE LIST MISSING', venue_id: null });
 		}
 
-		// Find venue_id for the matched name
-		const matchedVenue = venues.find((v) => v.name === matchedName);
+		// Normalize function: lowercase and remove leading "the "
+		function normalize(name) {
+			return name
+				.toLowerCase()
+				.replace(/^the\s+/i, '')
+				.trim();
+		}
+
+		// Try to find the matched venue with fuzzy normalization
+		const matchedVenue = venues.find((v) => normalize(v.name) === normalize(matchedName));
+
 		if (!matchedVenue) {
-			return json({ error: 'LLM returned unknown venue name' }, { status: 404 });
+			console.warn('🔴 LLM returned name not found in venue list:', matchedName);
+			return json({
+				match: 'LLM NAME NOT FOUND',
+				venue_id: null,
+				reason: 'LLM returned name not found in venue list'
+			});
 		}
 
+		console.log('✅ Final venue match:', matchedVenue.name);
 		return json({
 			match: matchedVenue.name,
-			venue_id: matchedVenue.id || 'NULL'
+			venue_id: matchedVenue.id
 		});
 	} catch (err) {
 		console.error('❌ LLM Error:', err.message);

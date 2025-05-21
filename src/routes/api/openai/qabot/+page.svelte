@@ -56,7 +56,7 @@
 	{/if}
 	{#if responseText}
 		<p class="flex w-full">Answer:</p>
-		<div class="rounded bg-white/5">
+		<div class="rounded bg-white/15">
 			<p class="p-4 rounded">{responseText}</p>
 		</div>
 	{/if}
