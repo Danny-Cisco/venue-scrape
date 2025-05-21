@@ -59,7 +59,7 @@
 
 		// copied = false;
 		try {
-			const res = await fetch(`/api/cheerio/oztix?url=${link}`);
+			const res = await fetch(`/api/cheerio/oztix-json?url=${link}`);
 
 			if (res.ok) {
 				const json = await res.json();
