@@ -1,5 +1,6 @@
 import { CheerioCrawler, RequestQueue } from 'crawlee';
 import { v4 as uuidv4 } from 'uuid';
+import { moshtixToOztix } from '$lib/utils/gigConvertors.js';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }) {
@@ -12,7 +13,7 @@ export async function GET({ url }) {
 		});
 	}
 
-	const result = {
+	const scraped = {
 		ld_json: null,
 		event_details_raw_html: '',
 		event_details_text: ''
@@ -33,7 +34,7 @@ export async function GET({ url }) {
 			if (jsonLdScript.length > 0) {
 				try {
 					const rawJson = jsonLdScript.first().html();
-					result.ld_json = JSON.parse(rawJson);
+					scraped.ld_json = JSON.parse(rawJson);
 				} catch (err) {
 					console.error('Failed to parse JSON-LD:', err.message);
 				}
@@ -42,11 +43,8 @@ export async function GET({ url }) {
 			// === 2. Event Details section extraction ===
 			const eventDetailsDiv = $('#event-details-section .fr-view');
 			if (eventDetailsDiv.length > 0) {
-				// Get raw HTML
-				result.event_details_raw_html = eventDetailsDiv.html().trim();
-
-				// Get readable text (without HTML tags)
-				result.event_details_text = eventDetailsDiv.text().trim();
+				scraped.event_details_raw_html = eventDetailsDiv.html().trim();
+				scraped.event_details_text = eventDetailsDiv.text().trim();
 			}
 		}
 	});
@@ -54,7 +52,9 @@ export async function GET({ url }) {
 	try {
 		await crawler.run();
 
-		return new Response(JSON.stringify(result), {
+		const oztixFormatted = moshtixToOztix(scraped);
+
+		return new Response(JSON.stringify(oztixFormatted), {
 			status: 200,
 			headers: {
 				'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export async function GET({ url }) {
 			}
 		});
 	} catch (err) {
-		console.error(err);
+		console.error('❌ Crawling failed:', err);
 		return new Response(JSON.stringify({ error: 'Scraping failed', details: err.message }), {
 			status: 500,
 			headers: {

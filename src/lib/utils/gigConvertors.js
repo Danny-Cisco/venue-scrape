@@ -55,3 +55,28 @@ export function eventbriteToOztix(eventbrite) {
 		tags: tags.map((tag) => tag.text)
 	};
 }
+
+export function moshtixToOztix(dataObject) {
+	const ld = dataObject.ld_json?.[0] ?? {};
+	const address = ld.location?.address ?? {};
+	const tickets = ld.offers ?? [];
+
+	return {
+		title: ld.name ?? '',
+		description: dataObject.event_details_text ?? '',
+		startDate: ld.startDate ?? '',
+		venue: ld.location?.name ?? '',
+		address: address.streetAddress ?? '',
+		suburb: address.addressLocality ?? '',
+		latlong: '', // will be joined later via separate coordinates table
+		image: ld.image ?? '',
+		ticketUrl: ld.url ?? '',
+		tickets: tickets.map((t) => ({
+			ticketType: t.name ?? '',
+			price: t.price ?? '',
+			currency: t.priceCurrency ?? '',
+			availability: t.availability ?? ''
+		})),
+		tags: [] // no tags available — safe to leave empty
+	};
+}
