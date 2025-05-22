@@ -9,7 +9,7 @@
 	async function matchVenue() {
 		loading = true;
 		resultMatch = '';
-		const res = await fetch('/api/supabase/soft-match-venue', {
+		const res = await fetch('/api/supabase/venue-name-match', {
 			method: 'POST',
 			body: JSON.stringify({ scrapedName }),
 			headers: { 'Content-Type': 'application/json' }
@@ -22,7 +22,7 @@
 	}
 
 	onMount(async () => {
-		const res = await fetch('/api/supabase/soft-match-venue');
+		const res = await fetch('/api/supabase/venue-name-match');
 		knownVenues = await res.json();
 	});
 </script>

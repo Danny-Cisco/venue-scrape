@@ -1,13 +1,23 @@
-export function humanitixToOztix(dataObject) {
-	console.log('🚀🔥🔥🔥 ~ humanitixToOztix ~ dataObject:', dataObject);
-	const dataEntry = dataObject.data.find((d) => d.data?.event);
-	if (!dataEntry) return null;
+export function humanitixToOztix(parsedData) {
+	if (!parsedData || !parsedData.data || !Array.isArray(parsedData.data)) {
+		console.warn('🚨 Invalid parsed data structure:', parsedData);
+		return null;
+	}
 
-	const event = dataEntry.data.event;
-	const schema = dataEntry.data.seo?.jsonSchema;
-	const tickets = schema?.offers ?? [];
+	const eventDataEntry = parsedData.data.find((d) => d?.data?.event);
+	if (!eventDataEntry) {
+		console.warn('🚨 No event entry found in parsed data:', parsedData);
+		return null;
+	}
 
-	const oztix = {
+	const event = eventDataEntry.data.event;
+	const schema = eventDataEntry.data.seo?.jsonSchema;
+	const tickets =
+		eventDataEntry.data.ticketTypeData?.tickets ??
+		schema?.offers?.filter((o) => o['@type'] === 'Offer') ??
+		[];
+
+	return {
 		title: event.title,
 		description: event.description,
 		startDate: event.dates?.startDate,
@@ -18,16 +28,15 @@ export function humanitixToOztix(dataObject) {
 		image: event.images?.banner?.src || event.images?.thumbnail?.src || '',
 		ticketUrl: event.urls?.ticketsUrl,
 		tickets: tickets.map((t) => ({
-			ticketType: t.name ?? '',
-			price: t.price ?? '',
-			currency: t.priceCurrency ?? '',
-			availability: t.availability ?? ''
+			ticketType: t.name ?? t?.description ?? '',
+			price: t.price?.numericalPrice ?? t.price ?? '',
+			currency: t.priceCurrency ?? 'AUD',
+			availability: t.availability ?? t?.onSaleStatus?.ticketSaleStatus ?? ''
 		})),
 		tags: event.keywords ?? []
 	};
-
-	return oztix;
 }
+
 export function eventbriteToOztix(eventbrite) {
 	const ld = eventbrite.ld_events?.[0] ?? {};
 	const sd = eventbrite.server_data?.event_listing_response ?? {};
