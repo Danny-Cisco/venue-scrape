@@ -147,7 +147,7 @@
 						<td class="px-2 py-2 text-center">
 							{#if gig.imageUrl}
 								<div title={gig.description} class="overflow-hidden w-[100px] h-[100px] rounded-xl">
-									<img src={gig.imageUrl} alt="promotion poster of the event" />
+									<img src={gig.imageUrl} loading="lazy" alt="promotion poster of the event" />
 								</div>
 							{/if}
 						</td>
