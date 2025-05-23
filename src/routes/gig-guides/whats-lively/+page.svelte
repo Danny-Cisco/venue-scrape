@@ -65,7 +65,7 @@
 				<h3 class="font-bold capitalize">{platform} ({links.length})</h3>
 				<ul class="text-sm text-gray-800 list-disc list-inside">
 					{#each links as link}
-						<li><a href={link} class="text-blue-700 underline" target="_blank">{link}</a></li>
+						<li><a href={link} class="hover:underline" target="_blank">{link}</a></li>
 					{/each}
 				</ul>
 			</div>
