@@ -1,67 +1,74 @@
 <script>
-	import { onMount } from 'svelte';
-	let knownVenues = [];
-	let scrapedName = '';
-	let resultMatch = '';
-	let resultId = '';
+	let urls = [
+		'https://whatslively.com/venues/c5af5e08f1f20fcaed24235f9c45fd37',
+		'https://whatslively.com/venues/28d78c4c966b13c182bb8707a67698c4',
+		'https://whatslively.com/venues/f66feb155e2be6baf23f14a9642b3583',
+		'https://whatslively.com/venues/290000fec132b5b126fde3cc9045aa05'
+	];
+
 	let loading = false;
+	let result = null;
+	let error = null;
 
-	async function matchVenue() {
+	async function fetchTicketLinks() {
 		loading = true;
-		resultMatch = '';
-		const res = await fetch('/api/supabase/venue-name-match', {
-			method: 'POST',
-			body: JSON.stringify({ scrapedName }),
-			headers: { 'Content-Type': 'application/json' }
-		});
+		result = null;
+		error = null;
 
-		const data = await res.json();
-		resultMatch = data.match || data.error;
-		resultId = data.venue_id;
-		loading = false;
+		try {
+			const res = await fetch('/api/cheerio/whats-lively-links', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ urls })
+			});
+
+			if (!res.ok) {
+				throw new Error(`Error ${res.status}: ${await res.text()}`);
+			}
+
+			result = await res.json();
+		} catch (err) {
+			error = err.message;
+		} finally {
+			loading = false;
+		}
 	}
-
-	onMount(async () => {
-		const res = await fetch('/api/supabase/whats-lively-urls');
-		knownVenues = await res.json();
-		console.log('🚀 ~ onMount ~ knownVenues:', knownVenues);
-	});
 </script>
 
-<h1 class="mb-4 text-xl font-bold">Whats Lively</h1>
+<h1 class="mb-4 text-xl font-bold">Test WhatsLively Ticket Link Scraper</h1>
 
-<div class="space-y-4 page">
-	<input
-		class="w-full p-2 border rounded"
-		placeholder="Scraped Venue Name"
-		bind:value={scrapedName}
-	/>
+<textarea
+	class="w-full h-32 p-2 mb-2 border rounded"
+	bind:value={urls}
+	on:change={() => {
+		// Normalize textarea input to array
+		if (typeof urls === 'string') {
+			urls = urls
+				.split('\n')
+				.map((url) => url.trim())
+				.filter(Boolean);
+		}
+	}}
+></textarea>
 
-	<button
-		class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-		on:click={matchVenue}
-		disabled={loading}
-	>
-		{loading ? 'Matching...' : 'Match Venue'}
-	</button>
+<button on:click={fetchTicketLinks} class="px-4 py-2 mb-4 text-white bg-blue-600 rounded">
+	{loading ? 'Loading…' : 'Fetch Ticket Links'}
+</button>
 
-	{#if resultMatch}
-		<div class="flex flex-col items-start mt-4 font-mono min-w-sm">
-			<p>
-				name: <strong>{resultMatch}</strong>
-			</p>
-			<p>id: <strong>{resultId}</strong></p>
-		</div>
-	{/if}
-
-	<details class="mt-6">
-		<summary class="cursor-pointer">Known Venues ({knownVenues.length})</summary>
-		<ul class="mt-2 ml-6 text-sm list-disc">
-			{#each knownVenues as venue}
-				<li>
-					<a href={venue.whatsLivelyUrl}>{venue.name}</a>
-				</li>
-			{/each}
-		</ul>
-	</details>
-</div>
+{#if error}
+	<p class="mb-4 font-mono text-red-600">❌ {error}</p>
+{:else if result}
+	<h2 class="mt-4 text-lg font-semibold">Results:</h2>
+	<div class="mt-2 space-y-4">
+		{#each Object.entries(result) as [platform, links]}
+			<div>
+				<h3 class="font-bold capitalize">{platform} ({links.length})</h3>
+				<ul class="text-sm text-gray-800 list-disc list-inside">
+					{#each links as link}
+						<li><a href={link} class="text-blue-700 underline" target="_blank">{link}</a></li>
+					{/each}
+				</ul>
+			</div>
+		{/each}
+	</div>
+{/if}
