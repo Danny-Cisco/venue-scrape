@@ -1,14 +1,17 @@
+import { json } from '@sveltejs/kit';
 import { CheerioCrawler, RequestQueue } from 'crawlee';
 import { v4 as uuidv4 } from 'uuid';
 import vm from 'node:vm';
 import { eventbriteToOztix } from '$lib/utils/gigConvertors.js';
 
+// Utility: Parses a JS object literal safely
 function parseServerData(rawObj) {
 	const wrapped = '(' + rawObj + ')';
 	const sandbox = Object.create(null);
 	return vm.runInNewContext(wrapped, sandbox, { timeout: 1000 });
 }
 
+// Utility: Extracts a balanced {...} block
 function sliceBalancedBraceBlock(str) {
 	const start = str.indexOf('{');
 	if (start === -1) return null;
@@ -23,13 +26,8 @@ function sliceBalancedBraceBlock(str) {
 	return null;
 }
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url }) {
-	const targetUrl = url.searchParams.get('url');
-	if (!targetUrl) {
-		return new Response(JSON.stringify({ error: 'Missing ?url=' }), { status: 400 });
-	}
-
+// Scraper logic for a single Eventbrite URL
+async function scrapeEventbritePage(targetUrl) {
 	const rawResult = {
 		ld_events: [],
 		server_data: null,
@@ -43,6 +41,7 @@ export async function GET({ url }) {
 	const crawler = new CheerioCrawler({
 		requestQueue,
 		async requestHandler({ $, request }) {
+			// Grab any LD+JSON blocks with @type: Event
 			$('script[type="application/ld+json"]').each((_, el) => {
 				try {
 					const json = JSON.parse($(el).html().trim());
@@ -59,13 +58,12 @@ export async function GET({ url }) {
 				} catch {}
 			});
 
+			// Extract window.__SERVER_DATA__ if available
 			$('script').each((_, el) => {
 				const raw = $(el).html();
 				if (!raw.includes('window.__SERVER_DATA__')) return;
-
 				const objBlock = sliceBalancedBraceBlock(raw);
 				if (!objBlock) return;
-
 				try {
 					rawResult.server_data = parseServerData(objBlock);
 				} catch (err) {
@@ -81,18 +79,46 @@ export async function GET({ url }) {
 		}
 	});
 
-	try {
-		await crawler.run();
-		const oztixFormatted = eventbriteToOztix(rawResult);
+	await crawler.run();
 
-		return new Response(JSON.stringify(oztixFormatted), {
-			status: 200,
-			headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-		});
-	} catch (err) {
-		return new Response(JSON.stringify({ error: 'Scraping failed', details: err.message }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-		});
+	// Convert the scraped raw structure into unified gig format
+	return eventbriteToOztix(rawResult);
+}
+
+// === GET version ===
+export async function GET({ url }) {
+	const inputUrl = url.searchParams.get('url');
+	if (!inputUrl) {
+		return json({ error: 'Missing ?url= parameter' }, { status: 400 });
 	}
+
+	try {
+		const gig = await scrapeEventbritePage(inputUrl);
+		return json({ gig });
+	} catch (err) {
+		console.error('❌ GET scraping error:', err.message);
+		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
+	}
+}
+
+// === POST version ===
+export async function POST({ request }) {
+	const { urls } = await request.json();
+	if (!Array.isArray(urls) || urls.length === 0) {
+		return json({ error: 'POST body must include non-empty `urls` array' }, { status: 400 });
+	}
+
+	const results = [];
+
+	for (const inputUrl of urls) {
+		try {
+			const gig = await scrapeEventbritePage(inputUrl);
+			results.push({ url: inputUrl, gig });
+		} catch (err) {
+			console.error(`❌ Failed to scrape ${inputUrl}:`, err.message);
+			results.push({ url: inputUrl, error: true, message: err.message });
+		}
+	}
+
+	return json(results);
 }

@@ -1,20 +1,11 @@
+import { json } from '@sveltejs/kit';
 import { CheerioCrawler, RequestQueue } from 'crawlee';
 import { v4 as uuidv4 } from 'uuid';
 import vm from 'node:vm';
 import { humanitixToOztix } from '$lib/utils/gigConvertors.js';
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url }) {
-	let inputUrl = url.searchParams.get('url');
-
-	if (!inputUrl) {
-		return new Response(JSON.stringify({ error: 'Missing ?url= parameter' }), {
-			status: 400,
-			headers: { 'Content-Type': 'application/json' }
-		});
-	}
-
-	// Normalize to the `/tickets` subpage
+async function scrapeHumanitixPage(inputUrl) {
+	// Normalize to `/tickets` subpage
 	if (!inputUrl.endsWith('/tickets')) {
 		inputUrl = inputUrl.replace(/\/+$/, '') + '/tickets';
 	}
@@ -56,7 +47,6 @@ export async function GET({ url }) {
 				vm.createContext(context);
 				vm.runInContext('result = ' + objectLiteral, context);
 
-				// ✅ Convert
 				const gig = humanitixToOztix(context.result);
 				result.gig = gig;
 			} catch (err) {
@@ -65,23 +55,44 @@ export async function GET({ url }) {
 		}
 	});
 
-	try {
-		await crawler.run();
-		return new Response(JSON.stringify(result), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
-	} catch (err) {
-		console.error('❌ Scraper error:', err);
-		return new Response(JSON.stringify({ error: 'Scraping failed', details: err.message }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
+	await crawler.run();
+	return result.gig;
+}
+
+// === GET version ===
+export async function GET({ url }) {
+	const inputUrl = url.searchParams.get('url');
+	if (!inputUrl) {
+		return json({ error: 'Missing ?url= parameter' }, { status: 400 });
 	}
+
+	try {
+		const gig = await scrapeHumanitixPage(inputUrl);
+		return json({ gig });
+	} catch (err) {
+		console.error('❌ GET scraping error:', err.message);
+		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
+	}
+}
+
+// === POST version ===
+export async function POST({ request }) {
+	const { urls } = await request.json();
+	if (!Array.isArray(urls) || urls.length === 0) {
+		return json({ error: 'POST body must include non-empty `urls` array' }, { status: 400 });
+	}
+
+	const results = [];
+
+	for (const inputUrl of urls) {
+		try {
+			const gig = await scrapeHumanitixPage(inputUrl);
+			results.push({ url: inputUrl, gig });
+		} catch (err) {
+			console.error(`❌ Failed to scrape ${inputUrl}:`, err.message);
+			results.push({ url: inputUrl, error: true, message: err.message });
+		}
+	}
+
+	return json(results);
 }

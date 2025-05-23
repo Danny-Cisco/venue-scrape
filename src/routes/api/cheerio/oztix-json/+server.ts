@@ -1,86 +1,107 @@
-import { json } from '@sveltejs/kit';
+// +server.ts (or similar SvelteKit route file)
+
 import { CheerioCrawler, RequestQueue } from 'crawlee';
 import { v4 as uuidv4 } from 'uuid';
-import { moshtixToOztix } from '$lib/utils/gigConvertors.js';
+import { json } from '@sveltejs/kit';
 
-/**
- * Extracts and formats gig data from Oztix-compatible HTML page.
- * Returns a standard gigObject via moshtixToOztix().
- */
-async function scrapeOztixPage(url) {
+async function runScraper(targets: string[]) {
+	const results: any[] = [];
 	const requestQueue = await RequestQueue.open();
-	const scraped = {
-		ld_json: null,
-		event_details_raw_html: '',
-		event_details_text: ''
-	};
 
-	await requestQueue.addRequest({
-		url,
-		uniqueKey: `${url}#${uuidv4()}`
-	});
+	for (const target of targets) {
+		await requestQueue.addRequest({
+			url: target,
+			uniqueKey: `${target}#${uuidv4()}`
+		});
+	}
 
 	const crawler = new CheerioCrawler({
 		requestQueue,
 		async requestHandler({ $, request }) {
-			const jsonLdScript = $('#event-structured-data-section script[type="application/ld+json"]');
-			if (jsonLdScript.length > 0) {
-				try {
-					const rawJson = jsonLdScript.first().html();
-					scraped.ld_json = JSON.parse(rawJson);
-				} catch (err) {
-					console.error(`❌ Failed to parse JSON-LD for ${request.url}:`, err.message);
-				}
+			let scrapedData = { source: request.url };
+
+			const jsonLdScript = $('script[type="application/ld+json"]').html();
+			if (!jsonLdScript) {
+				scrapedData.error = 'No ld+json script tag found';
+				results.push(scrapedData);
+				return;
 			}
 
-			const eventDetailsDiv = $('#event-details-section .fr-view');
-			if (eventDetailsDiv.length > 0) {
-				scraped.event_details_raw_html = eventDetailsDiv.html().trim();
-				scraped.event_details_text = eventDetailsDiv.text().trim();
+			try {
+				const json = JSON.parse(jsonLdScript);
+				const graph = json['@graph'] || [];
+				const eventData = graph.find((item) => item['@type'] === 'Event');
+				const productData = graph.find((item) => item['@type'] === 'Product');
+
+				const tags = $('.event-tag')
+					.map((_, el) => $(el).text().trim())
+					.get();
+
+				const tickets = (eventData?.offers || []).map((offer) => ({
+					ticketType: offer.itemOffered?.name || productData?.name || 'General Admission',
+					price: offer.price,
+					currency: offer.priceCurrency,
+					availability: offer.availability
+				}));
+
+				Object.assign(scrapedData, {
+					title: eventData?.name,
+					description: eventData?.description,
+					startDate: eventData?.startDate,
+					venue: eventData?.location?.name,
+					address: eventData?.location?.address?.streetAddress,
+					suburb: eventData?.location?.address?.addressLocality,
+					image: eventData?.image?.[0] || productData?.image?.[0] || null,
+					ticketUrl: eventData?.url,
+					tickets,
+					tags
+				});
+			} catch (err) {
+				scrapedData.error = 'JSON parse failed';
+				scrapedData.details = err.message;
 			}
+
+			results.push(scrapedData);
 		}
 	});
 
 	await crawler.run();
-	return moshtixToOztix(scraped);
+	return results;
 }
 
-// === GET handler (single url) ===
 export async function GET({ url }) {
-	const target = url.searchParams.get('url');
+	const singleUrl = url.searchParams.get('url');
 
-	if (!target) {
-		return json({ error: 'Missing ?url= parameter' }, { status: 400 });
+	if (!singleUrl) {
+		return json({ error: 'Missing ?url parameter' }, { status: 400 });
 	}
 
 	try {
-		const data = await scrapeOztixPage(target);
-		return json(data);
+		const result = await runScraper([singleUrl]);
+		return json(result[0]);
 	} catch (err) {
-		console.error(`❌ Failed GET scrape for ${target}:`, err);
 		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
 	}
 }
 
-// === POST handler (batch of urls) ===
 export async function POST({ request }) {
-	const { urls } = await request.json();
+	let urls: string[] = [];
+
+	try {
+		const body = await request.json();
+		urls = body.urls;
+	} catch {
+		return json({ error: 'Invalid JSON in request body' }, { status: 400 });
+	}
 
 	if (!Array.isArray(urls) || urls.length === 0) {
-		return json({ error: 'POST body must include non-empty `urls` array' }, { status: 400 });
+		return json({ error: 'Missing or invalid urls array in POST body' }, { status: 400 });
 	}
 
-	const results = [];
-
-	for (const url of urls) {
-		try {
-			const gigObject = await scrapeOztixPage(url);
-			results.push({ url, ...gigObject });
-		} catch (err) {
-			console.error(`❌ Error scraping ${url}:`, err.message);
-			results.push({ url, error: true, message: err.message });
-		}
+	try {
+		const results = await runScraper(urls);
+		return json(results);
+	} catch (err) {
+		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
 	}
-
-	return json(results);
 }

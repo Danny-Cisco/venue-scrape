@@ -1,15 +1,15 @@
 <script>
-	// let urls = [
-	// 	'https://whatslively.com/venues/c5af5e08f1f20fcaed24235f9c45fd37',
-	// 	'https://whatslively.com/venues/28d78c4c966b13c182bb8707a67698c4',
-	// 	'https://whatslively.com/venues/f66feb155e2be6baf23f14a9642b3583',
-	// 	'https://whatslively.com/venues/290000fec132b5b126fde3cc9045aa05'
-	// ];
-
 	let urls = [
 		'https://whatslively.com/venues/c5af5e08f1f20fcaed24235f9c45fd37',
+		'https://whatslively.com/venues/28d78c4c966b13c182bb8707a67698c4',
+		'https://whatslively.com/venues/f66feb155e2be6baf23f14a9642b3583',
 		'https://whatslively.com/venues/290000fec132b5b126fde3cc9045aa05'
 	];
+
+	// let urls = [
+	// 	'https://whatslively.com/venues/c5af5e08f1f20fcaed24235f9c45fd37',
+	// 	'https://whatslively.com/venues/290000fec132b5b126fde3cc9045aa05'
+	// ];
 
 	let loading = false;
 	let result = null;
