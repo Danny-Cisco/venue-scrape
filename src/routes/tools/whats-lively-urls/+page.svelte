@@ -28,7 +28,7 @@
 	});
 </script>
 
-<h1 class="mb-4 text-xl font-bold">Whats Lively</h1>
+<h1 class="mb-4 text-xl font-bold">Records in database with Whats Lively urls</h1>
 
 <div class="space-y-4 page">
 	<input

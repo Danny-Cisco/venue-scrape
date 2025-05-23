@@ -1,92 +1,86 @@
+import { json } from '@sveltejs/kit';
 import { CheerioCrawler, RequestQueue } from 'crawlee';
 import { v4 as uuidv4 } from 'uuid';
+import { moshtixToOztix } from '$lib/utils/gigConvertors.js';
 
-/** @type {import('./$types').RequestHandler} */
-export async function GET({ url }) {
-	const targetUrl = url.searchParams.get('url');
-
-	if (!targetUrl) {
-		return new Response(JSON.stringify({ error: 'Missing ?url= parameter' }), {
-			status: 400,
-			headers: { 'Content-Type': 'application/json' }
-		});
-	}
-
-	let scrapedData = {};
-
+/**
+ * Extracts and formats gig data from Oztix-compatible HTML page.
+ * Returns a standard gigObject via moshtixToOztix().
+ */
+async function scrapeOztixPage(url) {
 	const requestQueue = await RequestQueue.open();
+	const scraped = {
+		ld_json: null,
+		event_details_raw_html: '',
+		event_details_text: ''
+	};
+
 	await requestQueue.addRequest({
-		url: targetUrl,
-		uniqueKey: `${targetUrl}#${uuidv4()}`
+		url,
+		uniqueKey: `${url}#${uuidv4()}`
 	});
 
 	const crawler = new CheerioCrawler({
 		requestQueue,
 		async requestHandler({ $, request }) {
-			// Extract structured data from application/ld+json
-			const jsonLdScript = $('script[type="application/ld+json"]').html();
-
-			if (!jsonLdScript) {
-				scrapedData = { error: 'No ld+json script tag found' };
-				return;
+			const jsonLdScript = $('#event-structured-data-section script[type="application/ld+json"]');
+			if (jsonLdScript.length > 0) {
+				try {
+					const rawJson = jsonLdScript.first().html();
+					scraped.ld_json = JSON.parse(rawJson);
+				} catch (err) {
+					console.error(`❌ Failed to parse JSON-LD for ${request.url}:`, err.message);
+				}
 			}
 
-			try {
-				const json = JSON.parse(jsonLdScript);
-				const graph = json['@graph'] || [];
-				const eventData = graph.find((item) => item['@type'] === 'Event');
-				const productData = graph.find((item) => item['@type'] === 'Product');
-
-				// Extract .event-tag labels from DOM
-				const tags = $('.event-tag')
-					.map((_, el) => $(el).text().trim())
-					.get();
-
-				// Build structured ticket list
-				const tickets = (eventData.offers || []).map((offer) => ({
-					ticketType: offer.itemOffered?.name || productData?.name || 'General Admission',
-					price: offer.price,
-					currency: offer.priceCurrency,
-					availability: offer.availability
-				}));
-
-				// Assemble final clean object
-				scrapedData = {
-					title: eventData.name,
-					description: eventData.description,
-					startDate: eventData.startDate,
-					venue: eventData.location?.name,
-					address: eventData.location?.address?.streetAddress,
-					suburb: eventData.location?.address?.addressLocality,
-					image: eventData.image?.[0] || productData?.image?.[0] || null,
-					ticketUrl: eventData.url,
-					tickets,
-					tags
-				};
-			} catch (err) {
-				scrapedData = { error: 'JSON parse failed', details: err.message };
+			const eventDetailsDiv = $('#event-details-section .fr-view');
+			if (eventDetailsDiv.length > 0) {
+				scraped.event_details_raw_html = eventDetailsDiv.html().trim();
+				scraped.event_details_text = eventDetailsDiv.text().trim();
 			}
 		}
 	});
 
-	try {
-		await crawler.run();
+	await crawler.run();
+	return moshtixToOztix(scraped);
+}
 
-		return new Response(JSON.stringify(scrapedData), {
-			status: 200,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
-	} catch (err) {
-		console.error(err);
-		return new Response(JSON.stringify({ error: 'Scraping failed', details: err.message }), {
-			status: 500,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
+// === GET handler (single url) ===
+export async function GET({ url }) {
+	const target = url.searchParams.get('url');
+
+	if (!target) {
+		return json({ error: 'Missing ?url= parameter' }, { status: 400 });
 	}
+
+	try {
+		const data = await scrapeOztixPage(target);
+		return json(data);
+	} catch (err) {
+		console.error(`❌ Failed GET scrape for ${target}:`, err);
+		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
+	}
+}
+
+// === POST handler (batch of urls) ===
+export async function POST({ request }) {
+	const { urls } = await request.json();
+
+	if (!Array.isArray(urls) || urls.length === 0) {
+		return json({ error: 'POST body must include non-empty `urls` array' }, { status: 400 });
+	}
+
+	const results = [];
+
+	for (const url of urls) {
+		try {
+			const gigObject = await scrapeOztixPage(url);
+			results.push({ url, ...gigObject });
+		} catch (err) {
+			console.error(`❌ Error scraping ${url}:`, err.message);
+			results.push({ url, error: true, message: err.message });
+		}
+	}
+
+	return json(results);
 }
