@@ -11,6 +11,7 @@
 		'oztix-json',
 		'tote-links',
 		'moshtix-json',
+		'moshtix-venue',
 		'humanitix-json',
 		'eventbrite-json',
 		'john-curtain-links'

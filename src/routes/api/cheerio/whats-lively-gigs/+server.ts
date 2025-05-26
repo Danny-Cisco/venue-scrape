@@ -17,16 +17,11 @@ export async function POST({ request, fetch }) {
 		return json({ error: 'Request body must contain a non-empty `urls` array' }, { status: 400 });
 	}
 
-	const linkBuckets = {
-		eventbrite: [],
-		humanitix: [],
-		moshtix: [],
-		oztix: [],
-		other: []
-	};
+	// Group ticket links by venue URL and platform
+	const linkBuckets = {};
 
+	// Queue all venue URLs
 	const requestQueue = await RequestQueue.open();
-
 	for (const url of venueUrls) {
 		await requestQueue.addRequest({ url, uniqueKey: `${url}#${uuidv4()}` });
 	}
@@ -34,6 +29,9 @@ export async function POST({ request, fetch }) {
 	const crawler = new CheerioCrawler({
 		requestQueue,
 		async requestHandler({ $, request }) {
+			const sourceUrl = request.url;
+			console.log(`🔍 Crawling venue: ${sourceUrl}`);
+
 			const scriptTag = $('#__NEXT_DATA__');
 			if (!scriptTag.length) return;
 
@@ -45,16 +43,37 @@ export async function POST({ request, fetch }) {
 					let ticketUrl = event?.ticket?.original_url ?? event?.ticket?.url;
 					if (typeof ticketUrl !== 'string') continue;
 
+					// Normalize URL
+					ticketUrl = ticketUrl.trim();
+
+					// Determine platform
+					let platform = 'other';
 					if (ticketUrl.includes('moshtix.com')) {
-						linkBuckets.moshtix.push(cleanMoshtixUrl(ticketUrl));
+						ticketUrl = cleanMoshtixUrl(ticketUrl);
+						platform = 'moshtix';
 					} else if (ticketUrl.includes('oztix.com')) {
-						linkBuckets.oztix.push(cleanOztixUrl(ticketUrl));
+						ticketUrl = cleanOztixUrl(ticketUrl);
+						platform = 'oztix';
 					} else if (ticketUrl.includes('eventbrite.com')) {
-						linkBuckets.eventbrite.push(ticketUrl);
+						platform = 'eventbrite';
 					} else if (ticketUrl.includes('humanitix.com')) {
-						linkBuckets.humanitix.push(ticketUrl);
-					} else {
-						linkBuckets.other.push(ticketUrl);
+						platform = 'humanitix';
+					}
+
+					// Initialize nested object
+					if (!linkBuckets[sourceUrl]) {
+						linkBuckets[sourceUrl] = {
+							eventbrite: [],
+							humanitix: [],
+							moshtix: [],
+							oztix: [],
+							other: []
+						};
+					}
+
+					// Deduplicate
+					if (!linkBuckets[sourceUrl][platform].includes(ticketUrl)) {
+						linkBuckets[sourceUrl][platform].push(ticketUrl);
 					}
 				}
 			} catch (err) {
@@ -65,8 +84,9 @@ export async function POST({ request, fetch }) {
 
 	await crawler.run();
 
-	// Send a POST batch to each endpoint
-	async function fetchBatch(endpoint, urls) {
+	// Flatten and batch-send requests by platform
+	async function fetchBatch(endpoint, allUrls) {
+		const urls = Array.from(new Set(allUrls.flat()));
 		if (urls.length === 0) return [];
 		try {
 			const res = await fetch(endpoint, {
@@ -82,19 +102,25 @@ export async function POST({ request, fetch }) {
 		}
 	}
 
+	// Collect platform-specific URL arrays
+	const allOztix = Object.values(linkBuckets).flatMap((b) => b.oztix);
+	const allMoshtix = Object.values(linkBuckets).flatMap((b) => b.moshtix);
+	const allEventbrite = Object.values(linkBuckets).flatMap((b) => b.eventbrite);
+	const allHumanitix = Object.values(linkBuckets).flatMap((b) => b.humanitix);
+
 	const [oztixGigs, moshtixGigs, eventbriteGigs, humanitixGigs] = await Promise.all([
-		fetchBatch(OZTIX_ENDPOINT, linkBuckets.oztix),
-		fetchBatch(MOSHTIX_ENDPOINT, linkBuckets.moshtix),
-		fetchBatch(EVENTBRITE_ENDPOINT, linkBuckets.eventbrite),
-		fetchBatch(HUMANITIX_ENDPOINT, linkBuckets.humanitix)
+		fetchBatch(OZTIX_ENDPOINT, allOztix),
+		fetchBatch(MOSHTIX_ENDPOINT, allMoshtix),
+		fetchBatch(EVENTBRITE_ENDPOINT, allEventbrite),
+		fetchBatch(HUMANITIX_ENDPOINT, allHumanitix)
 	]);
 
 	return json({
+		byVenue: linkBuckets,
 		oztix: oztixGigs,
 		moshtix: moshtixGigs,
 		eventbrite: eventbriteGigs,
-		humanitix: humanitixGigs,
-		other: linkBuckets.other
+		humanitix: humanitixGigs
 	});
 }
 
