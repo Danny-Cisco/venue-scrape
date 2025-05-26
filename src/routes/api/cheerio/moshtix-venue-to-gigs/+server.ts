@@ -81,18 +81,26 @@ export async function GET({ url, fetch }) {
 // === POST handler ===
 export async function POST({ request, fetch }) {
 	const body = await request.json();
-	const venueUrl = body.url;
+	const venueUrls = body.urls;
 
-	if (!venueUrl || typeof venueUrl !== 'string') {
-		return new Response(JSON.stringify({ error: 'Missing or invalid `url` in body' }), {
+	if (!Array.isArray(venueUrls) || venueUrls.length === 0) {
+		return new Response(JSON.stringify({ error: 'Missing or invalid `urls` array in body' }), {
 			status: 400,
 			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 
 	try {
-		const links = await extractMoshtixLinksFrom(venueUrl);
-		const gigs = await fetchGigObjectsFromMoshtix(fetch, links);
+		const allLinks = new Set<string>();
+
+		for (const url of venueUrls) {
+			const links = await extractMoshtixLinksFrom(url);
+			links.forEach((link) => allLinks.add(link));
+		}
+
+		const linkArray = Array.from(allLinks);
+		const gigs = await fetchGigObjectsFromMoshtix(fetch, linkArray);
+
 		return new Response(JSON.stringify({ gigs }), {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' }
