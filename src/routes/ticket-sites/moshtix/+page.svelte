@@ -23,10 +23,20 @@
 
 	let venueId = '';
 
-	let urls = [
-		'https://www.moshtix.com.au/v2/venues/bad-decisions-bar/8683',
-		'https://www.moshtix.com.au/v2/venues/the-toff-in-town-melbourne/1007'
+	let venues = [
+		{
+			name: 'Bad Decisions',
+			id: '037c86b9-386d-404d-a124-f48dfe41ddca',
+			moshtix: 'https://www.moshtix.com.au/v2/venues/bad-decisions-bar/8683'
+		},
+		{
+			name: 'The Toff',
+			id: 'd15de333-dc11-43e0-a468-4b285cf32390',
+			moshtix: 'https://www.moshtix.com.au/v2/venues/the-toff-in-town-melbourne/1007'
+		}
 	];
+
+	let urls = venues.map((venue) => venue.moshtix);
 
 	// async function beginCrawl() {
 	// 	loading = true;
