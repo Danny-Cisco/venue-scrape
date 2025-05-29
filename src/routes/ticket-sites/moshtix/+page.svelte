@@ -250,7 +250,9 @@
 
 			if (!bandObject.instagram) {
 				const socialUrls = await getInstagramUrl(bandObject.bandname);
-			} else const socialUrls = [...socialUrls, bandObject.instagram];
+			} else {
+				const socialUrls = [...socialUrls, bandObject.instagram];
+			}
 
 			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
