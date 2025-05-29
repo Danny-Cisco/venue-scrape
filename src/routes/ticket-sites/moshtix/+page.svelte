@@ -88,16 +88,35 @@
 			result = await res.json();
 			console.log('✅BOOP✅ ~ fetchTicketLinks ~ result:', result);
 
-			// go thru the gigs array... and call gig.venueId = await softMatchVenueName(gig.venue)
+			let knownIdsCache = []; // { venue, id }
+
 			for (const gig of result.gigs) {
-				const venue = await softMatchVenueName(gig.venue);
+				console.log('gig.venue: ', gig.venue);
+				console.log('knownIdsCache: ', knownIdsCache);
+				// Check cache with strict string match
+				const cached = knownIdsCache.find((entry) => entry.input === gig.venue);
+				console.log('🚀 ~ beginCrawl ~ cached:', cached);
+
+				let venue;
+
+				if (cached) {
+					// Use cached venue
+					venue = { id: cached.id, name: cached.venue };
+				} else {
+					// Not cached — run the soft match
+					venue = await softMatchVenueName(gig.venue);
+					knownIdsCache.push({ venue: venue.name, id: venue.id, input: gig.venue });
+				}
+
+				// Assign matched venue info
 				gig.venueId = venue.id;
 				gig.venue = venue.name;
-				gig.bandObjects = []; // add some blank fields ready for the ui
-				gig.bios = []; // add some blank fields ready for the ui
-				gig.instaCaptions = []; // add some blank fields ready for the ui
-				gig.instaHashtags = []; // add some blank fields ready for the ui
-				// gig.oztix = {};
+
+				// Prepare UI fields
+				gig.bandObjects = [];
+				gig.bios = [];
+				gig.instaCaptions = [];
+				gig.instaHashtags = [];
 			}
 
 			gigs = result.gigs;
@@ -227,10 +246,12 @@
 		let followersTotal = 0;
 
 		for (const band of finalJson.bands) {
-			let bandObject = {
-				bandname: band.bandname,
-				socialUrls: await getInstagramUrl(band.bandname)
-			};
+			let bandObject = band;
+
+			if (!bandObject.instagram) {
+				const socialUrls = await getInstagramUrl(bandObject.bandname);
+			} else const socialUrls = [...socialUrls, bandObject.instagram];
+
 			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 			for (const url of bandObject.socialUrls) {
@@ -246,7 +267,7 @@
 						...bandObject.instagram.latestPosts.map((post) => post.hashtags).flat() // use flat to turn array of arrays into a single array
 					];
 
-					followersTotal = followersTotal + bandObject.instagram.followersCount;
+					followersTotal = followersTotal + bandObject.instagram.followersCount; // this is working... but why is the bandObject not saving the instagram?
 				}
 
 				bandObjects = [...bandObjects, bandObject || {}];
@@ -270,6 +291,7 @@
 
 		// gigs[gigIndex].bands = finalJson.bands; // fuck it... ill save the bands too
 		gigs[gigIndex].bandObjects = bandObjects; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
+		console.log('🚀🌼🌼 ~ getBands ~ bandObjects:', bandObjects);
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
 		await gigsFuzzyDupeCheckWithUpdate(gigs[gigIndex]);
