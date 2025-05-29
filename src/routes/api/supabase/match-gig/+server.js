@@ -25,16 +25,16 @@ export async function POST({ request, locals }) {
 		const reqBody = await request.json();
 		// console.log('🔍 Incoming match request body:', reqBody);
 
-		const { datetime, venue, bands } = reqBody;
+		const { startDate, venue, bands } = reqBody;
 
-		if (!datetime || !venue || !bands || !Array.isArray(bands) || typeof venue !== 'string') {
-			return json({ error: 'Missing or invalid datetime, venue, or bands' }, { status: 400 });
+		if (!startDate || !venue || !bands || !Array.isArray(bands) || typeof venue !== 'string') {
+			return json({ error: 'Missing or invalid startDate, venue, or bands' }, { status: 400 });
 		}
 
 		// Get full-day range in UTC
-		const inputDate = new Date(datetime);
+		const inputDate = new Date(startDate);
 		if (isNaN(inputDate.getTime())) {
-			return json({ error: 'Invalid datetime format' }, { status: 400 });
+			return json({ error: 'Invalid startDate format' }, { status: 400 });
 		}
 
 		const dayStart = new Date(inputDate.getTime());
@@ -42,16 +42,16 @@ export async function POST({ request, locals }) {
 
 		const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-		// console.log('Input datetime string:', datetime);
+		// console.log('Input startDate string:', startDate);
 		// console.log('Parsed inputDate (ISO):', inputDate.toISOString());
 		// console.log('Calculated dayStart (ISO):', dayStart.toISOString());
 		// console.log('Calculated dayEnd (ISO):', dayEnd.toISOString());
 
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
-			.select('id, datetime, venue, bands')
-			.gte('datetime', dayStart.toISOString())
-			.lt('datetime', dayEnd.toISOString());
+			.select('id, startDate, venue, bands')
+			.gte('startDate', dayStart.toISOString())
+			.lt('startDate', dayEnd.toISOString());
 
 		if (error) {
 			console.error('❌ Supabase query error:', error);

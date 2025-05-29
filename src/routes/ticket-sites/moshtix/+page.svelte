@@ -7,8 +7,8 @@
 	import { gigsFuzzyDupeCheckWithUpdate } from '$lib/utils/supabase.js';
 
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
+	import { readonly } from 'svelte/store';
 
-	let venueName = 'The Gem';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
@@ -36,7 +36,7 @@
 		}
 	];
 
-	let urls = venues.map((venue) => venue.moshtix);
+	let urls = venues.map((venue) => venue.moshtix); // this turns the venues oblect into the urls list i need
 
 	// async function beginCrawl() {
 	// 	loading = true;
@@ -68,11 +68,14 @@
 
 	async function beginCrawl() {
 		loading = true;
-		result = null;
-		error = null;
+		let result = null;
+		// error = null;
+
+		readOut = 'Begin Crawl!';
 
 		try {
-			const res = await fetch('/api/cheerio/moshtix-venue-to-gigs', {
+			readOut = '✅ Collecting all gigs from provided Moshtix urls';
+			const res = await fetch('/api/cheerio/moshtix-venueUrls-to-gigs', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ urls })
@@ -83,10 +86,23 @@
 			}
 
 			result = await res.json();
-			console.log('🚀 ~ fetchTicketLinks ~ result:', result);
+			console.log('✅BOOP✅ ~ fetchTicketLinks ~ result:', result);
+
+			// go thru the gigs array... and call gig.venueId = await softMatchVenueName(gig.venue)
+			for (const gig of result.gigs) {
+				const venue = await softMatchVenueName(gig.venue);
+				gig.venueId = venue.id;
+				gig.venue = venue.name;
+				gig.bandObjects = []; // add some blank fields ready for the ui
+				gig.bios = []; // add some blank fields ready for the ui
+				gig.instaCaptions = []; // add some blank fields ready for the ui
+				gig.instaHashtags = []; // add some blank fields ready for the ui
+				// gig.oztix = {};
+			}
+
 			gigs = result.gigs;
 		} catch (err) {
-			error = err.message;
+			console.log('🚀 ~ beginCrawl ~ err.message:', err.message);
 		} finally {
 			loading = false;
 		}
@@ -112,7 +128,9 @@
 		loading = false;
 		console.log('🚀 ~ softMatchVenueName ~ data.venue_id:', data.venue_id);
 
-		return data.venue_id;
+		readOut = `✅ found match: ${data.match}`;
+
+		return { id: data.venue_id, name: data.match };
 	}
 
 	// async function useCheerio(link) {
@@ -140,7 +158,7 @@
 	// 		readOut = `✋ Cheerio is fetching :   ${link}`;
 
 	// 		const gig = await useCheerio(link);
-	// 		gig.datetime = convertStringToDatetime(gig.date, gig.time);
+	// 		gig.startDate = convertStringToDatetime(gig.date, gig.time);
 	// 		gig.venue = venueName;
 	// 		gig.venueId = venueId;
 	// 		gig.bands = []; // add some blank fields ready for the ui
@@ -209,8 +227,11 @@
 		let followersTotal = 0;
 
 		for (const band of finalJson.bands) {
-			let bandObject = { bandName: band, socialUrls: await getInstagramUrl(band) };
-			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
+			let bandObject = {
+				bandname: band.bandname,
+				socialUrls: await getInstagramUrl(band.bandname)
+			};
+			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 			for (const url of bandObject.socialUrls) {
 				if (url.match(instaProfileRegex)) {
@@ -247,7 +268,7 @@
 		gigs[gigIndex].genres = genreObject.genres;
 		gigs[gigIndex].thinking = genreObject.thinking;
 
-		gigs[gigIndex].bands = finalJson.bands; // fuck it... ill save the bands too
+		// gigs[gigIndex].bands = finalJson.bands; // fuck it... ill save the bands too
 		gigs[gigIndex].bandObjects = bandObjects; // save the whole damn thing in there... an array of bandObjects with instagram data to boot
 		// HERE IS WHERE I CAN SAVE TO THE GIGS SUPABASE
 
@@ -290,13 +311,13 @@
 		return data.data[0];
 	}
 
-	async function getInstagramUrl(bandName) {
+	async function getInstagramUrl(bandname) {
 		loading = true;
 
-		readOut = `💀 Google is finding Instagram url for ${bandName}`;
+		readOut = `💀 Google is finding Instagram url for ${bandname}`;
 
 		const response = await fetch(
-			`/api/google/get-instagram-url?band=${encodeURIComponent(bandName)}`
+			`/api/google/get-instagram-url?band=${encodeURIComponent(bandname)}`
 		);
 
 		const body = await response.json();
@@ -328,14 +349,14 @@
 		console.log('🚀 ~ updateBandForLastGig ~ commencedIndexGetBands:', commencedIndexGetBands);
 		const lastGig = gigs[commencedIndexGetBands];
 		const question = lastGig.title + lastGig.description;
-		gigs[commencedIndexGetBands].bands = await getBands(question, commencedIndexGetBands);
+		gigs[commencedIndexGetBands].bandObjects = await getBands(question, commencedIndexGetBands);
 	}
 
 	$: if (gigs.length > 0) {
 		lastGigIndex = gigs.length - 1 || 0;
 		// checks first to see if the job is already commenced
 		if (commencedIndexGetBands !== lastGigIndex)
-			if (gigs[lastGigIndex].bands.length == 0) updateBandForLastGig();
+			if (gigs[lastGigIndex].bandObjects?.length == 0 || undefined) updateBandForLastGig();
 	}
 </script>
 

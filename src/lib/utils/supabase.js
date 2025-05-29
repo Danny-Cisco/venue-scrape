@@ -7,15 +7,15 @@ export async function gigsFuzzyDupeCheckWithUpdate(gig) {
 }
 
 export async function checkSupabaseForDuplicate(gig) {
-	// new locaiton of bandNames is inside 'gig.bandObjects[].bandName'
+	// new locaiton of bandnames is inside 'gig.bandObjects[].bandname'
 	let bands = [];
 	for (const bandObject of gig.bandObjects) {
-		bands = [...bands, bandObject.bandName];
+		bands = [...bands, bandObject.bandname];
 	}
 	console.log('🚀 ~ checkSupabaseForDuplicate ~ bands:', bands);
 
 	// loading = true;
-	const body = { datetime: gig.datetime, venue: gig.venue, bands: bands };
+	const body = { startDate: gig.startDate, venue: gig.venue, bands: bands };
 	console.log('📦 checking gig for a match in Supabase:', body);
 
 	const response = await fetch('/api/supabase/match-gig', {

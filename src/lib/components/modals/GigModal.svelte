@@ -14,8 +14,8 @@
 			<strong>{gig.time}</strong>
 		</p>
 
-		{#if gig.imageUrl}
-			<img src={gig.imageUrl} alt={gig.title} class="gig-image" />
+		{#if gig.image}
+			<img src={gig.image} alt={gig.title} class="gig-image" />
 		{/if}
 		<p class="gig-description">{gig.description}</p>
 

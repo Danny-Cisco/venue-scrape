@@ -19,7 +19,7 @@
 							const bandKey =
 								bandObject.instagram?.id ||
 								bandObject.instagram?.username ||
-								bandObject.bandName || // Primary camelCased name field
+								bandObject.bandname || // Primary camelCased name field
 								Math.random().toString(); // Fallback to avoid errors, not ideal for reactivity if names are missing
 
 							if (bandKey && !bandMap.has(bandKey)) {
@@ -145,9 +145,9 @@
 							</div>
 						</td>
 						<td class="px-2 py-2 text-center">
-							{#if gig.imageUrl}
+							{#if gig.image}
 								<div title={gig.description} class="overflow-hidden w-[100px] h-[100px] rounded-xl">
-									<img src={gig.imageUrl} loading="lazy" alt="promotion poster of the event" />
+									<img src={gig.image} loading="lazy" alt="promotion poster of the event" />
 								</div>
 							{/if}
 						</td>
@@ -155,11 +155,11 @@
 							>{gig.title}</td
 						>
 						<td class="px-4 py-2 whitespace-nowrap">
-							<div>{convertToDayOfWeek(gig.datetime)}</div>
-							<div>{convertToDateString(gig.datetime)}</div>
+							<div>{convertToDayOfWeek(gig.startDate)}</div>
+							<div>{convertToDateString(gig.startDate)}</div>
 						</td>
 						<td class="px-4 py-2 whitespace-nowrap">
-							<div>{convertToTimeString(gig.datetime)}</div>
+							<div>{convertToTimeString(gig.startDate)}</div>
 						</td>
 						<td class="px-4 py-2">
 							{#if gig.genres?.length > 0}
@@ -175,7 +175,7 @@
 							<div class="px-4 py-2 max-w-[250px] max-h-[100px] overflow-auto">
 								{#each gig.bandObjects || [] as bandObject}
 									<div class="text-green-400 row whitespace-nowrap">
-										'{bandObject.bandName}'
+										'{bandObject.bandname}'
 										<div class="flex-1 text-blue-400 row">
 											{formatFollowers(bandObject.instagram?.followersCount) || '---'}
 										</div>
@@ -348,14 +348,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each uniqueBands as band (band.instagram?.id || band.instagram?.username || band.bandName || Math.random())}
+				{#each uniqueBands as band (band.instagram?.id || band.instagram?.username || band.bandname || Math.random())}
 					<tr
 						class="hover:bg-gray-900 rowfx text-xs font-light text-gray-300 hover:text-white border-b-[1px] border-gray-500"
 						on:click={() => handleBandRowClick(band)}
 					>
 						<td class="px-4 py-2 font-semibold whitespace-nowrap"
 							><div class="min-h-[100px] flex flex-col justify-center">
-								{band.bandName || band.instagram?.fullName || 'N/A'}
+								{band.bandname || band.instagram?.fullName || 'N/A'}
 							</div></td
 						>
 						<td class="px-4 py-2">

@@ -28,13 +28,13 @@
 
 <div class="overflow-y-auto text-black band-card">
 	<div class="w-full space-y-20 band-details">
-		<h2 class="text-6xl font-bold text-center text-black">{band.bandName}</h2>
+		<h2 class="text-6xl font-bold text-center text-black">{band.bandname}</h2>
 
 		{#if band.images}
 			<div>
 				<div class="flex max-w-full min-w-full overflow-x-auto">
-					{#each band.images.imageUrls || [] as imageUrl}
-						<img src={imageUrl} alt={band.bandName} class="band-image" />
+					{#each band.images.images || [] as image}
+						<img src={image} alt={band.bandname} class="band-image" />
 					{/each}
 				</div>
 			</div>

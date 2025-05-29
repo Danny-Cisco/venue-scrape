@@ -100,7 +100,7 @@
 			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
-			gig.datetime = convertStringToDatetime(gig.date, gig.time);
+			gig.startDate = convertStringToDatetime(gig.date, gig.time);
 			gig.venue = venueName;
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
@@ -136,7 +136,7 @@
 			const oztixObj = gig.oztix;
 			gig.title = oztixObj.title;
 			gig.description = oztixObj.description;
-			gig.datetime = oztixObj.startDate;
+			gig.startDate = oztixObj.startDate;
 
 			gig.bands = []; // add some blank fields ready for the ui
 			gig.bios = []; // add some blank fields ready for the ui
@@ -213,8 +213,8 @@
 		const finalJson = await JSON.parse(responseJson);
 
 		for (const band of finalJson.bands) {
-			let bandObject = { bandName: band, socialUrls: await getInstagramUrl(band) };
-			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
+			let bandObject = { bandname: band, socialUrls: await getInstagramUrl(band) };
+			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 
 			for (const url of bandObject.socialUrls) {
@@ -325,15 +325,15 @@
 		return data.data[0];
 	}
 
-	async function getSocialUrls(bandName) {
+	async function getSocialUrls(bandname) {
 		// this function uses perplexity to gather social media links for a band
 		const systemPrompt =
 			' You are to act as a simple tool to return as a json array of social media links in the following format { "socialUrls": []}, do not say anything else. do not enclose the result in backticks';
 		loading = true;
 
-		readOut = `💀 Perplexity is finding social media links for ${bandName}`;
+		readOut = `💀 Perplexity is finding social media links for ${bandname}`;
 
-		const prompt = `what are all the social media links you can find for the band called ${bandName}.`;
+		const prompt = `what are all the social media links you can find for the band called ${bandname}.`;
 		const parsedBody = await JSON.stringify({ prompt, systemPrompt });
 		const response = await fetch('/api/perplexity/sonar-pro', {
 			method: 'POST',
@@ -367,13 +367,13 @@
 		return socialUrls || [];
 	}
 
-	async function getInstagramUrl(bandName) {
+	async function getInstagramUrl(bandname) {
 		loading = true;
 
-		readOut = `💀 Google is finding Instagram url for ${bandName}`;
+		readOut = `💀 Google is finding Instagram url for ${bandname}`;
 
 		const response = await fetch(
-			`/api/google/get-instagram-url?band=${encodeURIComponent(bandName)}`
+			`/api/google/get-instagram-url?band=${encodeURIComponent(bandname)}`
 		);
 
 		const body = await response.json();
@@ -442,7 +442,7 @@
 			<div class="flex flex-col items-start max-w-4xl mx-auto min-w-4xl">
 				{#each bands as band}
 					<p>
-						{band.bandName}
+						{band.bandname}
 						{band.socialUrls}
 					</p>
 				{/each}

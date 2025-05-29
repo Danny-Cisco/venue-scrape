@@ -27,8 +27,8 @@ export const gigsStoreDateFiltered = derived(
 		endDate.setHours(23, 59, 59, 999); // make end date inclusive
 
 		return $gigsStore.filter((gig) => {
-			if (!gig.datetime) return false;
-			const gigDate = new Date(gig.datetime);
+			if (!gig.startDate) return false;
+			const gigDate = new Date(gig.startDate);
 			return gigDate >= startDate && gigDate <= endDate;
 		});
 	}

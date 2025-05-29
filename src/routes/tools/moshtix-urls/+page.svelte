@@ -14,7 +14,7 @@
 		error = null;
 
 		try {
-			const res = await fetch('/api/cheerio/moshtix-venue-to-gigs', {
+			const res = await fetch('/api/cheerio/moshtix-venueUrls-to-gigs', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ urls })

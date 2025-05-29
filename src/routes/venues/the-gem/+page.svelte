@@ -118,7 +118,7 @@
 			readOut = `✋ Cheerio is fetching :   ${link}`;
 
 			const gig = await useCheerio(link);
-			gig.datetime = convertStringToDatetime(gig.date, gig.time);
+			gig.startDate = convertStringToDatetime(gig.date, gig.time);
 			gig.venue = venueName;
 			gig.venueId = venueId;
 			gig.bands = []; // add some blank fields ready for the ui
@@ -187,8 +187,8 @@
 		let followersTotal = 0;
 
 		for (const band of finalJson.bands) {
-			let bandObject = { bandName: band, socialUrls: await getInstagramUrl(band) };
-			// let bandObject = { bandName: band, socialUrls: ['perplexity disabled'] };
+			let bandObject = { bandname: band, socialUrls: await getInstagramUrl(band) };
+			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
 			for (const url of bandObject.socialUrls) {
 				if (url.match(instaProfileRegex)) {
@@ -268,13 +268,13 @@
 		return data.data[0];
 	}
 
-	async function getInstagramUrl(bandName) {
+	async function getInstagramUrl(bandname) {
 		loading = true;
 
-		readOut = `💀 Google is finding Instagram url for ${bandName}`;
+		readOut = `💀 Google is finding Instagram url for ${bandname}`;
 
 		const response = await fetch(
-			`/api/google/get-instagram-url?band=${encodeURIComponent(bandName)}`
+			`/api/google/get-instagram-url?band=${encodeURIComponent(bandname)}`
 		);
 
 		const body = await response.json();

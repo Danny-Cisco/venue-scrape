@@ -15,7 +15,7 @@
 <div class="gap-2 mt-4 page">
 	<h1>Get Instagram Url</h1>
 
-	<input class="w-full" bind:value={band} placeholder="Bandname..." />
+	<input class="w-full" bind:value={band} placeholder="bandname..." />
 	<button class="btn" on:click={search}>Search</button>
 	<h1 class="my-4">Result:</h1>
 	<a href={result}>{result}</a>

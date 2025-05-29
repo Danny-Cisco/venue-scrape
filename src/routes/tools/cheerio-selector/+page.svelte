@@ -12,7 +12,7 @@
 		'tote-links',
 		'moshtix-json',
 		'moshtix-venue',
-		'moshtix-venue-to-gigs',
+		'moshtix-venueUrls-to-gigs',
 		'humanitix-json',
 		'eventbrite-json',
 		'john-curtain-links'

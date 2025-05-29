@@ -40,10 +40,10 @@ export async function GET({ url }) {
 				.trim();
 			const description = $('.rich-text-wrapper.w-richtext').text().trim();
 			const ticketUrl = $('a:contains("BUY TICKETS HERE")').attr('href');
-			const imageUrl =
+			const image =
 				$('.photo-line-animation img.photo').attr('src') || $('.sticky-div img.photo').attr('src');
 
-			scrapedData = { title, date, time, description, imageUrl, ticketUrl };
+			scrapedData = { title, date, time, description, image, ticketUrl };
 		}
 	});
 
