@@ -369,25 +369,41 @@
 
 	$: console.log('bands: ', bands);
 
-	let lastGigIndex = 0;
-	let commencedIndexGetBands = 99999;
+	let lastProcessedIndex = -1;
+	let currentlyProcessing = new Set(); // Keeps track of gigs being processed
 
-	$: console.log('🚀 ~ lastGigIndex:', lastGigIndex);
-	$: console.log('🚀 ~ gigs:', gigs);
+	$: console.log('🧪 ~ gigs:', gigs);
 
-	async function updateBandForLastGig() {
-		commencedIndexGetBands = lastGigIndex;
-		console.log('🚀 ~ updateBandForLastGig ~ commencedIndexGetBands:', commencedIndexGetBands);
-		const lastGig = gigs[commencedIndexGetBands];
-		const question = lastGig.title + lastGig.description;
-		gigs[commencedIndexGetBands].bandObjects = await getBands(question, commencedIndexGetBands);
+	// Process all unprocessed gigs that aren't already in processing
+	$: {
+		if (gigs.length > 0) {
+			for (let i = 0; i < gigs.length; i++) {
+				const gig = gigs[i];
+
+				const needsProcessing = !gig.bandObjects || gig.bandObjects.length === 0;
+
+				const notYetHandled = i > lastProcessedIndex && !currentlyProcessing.has(i);
+
+				if (needsProcessing && notYetHandled) {
+					updateBandForGig(i);
+				}
+			}
+		}
 	}
 
-	$: if (gigs.length > 0) {
-		lastGigIndex = gigs.length - 1 || 0;
-		// checks first to see if the job is already commenced
-		if (commencedIndexGetBands !== lastGigIndex)
-			if (gigs[lastGigIndex].bandObjects?.length == 0 || undefined) updateBandForLastGig();
+	async function updateBandForGig(index) {
+		currentlyProcessing.add(index);
+		const gig = gigs[index];
+		const question = gig.title + gig.description;
+
+		try {
+			gigs[index].bandObjects = await getBands(question, index);
+			lastProcessedIndex = Math.max(lastProcessedIndex, index);
+		} catch (err) {
+			console.error(`❌ Failed to get bands for gig[${index}]`, err);
+		} finally {
+			currentlyProcessing.delete(index);
+		}
 	}
 </script>
 
