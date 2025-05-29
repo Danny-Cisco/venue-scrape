@@ -49,9 +49,9 @@ export async function POST({ request, locals }) {
 
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
-			.select('id, startDate, venue, bands')
-			.gte('startDate', dayStart.toISOString())
-			.lt('startDate', dayEnd.toISOString());
+			.select('id, start_date, venue, bands')
+			.gte('start_date', dayStart.toISOString())
+			.lt('start_date', dayEnd.toISOString());
 
 		if (error) {
 			console.error('❌ Supabase query error:', error);

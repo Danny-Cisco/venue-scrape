@@ -248,11 +248,18 @@
 		for (const band of finalJson.bands) {
 			let bandObject = band;
 
-			if (!bandObject.instagram) {
-				const socialUrls = await getInstagramUrl(bandObject.bandname);
-			} else {
-				const socialUrls = [...socialUrls, bandObject.instagram];
+			if (!Array.isArray(bandObject.socialUrls)) {
+				console.warn('Expected array, got:', typeof bandObject.socialUrls, bandObject.socialUrls);
 			}
+
+			if (!bandObject.instagram) {
+				const instaUrl = await getInstagramUrl(bandObject.bandname);
+				bandObject.socialUrls = [...(bandObject.socialUrls ?? []), instaUrl];
+			} else {
+				bandObject.socialUrls = [...(bandObject.socialUrls ?? []), bandObject.instagram];
+			}
+
+			bandObject.socialUrls = bandObject.socialUrls.flat(); // dear lord... what a hoekey fix... ah well
 
 			// let bandObject = { bandname: band, socialUrls: ['perplexity disabled'] };
 			console.log('🚀✅ ~ getBands ~ bandObject.socialUrls:', bandObject.socialUrls); // lets peek at the socialUrls here
