@@ -22,6 +22,8 @@
 	let gigsRecords;
 	export let data;
 
+	let gigsData = [];
+
 	let tableSectionRef;
 	let chartSectionRef;
 
@@ -30,6 +32,17 @@
 	let showDatePickerText = 'need an old-school date-picker';
 
 	let showDatePicker = false;
+
+	let nowForChat = '';
+	let nowISO;
+	let dateRangeEndISO;
+	let dateRangeStartISO;
+
+	let startDateInput = '';
+	let endDateInput = '';
+
+	let timeRangePrompt = '';
+	let loading = false;
 
 	// Auto-scroll when `filteredGigIds` changes and has values
 	$: if ($filteredGigIds?.length > 0 && tableSectionRef) {
@@ -50,8 +63,8 @@
 	}
 
 	// Handle data updates
-	$: ({ gigsData, profile, session } = data);
-	$: if (gigsData?.success) gigsRecords = gigsData.records;
+	$: ({ profile, session } = data);
+	$: if (gigsData.length > 0) gigsRecords = gigsData.records;
 	$: if (gigsRecords)
 		$gigsStore = gigsRecords.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
@@ -73,12 +86,6 @@
 		console.log('🚀 ~ formatDateForInput ~ formattedDate:', formattedDate);
 		return formattedDate;
 	}
-
-	let startDateInput = '';
-	let endDateInput = '';
-
-	let timeRangePrompt = '';
-	let loading = false;
 
 	function updateDateRange(type, event) {
 		$filteredGigIds = [];
@@ -150,22 +157,49 @@
 	let upsetPlotData;
 	$: upsetPlotData = $gigsGenreStore;
 
-	let nowForChat = '';
+	onMount(async () => {
+		try {
+			const now = new Date();
 
-	onMount(() => {
-		const now = new Date();
-		const formatter = new Intl.DateTimeFormat('en-AU', {
-			weekday: 'long',
-			day: 'numeric',
-			month: 'long',
-			year: 'numeric',
-			hour: 'numeric',
-			minute: 'numeric',
-			hour12: true,
-			timeZoneName: 'short'
-		});
-		nowForChat = formatter.format(now);
-		console.log('🕰️ nowForChat =', nowForChat);
+			// 🎤 Human-readable string for LLMs
+			const formatter = new Intl.DateTimeFormat('en-AU', {
+				weekday: 'long',
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				hour12: true,
+				timeZoneName: 'short'
+			});
+			nowForChat = formatter.format(now);
+
+			// 🕓 ISO strings for querying
+			nowISO = now.toISOString();
+			const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+			dateRangeEndISO = in7Days.toISOString();
+
+			// 🛰️ Fetch gigs from filtered endpoint
+			const params = new URLSearchParams({
+				table: 'gigs',
+				dateRangeStart: nowISO,
+				dateRangeEnd: dateRangeEndISO
+			});
+
+			const res = await fetch(`/api/supabase/get-filtered-date?${params}`);
+			if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+
+			const json = await res.json();
+			if (!json.success) throw new Error(json.message);
+
+			gigsRecords = json.records; // 🎉 Success!
+			console.log('🚀 ~ onMount ~ gigsData:', gigsData);
+		} catch (err) {
+			console.error('❌ Error loading gigs:', err);
+			error = err.message;
+		} finally {
+			loading = false;
+		}
 	});
 </script>
 
