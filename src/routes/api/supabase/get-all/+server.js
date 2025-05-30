@@ -12,7 +12,7 @@ export async function GET({ locals, url }) {
 			records = await locals.db.all(table, (q) =>
 				q
 					.select('*, venue:venue_id(*)') // Join the venue table
-					.order('created_at', { ascending: false })
+					.order('start_date', { ascending: false })
 			);
 		else {
 			records = await locals.db.all(table, (q) => q.order('created_at', { ascending: false }));
