@@ -48,7 +48,7 @@
 			if (!map.has(key)) {
 				map.set(key, {
 					coords: { lat, lng },
-					venueName: gig.venue?.name || gig.oztix?.venue || 'Unknown Venue',
+					venueName: gig.venue?.name || gig.venue || 'Unknown Venue',
 					gigs: []
 				});
 			}
