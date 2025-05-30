@@ -141,7 +141,7 @@
 						<td
 							class="px-4 py-2 font-bold uppercase whitespace-nowrap overflow-hidden max-w-[150px]"
 							><div class="min-h-[100px] flex flex-col justify-center">
-								{gig.venue}
+								{gig.venue?.name || gig.venue}
 							</div>
 						</td>
 						<td class="px-2 py-2 text-center">

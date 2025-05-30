@@ -7,6 +7,8 @@
 
 	import { dateRangePrompt } from '$lib/utils/prompts.ts';
 
+	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
+
 	import {
 		gigsStore,
 		gigsGenreStore,
@@ -21,6 +23,8 @@
 	let bands = {};
 	let gigsRecords;
 	export let data;
+
+	let pageInitialising = true;
 
 	let gigsData = [];
 
@@ -218,122 +222,133 @@
 			error = err.message;
 		} finally {
 			loading = false;
+			pageInitialising = false;
 		}
 	});
 </script>
 
-<!-- UI -->
-<div class="page isolate" in:fade>
-	<!-- <div class="w-screen text-center">
+{#if pageInitialising || loading}
+	<div class="page center h-[100vhs]">
+		<p>Preparing the data...</p>
+		<PacMan />
+	</div>
+{:else}
+	<!-- UI -->
+	<div class="page isolate" in:fade>
+		<!-- <div class="w-screen text-center">
 		<h1 class="mt-4 mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-300">
 			Genre Chart
 		</h1>
 	</div> -->
 
-	<!-- Main content -->
-	<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
-		<div class="flex-grow overflow-hidden">
-			{#key upsetPlotData}
-				<UpsetPlot data={upsetPlotData} />
-			{/key}
+		<!-- Main content -->
+		<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
+			<div class="flex-grow overflow-hidden">
+				{#key upsetPlotData}
+					<UpsetPlot data={upsetPlotData} />
+				{/key}
+			</div>
 		</div>
-	</div>
 
-	<!-- TimeRange chatGpt input -->
-	<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
-		<input
-			type="text"
-			bind:value={timeRangePrompt}
-			on:keydown={(e) => {
-				if (e.key === 'Enter') {
-					getDateRange(timeRangePrompt);
-				}
-			}}
-			placeholder="Ask for a date range..."
-			class="w-full px-5 rounded-full"
-		/>
+		<!-- TimeRange chatGpt input -->
+		<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
+			<input
+				type="text"
+				bind:value={timeRangePrompt}
+				on:keydown={(e) => {
+					if (e.key === 'Enter') {
+						getDateRange(timeRangePrompt);
+					}
+				}}
+				placeholder="Ask for a date range..."
+				class="w-full px-5 rounded-full"
+			/>
 
-		<div class="absolute text-gray-500 right-10 row">
-			{#if !loading}
-				enter
+			<div class="absolute text-gray-500 right-10 row">
+				{#if !loading}
+					enter
 
-				<svg
-					fill="none"
-					height="24"
-					viewBox="0 0 20 20"
-					width="24"
-					xmlns="http://www.w3.org/2000/svg"
-					><path
-						d="m3.76072 12 3.33197 3.136c.20108.1893.21067.5057.02141.7068s-.5057.2107-.70679.0214l-4.25-4c-.10039-.0945-.15731-.2263-.15731-.3641 0-.1379.05693-.2697.15732-.3641l4.25-3.99998c.20109-.18926.51753-.17967.70678.02142.18926.20109.17967.51753-.02142.70678l-3.33182 3.13578h11.23914c1.1046 0 2-.8954 2-2v-4.5c0-.27614.2239-.5.5-.5s.5.22386.5.5v4.5c0 1.6569-1.3431 3-3 3z"
-						fill="currentColor"
-					/></svg
-				>
+					<svg
+						fill="none"
+						height="24"
+						viewBox="0 0 20 20"
+						width="24"
+						xmlns="http://www.w3.org/2000/svg"
+						><path
+							d="m3.76072 12 3.33197 3.136c.20108.1893.21067.5057.02141.7068s-.5057.2107-.70679.0214l-4.25-4c-.10039-.0945-.15731-.2263-.15731-.3641 0-.1379.05693-.2697.15732-.3641l4.25-3.99998c.20109-.18926.51753-.17967.70678.02142.18926.20109.17967.51753-.02142.70678l-3.33182 3.13578h11.23914c1.1046 0 2-.8954 2-2v-4.5c0-.27614.2239-.5.5-.5s.5.22386.5.5v4.5c0 1.6569-1.3431 3-3 3z"
+							fill="currentColor"
+						/></svg
+					>
+				{:else}
+					<p class="font-semibold text-green-400">loading..</p>
+				{/if}
+			</div>
+		</div>
+
+		<!-- Old school datepicker -->
+		<button
+			class="text-xs text-left text-gray-500"
+			on:click={() => {
+				showDatePicker = !showDatePicker;
+			}}>{showDatePickerText}?</button
+		>
+		{#if showDatePicker}
+			<!-- Date Range Inputs -->
+			<div
+				class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300"
+				transition:slide
+			>
+				<div class="block">
+					<label for="startDate">Start</label>
+					<input
+						type="date"
+						id="startDate"
+						bind:value={startDateInput}
+						on:change={(e) => {
+							console.log('🔁 Start date changed:', e.target.value);
+							updateDateRange('start', e);
+						}}
+						class="px-2 py-1 text-white border border-gray-600 rounded"
+					/>
+				</div>
+
+				<div class="block">
+					<label for="endDate">End</label>
+					<input
+						type="date"
+						id="endDate"
+						bind:value={endDateInput}
+						on:change={(e) => {
+							console.log('🔁 End date changed:', e.target.value);
+							updateDateRange('end', e);
+						}}
+						class="px-2 py-1 text-white border border-gray-600 rounded"
+					/>
+				</div>
+			</div>
+		{/if}
+
+		<!-- Filtered gigs -->
+
+		<!-- Add this above your GigsBandsTable -->
+		<div class="p-4 mt-4" bind:this={tableSectionRef}>
+			{#if !$clickedGenres && !timeRangePrompt}
+				<div class="text-center"><h2>NOW SHOWING: ALL GIGS</h2></div>
 			{:else}
-				<p class="font-semibold text-green-400">loading..</p>
+				<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
+			{/if}
+			{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
+				<p class="italic text-gray-500">Click on chart to see those gigs</p>
+			{:else}
+				<!-- google maps -->
+				{#key $gigsStoreFiltered}
+					<GoogleMaps gigs={$gigsStoreFiltered} />
+				{/key}
+				<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
 			{/if}
 		</div>
 	</div>
-
-	<!-- Old school datepicker -->
-	<button
-		class="text-xs text-left text-gray-500"
-		on:click={() => {
-			showDatePicker = !showDatePicker;
-		}}>{showDatePickerText}?</button
-	>
-	{#if showDatePicker}
-		<!-- Date Range Inputs -->
-		<div class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300" transition:slide>
-			<div class="block">
-				<label for="startDate">Start</label>
-				<input
-					type="date"
-					id="startDate"
-					bind:value={startDateInput}
-					on:change={(e) => {
-						console.log('🔁 Start date changed:', e.target.value);
-						updateDateRange('start', e);
-					}}
-					class="px-2 py-1 text-white border border-gray-600 rounded"
-				/>
-			</div>
-
-			<div class="block">
-				<label for="endDate">End</label>
-				<input
-					type="date"
-					id="endDate"
-					bind:value={endDateInput}
-					on:change={(e) => {
-						console.log('🔁 End date changed:', e.target.value);
-						updateDateRange('end', e);
-					}}
-					class="px-2 py-1 text-white border border-gray-600 rounded"
-				/>
-			</div>
-		</div>
-	{/if}
-
-	<!-- Filtered gigs -->
-
-	<!-- Add this above your GigsBandsTable -->
-	<div class="p-4 mt-4" bind:this={tableSectionRef}>
-		{#if !$clickedGenres && !timeRangePrompt}
-			<div class="text-center"><h2>NOW SHOWING: ALL GIGS</h2></div>
-		{:else}
-			<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
-		{/if}
-		{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
-			<p class="italic text-gray-500">Click on chart to see those gigs</p>
-		{:else}
-			<!-- google maps -->
-			{#key $gigsStoreFiltered}
-				<GoogleMaps gigs={$gigsStoreFiltered} />
-			{/key}
-			<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
-		{/if}
-	</div>
-</div>
+{/if}
 
 <style>
 	.page {
