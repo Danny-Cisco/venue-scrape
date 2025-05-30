@@ -12,6 +12,11 @@
 		lng: 145.0013590644179
 	};
 
+	function formatFollowers(count) {
+		if (typeof count === 'number' && count >= 0) return `${(count / 1000).toFixed(1)}k`;
+		return '---';
+	}
+
 	const loadGoogleMapsScript = () => {
 		return new Promise((resolve, reject) => {
 			if (window.google && window.google.maps) return resolve(window.google.maps);
@@ -25,23 +30,25 @@
 			document.head.appendChild(script);
 		});
 	};
-
 	function groupGigsByVenue(gigs) {
 		const map = new Map();
 
 		for (const gig of gigs) {
-			if (!gig.location?.coordinates) {
+			// Use venue.location first, then fallback to gig.location
+			const coords = gig.venue?.location?.coordinates || gig.location?.coordinates;
+
+			if (!coords) {
 				console.warn('❌ Missing location for gig:', gig);
 				continue;
 			}
 
-			const [lng, lat] = gig.location.coordinates;
+			const [lng, lat] = coords;
 			const key = `${lng},${lat}`;
 
 			if (!map.has(key)) {
 				map.set(key, {
 					coords: { lat, lng },
-					venueName: gig.venue || gig.oztix?.venue || 'Unknown Venue',
+					venueName: gig.venue?.name || gig.oztix?.venue || 'Unknown Venue',
 					gigs: []
 				});
 			}
@@ -104,12 +111,12 @@
 								.map(
 									(gig) => `
 								<li style="margin-bottom: 16px; border-bottom: 1px solid #333; padding-bottom: 12px;">
-									<a href="#" onclick="selectGigFromMap('${gig.id}')" style="color: #4FC3F7; font-weight: bold; display: block; margin-bottom: 8px;">${gig.title}</a>
-									<div style="display: flex; align-items: center; gap: 0.5rem; font-size: 14px; color: white;">
+									<a href="#" onclick="selectGigFromMap('${gig.id}')" style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">${gig.title}</a>
+									<div style="display: flex; align-items: center; gap: 0.5rem; font-size: 14px; font-family: monospace; color: #33aaff;">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
 										</svg>
-										${gig.followers || 0}
+										${formatFollowers(gig.followers) || 0}
 									</div>
 									<div style="display: flex; align-items: center; gap: 0.5rem; font-size: 14px; color: tomato; margin-top: 6px;">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 16px; height: 16px;">
