@@ -228,7 +228,7 @@
 </script>
 
 {#if pageInitialising || loading}
-	<div class="page center h-[100vhs]">
+	<div class="page center h-[100vhs]" in:fade>
 		<p>Preparing the data...</p>
 		<PacMan />
 	</div>
