@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 
 export async function GET({ locals, url }) {
-	console.log('BOBOBOBOBOBOP');
 	const table = url.searchParams.get('table') || 'main';
 
 	// Read optional date range

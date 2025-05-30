@@ -3,7 +3,6 @@
 	let responseText = '';
 
 	async function sendMessage() {
-		console.log('BOBOBOBOP');
 		const parsedMessage = await JSON.stringify(message);
 		const response = await fetch('/api/openai/chat', {
 			method: 'POST',

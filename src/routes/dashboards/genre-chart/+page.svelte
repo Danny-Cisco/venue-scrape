@@ -66,7 +66,7 @@
 	$: ({ profile, session } = data);
 	$: if (gigsData.length > 0) gigsRecords = gigsData.records;
 	$: if (gigsRecords)
-		$gigsStore = gigsRecords.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+		$gigsStore = gigsRecords.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
 
 	// Debugging logs
 	$: console.log('✅ data:', data);
@@ -149,7 +149,26 @@
 		const dateRangeJson = await JSON.parse(answerJson);
 		console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
 
-		dateRangeStore.set({ start: dateRangeJson.startDate, end: dateRangeJson.endDate });
+		// dateRangeStore.set({ start: dateRangeJson.startDate, end: dateRangeJson.endDate });
+		// INSTEAD, THIS IS THE PLACE I NEED TO CALL THE get filtered endpoint again...
+
+		const start = new Date(dateRangeJson.startDate + 'T00:00:00');
+		const end = new Date(dateRangeJson.endDate + 'T23:59:59.999');
+
+		const params = new URLSearchParams({
+			table: 'gigs',
+			dateRangeStart: start.toISOString(),
+			dateRangeEnd: end.toISOString()
+		});
+
+		const res = await fetch(`/api/supabase/get-filtered-date?${params}`);
+		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+
+		const json = await res.json();
+		if (!json.success) throw new Error(json.message);
+
+		gigsRecords = json.records; // 🎉 Success!
+		console.log('🚀 ~ onMount ~ gigsData:', gigsData);
 		loading = false;
 		return;
 	}
