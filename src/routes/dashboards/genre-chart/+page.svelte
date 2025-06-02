@@ -227,7 +227,12 @@
 	});
 </script>
 
-{#if pageInitialising || loading}
+{#if pageInitialising}
+	<div class="page center h-[100vhs]" in:fade>
+		<p>Fetching the next 7 days...</p>
+		<PacMan />
+	</div>
+{:else if loading}
 	<div class="page center h-[100vhs]" in:fade>
 		<p>Preparing the data...</p>
 		<PacMan />
