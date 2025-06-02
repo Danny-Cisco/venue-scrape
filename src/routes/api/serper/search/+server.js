@@ -9,8 +9,7 @@ export async function GET({ url }) {
 	}
 
 	const requestBody = JSON.stringify({
-		q: query,
-		gl: 'au'
+		q: query
 	});
 
 	try {

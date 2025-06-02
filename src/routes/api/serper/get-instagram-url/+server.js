@@ -24,7 +24,7 @@ export async function GET({ url, fetch }) {
 	}
 
 	const searchQuery = `${band} band instagram`;
-	const ai = `What is the URL for ${band} band Instagram profile? If unsure, prioritise Melbourne bands. If no band seems like the correct one, reply NULL.`;
+	const ai = `What is the URL for ${band} band Instagram profile? Return only the base profile URL, stopping at the username. If unsure, prioritise Melbourne bands. If no band seems like the correct one, reply NULL.`;
 
 	try {
 		// 🔍 Serper API call
@@ -34,7 +34,7 @@ export async function GET({ url, fetch }) {
 				'X-API-KEY': PRIVATE_SERPER_API_KEY,
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ q: searchQuery, gl: 'au' })
+			body: JSON.stringify({ q: searchQuery })
 		});
 
 		if (!serperRes.ok) {

@@ -32,7 +32,7 @@ export async function GET({ url, fetch }) {
 				'X-API-KEY': PRIVATE_SERPER_API_KEY,
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ q: google, gl: 'au' })
+			body: JSON.stringify({ q: google })
 		});
 
 		if (!serperRes.ok) {
