@@ -123,7 +123,6 @@
 					<th class="px-4 py-2">Bands</th>
 					<th class="px-4 py-2">Followers</th>
 					<th class="px-4 py-2">Price</th>
-					<th class="px-4 py-2">Sold Out?</th>
 					<th class="px-4 py-2">Descrip</th>
 					<th class="px-4 py-2">Bios</th>
 					<th class="px-4 py-2">Insta Caps</th>
@@ -139,8 +138,10 @@
 						on:click={() => handleGigRowClick(gig)}
 					>
 						<td
-							class="px-4 py-2 font-bold uppercase whitespace-nowrap overflow-hidden max-w-[150px]"
-							><div class="min-h-[100px] flex flex-col justify-center">
+							class="px-4 py-2 border-l-4 px-4 py-2 font-bold uppercase whitespace-nowrap overflow-hidden max-w-[150px]"
+							class:border-red-500={gig.tickets?.some((t) => t.availability === 'SoldOut')}
+						>
+							<div class="min-h-[100px] flex flex-col justify-center">
 								{gig.venue?.name || gig.venue}
 							</div>
 						</td>
@@ -193,19 +194,31 @@
 							{/if}
 						</td>
 
-						<td class="px-4 py-2">
-							{#if gig.oztix?.tickets && gig.oztix.tickets.length > 0 && gig.oztix.tickets[0].price}
-								<div class="max-h-[200px] overflow-y-auto">${gig.oztix?.tickets[0].price}</div>
+						<td
+							class="px-4 py-2 border-l-4 border-r-4"
+							class:border-red-500={gig.tickets?.some((t) => t.availability === 'SoldOut')}
+						>
+							{#if gig.tickets && gig.tickets.length > 0 && gig.tickets[0].price}
+								<div class="max-h-[100px] overflow-y-auto overflow-x-hidden">
+									{#each gig.tickets as ticket}
+										<div class="block">
+											<div class="grid [grid-template-columns:3fr_1fr_1fr] w-[500px]">
+												<div class="h-[50px]">{ticket.ticketType}</div>
+												<div>${ticket.price}</div>
+												{#if ticket.availability == 'SoldOut'}
+													<SoldOut />
+												{:else}
+													<div>{ticket.availability}</div>
+												{/if}
+											</div>
+										</div>
+									{/each}
+								</div>
 							{:else}
 								<div class="max-h-[200px] whitespace-nowrap overflow-y-auto">FREE ENTRY</div>
 							{/if}
 						</td>
 
-						<td class="px-2 py-2 text-center">
-							{#if gig.soldOut}
-								<SoldOut />
-							{/if}
-						</td>
 						<td class="px-2 py-2 text-center">
 							{#if gig.description}
 								<span title={gig.description}>

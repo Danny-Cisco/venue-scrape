@@ -1,4 +1,5 @@
 <script>
+	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 	export let gig = {};
 
 	function openBandModal(band) {
@@ -9,6 +10,7 @@
 <div class="overflow-y-auto gig-card">
 	<div class="w-full gig-details">
 		<h2 class="gig-title">{gig.title}</h2>
+
 		<p class="flex flex-col gig-datetime">
 			<strong>{gig.date}</strong>
 			<strong>{gig.time}</strong>
@@ -17,6 +19,7 @@
 		{#if gig.image}
 			<img src={gig.image} alt={gig.title} class="gig-image" />
 		{/if}
+
 		<p class="gig-description">{gig.description}</p>
 
 		{#if gig.ticketUrl && gig.ticketUrl !== '#'}
@@ -24,6 +27,27 @@
 		{:else}
 			<p class="gig-ticket-free">Free Entry</p>
 		{/if}
+
+		<!-- 🎟️ Tickets Section -->
+		{#if gig.tickets && gig.tickets.length > 0}
+			<h3 class="mt-6 mb-2 font-bold text-black uppercase">Tickets</h3>
+			<div class="flex flex-col max-w-full gap-2 p-2 bg-black">
+				{#each gig.tickets as ticket}
+					<div
+						class="grid [grid-template-columns:3fr_1fr_1fr] w-full max-w-full gap-2 border p-2 rounded"
+					>
+						<div>{ticket.ticketType}</div>
+						<div>${ticket.price}</div>
+						{#if ticket.availability === 'SoldOut'}
+							<SoldOut />
+						{:else}
+							<span>{ticket.availability}</span>
+						{/if}
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Bands</h3>
 		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
