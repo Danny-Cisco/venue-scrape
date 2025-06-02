@@ -15,7 +15,7 @@ export async function GET({ locals, url }) {
 					.order('start_date', { ascending: false })
 			);
 		else {
-			records = await locals.db.all(table, (q) => q.order('created_at', { ascending: false }));
+			records = await locals.db.all(table, (q) => q.order('name', { ascending: true }));
 		}
 
 		return json({ success: true, table, records }); // already camelCase

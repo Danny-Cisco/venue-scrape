@@ -24,6 +24,7 @@
 	onMount(async () => {
 		const res = await fetch('/api/supabase/venue-name-match');
 		knownVenues = await res.json();
+		console.log('🚀 ~ onMount ~ knownVenues:', knownVenues);
 	});
 </script>
 

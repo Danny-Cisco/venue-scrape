@@ -9,6 +9,8 @@
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
 	import { readonly } from 'svelte/store';
 
+	import { onMount } from 'svelte';
+
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
@@ -405,6 +407,19 @@
 			currentlyProcessing.delete(index);
 		}
 	}
+
+	onMount(() => {
+		(async () => {
+			try {
+				const res = await fetch('/api/supabase/get-venues-moshtix');
+				const data = await res.json();
+				venues = data.records;
+				console.log('🚀 ~ venues:', venues);
+			} catch (err) {
+				console.error('❌ Failed to fetch venues:', err);
+			}
+		})();
+	});
 </script>
 
 <div class="page isolate" in:fade>
@@ -447,6 +462,15 @@
 		<!-- dotted divider -->
 		<div class="border-b-[3px] border-dotted border-purple-500 w-full"></div>
 	</div>
-
-	<GigsBandsTable {gigs} {bands} />
+	{#if gigs.length > 0}
+		<GigsBandsTable {gigs} {bands} />
+	{:else}
+		<div>
+			<ul>
+				{#each venues as venue}
+					<li>{venue.name}</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
 </div>
