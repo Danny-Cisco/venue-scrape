@@ -373,7 +373,7 @@
 		readOut = `💀 Google is finding Instagram url for ${bandname}`;
 
 		const response = await fetch(
-			`/api/google/get-instagram-url?band=${encodeURIComponent(bandname)}`
+			`/api/serper/get-instagram-url?band=${encodeURIComponent(bandname)}`
 		);
 
 		const body = await response.json();
