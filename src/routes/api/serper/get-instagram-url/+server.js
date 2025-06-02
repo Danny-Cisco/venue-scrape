@@ -1,4 +1,4 @@
-import { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } from '$env/static/private';
+import { PRIVATE_SERPER_API_KEY } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
 async function sendQuestion(question, systemPrompt, fetch) {
@@ -19,39 +19,48 @@ async function sendQuestion(question, systemPrompt, fetch) {
 export async function GET({ url, fetch }) {
 	const band = url.searchParams.get('band');
 
-	const google = `${band} + band instagram`;
-	const ai = `what is the url for ${band} + band instagram profile. If unsure, prioritise Melbourne Bands. If no band seems like the correct band, reply NULL`;
-
-	if (!google) {
-		return json({ error: 'Missing search google' }, { status: 400 });
+	if (!band) {
+		return json({ error: 'Missing band parameter' }, { status: 400 });
 	}
 
-	try {
-		// First API call - Google Search
-		const endpoint = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(google)}`;
-		const response = await fetch(endpoint);
+	const searchQuery = `${band} band instagram`;
+	const ai = `What is the URL for ${band} band Instagram profile? If unsure, prioritise Melbourne bands. If no band seems like the correct one, reply NULL.`;
 
-		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({}));
-			return json({ error: errorData.error || 'Search failed' }, { status: response.status });
+	try {
+		// 🔍 Serper API call
+		const serperRes = await fetch('https://google.serper.dev/search', {
+			method: 'POST',
+			headers: {
+				'X-API-KEY': PRIVATE_SERPER_API_KEY,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ q: searchQuery, gl: 'au' })
+		});
+
+		if (!serperRes.ok) {
+			const errData = await serperRes.json().catch(() => ({}));
+			return json({ error: errData.error || 'Serper search failed' }, { status: serperRes.status });
 		}
 
-		const data = await response.text();
+		const serperData = await serperRes.json();
+		const organicResults = serperData.organic ?? [];
 
-		const prompt = data + ai;
+		// 🧼 Format results into a plain-text prompt
+		const formattedResults = organicResults
+			.slice(0, 3) // limit to first 3 results
+			.map((item, i) => `${i + 1}. ${item.title}\n${item.link}\n${item.snippet}`)
+			.join('\n\n');
+		const prompt = `${formattedResults}\n\n${ai}`;
 
 		const systemPrompt =
-			'You are to act as a data cleaning tool. you will recieve a list of 10 google search results, plus one question regarding the results. please be as concise and accurate as possible. If you are asked for a link, simply state the url and nothing more.';
+			'You are to act as a data cleaning tool. You will receive a list of 10 Google search results, plus one question regarding the results. Please be as concise and accurate as possible. If you are asked for a link, simply state the URL and nothing more.';
 
-		// Second API call - OpenAI processing
+		// 🧠 AI answer
 		const answer = await sendQuestion(prompt, systemPrompt, fetch);
 
-		// Return a proper Response object using json helper
-		return json({
-			answer
-		});
+		return json({ answer });
 	} catch (error) {
-		console.error('Error processing request:', error);
+		console.error('❌ Error processing request:', error);
 		return json(
 			{
 				error: 'Failed to process search request',

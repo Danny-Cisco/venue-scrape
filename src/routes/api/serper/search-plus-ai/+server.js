@@ -1,4 +1,4 @@
-import { GOOGLE_API_KEY, GOOGLE_SEARCH_ENGINE_ID } from '$env/static/private';
+import { PRIVATE_SERPER_API_KEY } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
 async function sendQuestion(question, systemPrompt, fetch) {
@@ -25,31 +25,39 @@ export async function GET({ url, fetch }) {
 	}
 
 	try {
-		// First API call - Google Search
-		const endpoint = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(google)}`;
-		const response = await fetch(endpoint);
+		// 🔍 First API call - Serper Search
+		const serperRes = await fetch('https://google.serper.dev/search', {
+			method: 'POST',
+			headers: {
+				'X-API-KEY': PRIVATE_SERPER_API_KEY,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ q: google, gl: 'au' })
+		});
 
-		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({}));
-			return json({ error: errorData.error || 'Search failed' }, { status: response.status });
+		if (!serperRes.ok) {
+			const errData = await serperRes.json().catch(() => ({}));
+			return json({ error: errData.error || 'Serper search failed' }, { status: serperRes.status });
 		}
 
-		const data = await response.text();
+		const serperData = await serperRes.json();
 
-		const prompt = data + ai;
+		const organicResults = serperData.organic ?? [];
 
-		const systemPrompt =
-			'You are to act as a data cleaning tool. you will recieve a list of 10 google search results, plus one question regarding the results. please be as concise and accurate as possible. If you are asked for a link, simply state the url and nothing more.';
+		const formattedResults = organicResults
+			.map((item, i) => `${i + 1}. ${item.title}\n${item.link}\n${item.snippet}`)
+			.join('\n\n');
 
-		// Second API call - OpenAI processing
+		const prompt = `${formattedResults}\n\n${ai}`;
+
+		const systemPrompt = `You are to act as a data cleaning tool. You will receive a list of 10 Google search results, plus one question regarding the results. Please be as concise and accurate as possible. If you are asked for a link, simply state the URL and nothing more.`;
+
+		// 🧠 Second API call - OpenAI Processing
 		const answer = await sendQuestion(prompt, systemPrompt, fetch);
 
-		// Return a proper Response object using json helper
-		return json({
-			answer
-		});
+		return json({ answer });
 	} catch (error) {
-		console.error('Error processing request:', error);
+		console.error('❌ Error processing request:', error);
 		return json(
 			{
 				error: 'Failed to process search request',
