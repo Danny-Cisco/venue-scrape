@@ -14,6 +14,8 @@
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
+	let getAllVenues = true;
+
 	let links = [];
 	let gigs = [];
 
@@ -27,18 +29,14 @@
 
 	let venues = [
 		{
-			name: 'Bad Decisions',
-			id: '037c86b9-386d-404d-a124-f48dfe41ddca',
-			moshtix: 'https://www.moshtix.com.au/v2/venues/bad-decisions-bar/8683'
-		},
-		{
-			name: 'The Toff',
+			name: 'Brunswick Ballroom',
 			id: 'd15de333-dc11-43e0-a468-4b285cf32390',
-			moshtix: 'https://www.moshtix.com.au/v2/venues/the-toff-in-town-melbourne/1007'
+			moshtix: 'https://www.moshtix.com.au/v2/venues/brunswick-ballroom-melbourne-vic/5479'
 		}
 	];
 
-	let urls = venues.map((venue) => venue.moshtix); // this turns the venues oblect into the urls list i need
+	let urls; // this turns the venues oblect into the urls list i need
+	$: urls = venues.map((venue) => venue.moshtix); // this turns the venues oblect into the urls list i need
 
 	// async function beginCrawl() {
 	// 	loading = true;
@@ -75,57 +73,60 @@
 
 		readOut = 'Begin Crawl!';
 
-		try {
-			readOut = '✅ Collecting all gigs from provided Moshtix urls';
-			const res = await fetch('/api/cheerio/moshtix-venueUrls-to-gigs', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ urls })
-			});
+		for (const venue of venues) {
+			readOut = `✅ Collecting all gigs from Moshtix url ${venue.name}`;
+			const bodyJson = { urls: [venue.moshtix] };
+			try {
+				const res = await fetch('/api/cheerio/moshtix-venueUrls-to-gigs', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(bodyJson)
+				});
 
-			if (!res.ok) {
-				throw new Error(`Error ${res.status}: ${await res.text()}`);
-			}
-
-			result = await res.json();
-			console.log('✅BOOP✅ ~ fetchTicketLinks ~ result:', result);
-
-			let knownIdsCache = []; // { venue, id }
-
-			for (const gig of result.gigs) {
-				console.log('gig.venue: ', gig.venue);
-				console.log('knownIdsCache: ', knownIdsCache);
-				// Check cache with strict string match
-				const cached = knownIdsCache.find((entry) => entry.input === gig.venue);
-				console.log('🚀 ~ beginCrawl ~ cached:', cached);
-
-				let venue;
-
-				if (cached) {
-					// Use cached venue
-					venue = { id: cached.id, name: cached.venue };
-				} else {
-					// Not cached — run the soft match
-					venue = await softMatchVenueName(gig.venue);
-					knownIdsCache.push({ venue: venue.name, id: venue.id, input: gig.venue });
+				if (!res.ok) {
+					throw new Error(`Error ${res.status}: ${await res.text()}`);
 				}
 
-				// Assign matched venue info
-				gig.venueId = venue.id;
-				gig.venue = venue.name;
+				result = await res.json();
+				console.log('✅BOOP✅ ~ fetchTicketLinks ~ result:', result);
 
-				// Prepare UI fields
-				gig.bandObjects = [];
-				gig.bios = [];
-				gig.instaCaptions = [];
-				gig.instaHashtags = [];
+				let knownIdsCache = []; // { venue, id }
+
+				for (const gig of result.gigs) {
+					console.log('gig.venue: ', gig.venue);
+					console.log('knownIdsCache: ', knownIdsCache);
+					// Check cache with strict string match
+					const cached = knownIdsCache.find((entry) => entry.input === gig.venue);
+					console.log('🚀 ~ beginCrawl ~ cached:', cached);
+
+					let venue;
+
+					if (cached) {
+						// Use cached venue
+						venue = { id: cached.id, name: cached.venue };
+					} else {
+						// Not cached — run the soft match
+						venue = await softMatchVenueName(gig.venue);
+						knownIdsCache.push({ venue: venue.name, id: venue.id, input: gig.venue });
+					}
+
+					// Assign matched venue info
+					gig.venueId = venue.id;
+					gig.venue = venue.name;
+
+					// Prepare UI fields
+					gig.bandObjects = [];
+					gig.bios = [];
+					gig.instaCaptions = [];
+					gig.instaHashtags = [];
+				}
+
+				gigs = [...gigs, result.gigs || []].flat();
+			} catch (err) {
+				console.log('🚀 ~ beginCrawl ~ err.message:', err.message);
+			} finally {
+				loading = false;
 			}
-
-			gigs = result.gigs;
-		} catch (err) {
-			console.log('🚀 ~ beginCrawl ~ err.message:', err.message);
-		} finally {
-			loading = false;
 		}
 	}
 
@@ -271,11 +272,11 @@
 					gigs[gigIndex].bios = [...(gigs[gigIndex].bios || []), bandObject.instagram.biography]; // spread bios into gig
 					gigs[gigIndex].instaCaptions = [
 						...(gigs[gigIndex]?.instaCaptions || []),
-						...bandObject.instagram.latestPosts.map((post) => post.caption)
+						...bandObject.instagram?.latestPosts?.map((post) => post.caption)
 					];
 					gigs[gigIndex].instaHashtags = [
 						...(gigs[gigIndex]?.instaHashtags || []),
-						...bandObject.instagram.latestPosts.map((post) => post.hashtags).flat() // use flat to turn array of arrays into a single array
+						...bandObject.instagram?.latestPosts?.map((post) => post.hashtags).flat() // use flat to turn array of arrays into a single array
 					];
 
 					followersTotal = followersTotal + bandObject.instagram.followersCount; // this is working... but why is the bandObject not saving the instagram?
@@ -410,13 +411,15 @@
 
 	onMount(() => {
 		(async () => {
-			try {
-				const res = await fetch('/api/supabase/get-venues-moshtix');
-				const data = await res.json();
-				venues = data.records;
-				console.log('🚀 ~ venues:', venues);
-			} catch (err) {
-				console.error('❌ Failed to fetch venues:', err);
+			if (getAllVenues) {
+				try {
+					const res = await fetch('/api/supabase/get-venues-moshtix');
+					const data = await res.json();
+					venues = data.records;
+					console.log('🚀 ~ venues:', venues);
+				} catch (err) {
+					console.error('❌ Failed to fetch venues:', err);
+				}
 			}
 		})();
 	});
