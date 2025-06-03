@@ -9,21 +9,17 @@
 </script>
 
 <div class="overflow-y-auto gig-card">
-	<!-- Genres -->
-	<div class="block mt-1">
-		<div class="p-1 row">
-			{#each gig.genres as genre}
-				<div class="px-3 py-1 bg-black rounded-full">
-					{genre}
-				</div>
-			{/each}
-		</div>
-	</div>
 	<div class="w-full gig-details">
-		<script>
-			import { getWeekday, getDay, getMonth, getYear, getTime } from '$lib/utils/dateUtils.js';
-			export let gig;
-		</script>
+		<!-- Genres -->
+		<div class="block mt-1">
+			<div class="row">
+				{#each gig.genres as genre}
+					<div class="px-3 py-1 bg-white border-[1px] border-black text-black rounded-full">
+						{genre}
+					</div>
+				{/each}
+			</div>
+		</div>
 
 		<div class="flex items-start w-full gap-4 py-4 border-b border-gray-300">
 			<!-- 🎨 Poster -->
@@ -32,17 +28,12 @@
 			{/if}
 
 			<!-- 📝 Details -->
-			<div class="flex-1">
-				<!-- Promoter (optional) -->
-				{#if gig.promoter}
-					<p class="text-sm italic text-gray-600">{gig.promoter}</p>
-				{/if}
-
+			<div class="flex flex-col flex-1 min-h-full">
 				<!-- Gig Title -->
-				<h2 class="mt-1 text-2xl font-bold text-black">{gig.title}</h2>
-
+				<h2 class="text-2xl font-bold text-black">{gig.title}</h2>
+				<div class="flex-1"></div>
 				<!-- Date + Time -->
-				<p class="mt-2 text-lg font-semibold text-black">
+				<p class="text-lg font-semibold text-black">
 					{getTime(gig.startDate)}, {getWeekday(gig.startDate)}
 					{getDay(gig.startDate)}
 					{getMonth(gig.startDate)}, {getYear(gig.startDate)}
@@ -86,7 +77,7 @@
 		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
 				<button on:click={openBandModal(bandObject.bandname)}
-					>{bandObject.bandname} - {(bandObject.instagram.followersCount / 1000).toFixed(
+					>{bandObject.bandname} - {(bandObject.instagram?.followersCount / 1000).toFixed(
 						1
 					)}k</button
 				>
