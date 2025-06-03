@@ -32,7 +32,7 @@
 			<!-- 📝 Details -->
 			<div class="flex flex-col flex-1 min-h-full">
 				<!-- Gig Title -->
-				<h2 class="text-2xl font-bold text-black">{gig.title}</h2>
+				<h2 class="text-2xl font-bold text-black">{@html gig.title}</h2>
 				<div class="flex-1"></div>
 				<!-- Date + Time -->
 				<p class="text-lg font-semibold text-black">
@@ -43,32 +43,34 @@
 
 				<!-- Venue -->
 				{#if gig.venue}
-					<p class="mt-1 font-bold text-gray-700 text-md">
+					<p class="mt-1 text-xl font-bold text-gray-700">
 						<u>{gig.venue.name}</u>,
-						{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-							<a
-								href={gig.ticketUrl}
-								target="_blank"
-								class="absolute bottom-0 right-0 row gig-ticket-button"
-								>Ticketing Site <svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke-width="1.5"
-									stroke="currentColor"
-									class="size-6"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-									/>
-								</svg>
-							</a>
-						{:else}
-							<p class="gig-ticket-free">Free Entry</p>
-						{/if}
 					</p>
+				{/if}
+
+				<!-- Ticket Url -->
+				{#if gig.ticketUrl && gig.ticketUrl !== '#'}
+					<a
+						href={gig.ticketUrl}
+						target="_blank"
+						class="absolute right-0 bottom-2 row gig-ticket-button"
+						>Ticketing Site <svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+							/>
+						</svg>
+					</a>
+				{:else}
+					<p class="gig-ticket-free">Free Entry</p>
 				{/if}
 			</div>
 		</div>
@@ -91,7 +93,7 @@
 			</div>
 		{/if}
 
-		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Bands</h3>
+		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Bands</h3>
 		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
 				<button on:click={openBandModal(bandObject.bandname)}
@@ -101,7 +103,7 @@
 				>
 			{/each}
 		</div>
-		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Description</h3>
+		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3>
 
 		<div>
 			<p
