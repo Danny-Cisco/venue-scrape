@@ -83,14 +83,40 @@
 			zoom: 12
 		});
 
+		// Static green anchor for ShotKickers
+		new googleMaps.Marker({
+			position: SHOTKICKERS_COORDS,
+			map,
+			title: 'ShotKickers',
+			icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				scale: 10,
+				fillColor: '#4285F4', // Blue for Shotkickers, red for others
+				fillOpacity: 1,
+				strokeWeight: 1,
+				strokeColor: '#4285F4'
+			}
+			// no listeners
+		});
+
 		// Main loop: render real gigs
 		venueGroups.forEach(({ coords, venueName, gigs }) => {
 			const key = `${coords.lng},${coords.lat}`;
 
+			const isShotkickers = venueName.trim().toLowerCase() === 'shotkickers';
+
 			const marker = new googleMaps.Marker({
 				position: coords,
 				map,
-				title: venueName
+				title: venueName,
+				icon: {
+					path: google.maps.SymbolPath.CIRCLE,
+					scale: 10,
+					fillColor: isShotkickers ? '#4285F4' : '#FF5252', // Blue for Shotkickers, red for others
+					fillOpacity: 1,
+					strokeWeight: 2,
+					strokeColor: '#B71C1C'
+				}
 			});
 
 			const content = `
@@ -136,15 +162,6 @@
 			const infoWindow = new googleMaps.InfoWindow({ content });
 			// marker.addListener('mouseover', () => infoWindow.open(map, marker));
 			marker.addListener('click', () => infoWindow.open(map, marker));
-		});
-
-		// Static green anchor for ShotKickers
-		new googleMaps.Marker({
-			position: SHOTKICKERS_COORDS,
-			map,
-			title: 'ShotKickers',
-			icon: greenMarkerIcon
-			// no listeners
 		});
 	});
 </script>
