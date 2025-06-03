@@ -18,7 +18,7 @@ export async function GET({ locals, url }) {
 	try {
 		let records;
 
-		if (table === 'gigs' || 'soldout_gigs') {
+		if (table === 'gigs') {
 			records = await locals.db.all(table, (q) =>
 				q
 					.select('*, venue:venue_id(*)')
