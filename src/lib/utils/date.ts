@@ -81,3 +81,58 @@ export function convertStringToDatetime(dateString, timeString) {
 		return null;
 	}
 }
+
+export function formatDateLong(isoString) {
+	const date = new Date(isoString);
+
+	return new Intl.DateTimeFormat('en-AU', {
+		weekday: 'long', // "Sunday"
+		year: 'numeric', // "2025"
+		month: 'long', // "July"
+		day: 'numeric', // "6"
+		hour: 'numeric', // "7"
+		minute: '2-digit', // "00"
+		hour12: true, // "PM"
+		timeZoneName: 'short' // "AEST"
+	}).format(date);
+}
+
+export function getWeekday(isoString) {
+	const date = new Date(isoString);
+	return new Intl.DateTimeFormat('en-AU', { weekday: 'long' }).format(date); // e.g., "Sunday"
+}
+
+export function getDay(isoString) {
+	const date = new Date(isoString);
+	return date.getDate(); // e.g., 6
+}
+
+export function getMonth(isoString) {
+	const date = new Date(isoString);
+	return new Intl.DateTimeFormat('en-AU', { month: 'long' }).format(date); // e.g., "July"
+}
+
+export function getYear(isoString) {
+	const date = new Date(isoString);
+	return date.getFullYear(); // e.g., 2025
+}
+
+export function getTime(isoString) {
+	const date = new Date(isoString);
+	return new Intl.DateTimeFormat('en-AU', {
+		hour: 'numeric',
+		minute: '2-digit',
+		hour12: true
+	}).format(date); // e.g., "7:00 PM"
+}
+
+export function getTimeZone(isoString) {
+	const date = new Date(isoString);
+	return (
+		new Intl.DateTimeFormat('en-AU', {
+			timeZoneName: 'short'
+		})
+			.formatToParts(date)
+			.find((p) => p.type === 'timeZoneName')?.value || ''
+	);
+}

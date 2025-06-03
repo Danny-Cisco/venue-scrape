@@ -1,5 +1,6 @@
 <script>
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
+	import { getWeekday, getDay, getMonth, getYear, getTime, getTimeZone } from '$lib/utils/date.ts';
 	export let gig = {};
 
 	function openBandModal(band) {
@@ -8,29 +9,62 @@
 </script>
 
 <div class="overflow-y-auto gig-card">
+	<!-- Genres -->
+	<div class="block mt-1">
+		<div class="p-1 row">
+			{#each gig.genres as genre}
+				<div class="px-3 py-1 bg-black rounded-full">
+					{genre}
+				</div>
+			{/each}
+		</div>
+	</div>
 	<div class="w-full gig-details">
-		<h2 class="gig-title">{gig.title}</h2>
+		<script>
+			import { getWeekday, getDay, getMonth, getYear, getTime } from '$lib/utils/dateUtils.js';
+			export let gig;
+		</script>
 
-		<p class="flex flex-col gig-datetime">
-			<strong>{gig.date}</strong>
-			<strong>{gig.time}</strong>
-		</p>
+		<div class="flex items-start w-full gap-4 py-4 border-b border-gray-300">
+			<!-- 🎨 Poster -->
+			{#if gig.image}
+				<img src={gig.image} alt={gig.title} class="object-cover w-32 h-32 rounded" />
+			{/if}
 
-		{#if gig.image}
-			<img src={gig.image} alt={gig.title} class="gig-image" />
-		{/if}
+			<!-- 📝 Details -->
+			<div class="flex-1">
+				<!-- Promoter (optional) -->
+				{#if gig.promoter}
+					<p class="text-sm italic text-gray-600">{gig.promoter}</p>
+				{/if}
 
-		<p class="gig-description">{gig.description}</p>
+				<!-- Gig Title -->
+				<h2 class="mt-1 text-2xl font-bold text-black">{gig.title}</h2>
 
-		{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-			<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button">Visit Ticketing Site</a>
-		{:else}
-			<p class="gig-ticket-free">Free Entry</p>
-		{/if}
+				<!-- Date + Time -->
+				<p class="mt-2 text-lg font-semibold text-black">
+					{getTime(gig.startDate)}, {getWeekday(gig.startDate)}
+					{getDay(gig.startDate)}
+					{getMonth(gig.startDate)}, {getYear(gig.startDate)}
+				</p>
 
+				<!-- Venue -->
+				{#if gig.venue}
+					<p class="mt-1 font-bold text-gray-700 text-md">
+						<u>{gig.venue.name}</u>,
+						{#if gig.ticketUrl && gig.ticketUrl !== '#'}
+							<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button"
+								>Visit Ticketing Site</a
+							>
+						{:else}
+							<p class="gig-ticket-free">Free Entry</p>
+						{/if}
+					</p>
+				{/if}
+			</div>
+		</div>
 		<!-- 🎟️ Tickets Section -->
 		{#if gig.tickets && gig.tickets.length > 0}
-			<h3 class="mt-6 mb-2 font-bold text-black uppercase">Tickets</h3>
 			<div class="flex flex-col max-w-full gap-2 p-2 bg-black">
 				{#each gig.tickets as ticket}
 					<div
@@ -51,9 +85,16 @@
 		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Bands</h3>
 		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
-				<button on:click={openBandModal(bandObject.bandname)}>{bandObject.bandname}</button>
+				<button on:click={openBandModal(bandObject.bandname)}
+					>{bandObject.bandname} - {(bandObject.instagram.followersCount / 1000).toFixed(
+						1
+					)}k</button
+				>
 			{/each}
 		</div>
+		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Description</h3>
+
+		<p class="gig-description">{gig.description}</p>
 	</div>
 </div>
 
@@ -101,23 +142,6 @@
 		font-size: 1rem;
 		color: #333;
 		line-height: 1.5;
-	}
-
-	.gig-ticket-button {
-		margin-top: 1rem;
-		padding: 0.5rem 1rem;
-		background-color: gray;
-		color: #fff;
-		font-weight: bold;
-		border-radius: 0.5rem;
-		text-align: center;
-		text-decoration: none;
-		transition: background-color 0.2s;
-		border-radius: 999999px;
-	}
-
-	.gig-ticket-button:hover {
-		background-color: black;
 	}
 
 	.gig-ticket-free {
