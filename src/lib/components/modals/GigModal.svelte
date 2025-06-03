@@ -14,7 +14,7 @@
 	<div class="w-full gig-details">
 		<!-- Genres -->
 		<div class="block mt-1">
-			<div class="row">
+			<div class="justify-end w-full row">
 				{#each gig.genres as genre}
 					<div class="px-3 py-1 bg-white border-[1px] border-black text-black rounded-full">
 						{genre}
@@ -23,7 +23,7 @@
 			</div>
 		</div>
 
-		<div class="relative flex items-start w-full gap-4 py-4 border-b border-gray-300">
+		<div class="relative flex items-start w-full gap-4 py-4">
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img src={gig.image} alt={gig.title} class="object-cover w-32 h-32 rounded" />
