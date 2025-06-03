@@ -3,6 +3,8 @@
 	import { getWeekday, getDay, getMonth, getYear, getTime, getTimeZone } from '$lib/utils/date.ts';
 	export let gig = {};
 
+	export let showDescription = false;
+
 	function openBandModal(band) {
 		console.log('band clicked 👉 ', band);
 	}
@@ -21,7 +23,7 @@
 			</div>
 		</div>
 
-		<div class="flex items-start w-full gap-4 py-4 border-b border-gray-300">
+		<div class="relative flex items-start w-full gap-4 py-4 border-b border-gray-300">
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img src={gig.image} alt={gig.title} class="object-cover w-32 h-32 rounded" />
@@ -44,9 +46,25 @@
 					<p class="mt-1 font-bold text-gray-700 text-md">
 						<u>{gig.venue.name}</u>,
 						{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-							<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button"
-								>Visit Ticketing Site</a
-							>
+							<a
+								href={gig.ticketUrl}
+								target="_blank"
+								class="absolute bottom-0 right-0 row gig-ticket-button"
+								>Ticketing Site <svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+									/>
+								</svg>
+							</a>
 						{:else}
 							<p class="gig-ticket-free">Free Entry</p>
 						{/if}
@@ -85,7 +103,23 @@
 		</div>
 		<h3 class="mt-4 mb-0 font-bold text-black uppercase">Description</h3>
 
-		<p class="gig-description">{gig.description}</p>
+		<div>
+			<p
+				class="text-sm text-gray-800 transition-all duration-300 ease-in-out gig-description"
+				class:line-clamp-3={!showDescription}
+			>
+				{gig.description}
+			</p>
+
+			{#if gig.description.length > 120}
+				<button
+					on:click={() => (showDescription = !showDescription)}
+					class="mt-1 text-sm text-blue-600 underline hover:text-blue-800"
+				>
+					{showDescription ? 'Show less' : 'Show more'}
+				</button>
+			{/if}
+		</div>
 	</div>
 </div>
 
