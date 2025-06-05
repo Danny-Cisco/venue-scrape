@@ -62,7 +62,7 @@
 			</div>
 		</div>
 
-		<div class="relative flex items-start w-full gap-4 py-4">
+		<div class="relative flex items-start w-full gap-4 pt-10">
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img src={gig.image} alt={gig.title} class="object-cover w-32 h-32 rounded" />
@@ -86,14 +86,18 @@
 						<u>{gig.venue.name}</u>,
 					</p>
 				{/if}
-
+			</div>
+		</div>
+		<!-- 🎟️ Tickets Section -->
+		{#if gig.tickets && gig.tickets.length > 0}
+			<h2 class="text-lg font-bold text-black uppercase row">
 				<!-- Ticket Url -->
 				{#if gig.ticketUrl && gig.ticketUrl !== '#'}
 					<a
 						href={gig.ticketUrl}
 						target="_blank"
-						class="absolute text-xs right-6 bottom-2 row gig-ticket-button"
-						>Tickets <svg
+						class="justify-end w-full mr-6 text-xs row gig-ticket-button"
+						>Ticket Site <svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
@@ -111,10 +115,7 @@
 				{:else}
 					<p class="gig-ticket-free">Free Entry</p>
 				{/if}
-			</div>
-		</div>
-		<!-- 🎟️ Tickets Section -->
-		{#if gig.tickets && gig.tickets.length > 0}
+			</h2>
 			<div class="flex flex-col w-full max-w-full gap-1 p-2 text-xs text-black rounded-lg">
 				{#each gig.tickets as ticket}
 					<div
