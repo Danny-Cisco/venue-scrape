@@ -1,19 +1,20 @@
 <script>
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 	import { fade, fly } from 'svelte/transition';
-	import { getWeekday, getDay, getMonth, getYear, getTime, getTimeZone } from '$lib/utils/date.ts';
 	export let gig = {};
 
 	import { marked } from 'marked';
 
 	import { getStarCount } from '$lib/utils/stars.js';
 
+	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
+
 	import { onMount } from 'svelte';
 
 	import { htmlFormatter } from '$lib/utils/prompts.ts';
 
 	export let showDescription = false;
-	export let showTickets = false;
+	export let showTickets = true;
 
 	let question = gig.description;
 	let systemPrompt = htmlFormatter;
@@ -62,48 +63,176 @@
 
 <div class="overflow-y-auto gig-card">
 	<div class="w-full gig-details">
-		<!-- Genres -->
-		<div class="block mt-1">
-			<div class="justify-center w-full row">
-				{#each gig.genres as genre}
-					<div
-						class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black border-dashed rounded-full"
-					>
-						{genre}
-					</div>
-				{/each}
-			</div>
-		</div>
+		<!-- Gig Title -->
+		<h2 class="text-4xl font-bold text-black">{@html gig.title}</h2>
 
-		<div class="relative flex items-start w-full gap-4 pt-10">
-			<!-- 🎨 Poster -->
-			{#if gig.image}
-				<img
-					src={moshtix140to600image(gig.image)}
-					alt={gig.title}
-					class="object-cover w-[600px] h-[600px] rounded"
-				/>
-			{/if}
-
-			<!-- 📝 Details -->
-			<div class="flex flex-col flex-1 min-h-full">
-				<!-- Gig Title -->
-				<h2 class="text-2xl font-bold text-black">{@html gig.title}</h2>
+		<div class="grid grid-cols-2">
+			<div class="flex flex-col">
 				<!-- Venue -->
 				{#if gig.venue}
-					<p class="mt-1 text-xl font-bold text-gray-700">
+					<p class="mb-3 text-2xl font-bold text-gray-700">
 						<a href={gig.venue.website}>
 							<u>{gig.venue.name}</u>
 						</a>
 					</p>
 				{/if}
-				<div class="flex-1"></div>
 				<!-- Date + Time -->
-				<p class="text-lg font-semibold text-black">
-					{getTime(gig.startDate)}, {getWeekday(gig.startDate)}
-					{getDay(gig.startDate)}
-					{getMonth(gig.startDate)}, {getYear(gig.startDate)}
-				</p>
+				<DateTextMinimal date={gig.startDate} />
+			</div>
+			<!-- Genres -->
+			<div class="flex justify-end w-full mt-1">
+				<div class="flex items-end justify-end w-full gap-2">
+					{#each gig.genres as genre}
+						<div
+							class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black border-dashed rounded-full"
+						>
+							{genre}
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+
+		<div class="relative flex items-start w-full pt-10">
+			<!-- 🎨 Poster -->
+			{#if gig.image}
+				<img
+					src={moshtix140to600image(gig.image)}
+					alt={gig.title}
+					class="object-cover w-[600px] h-[600px] rounded-l-xl rounded-r-0"
+				/>
+			{/if}
+
+			<!-- 📝 Details -->
+			<div class="flex flex-col flex-1 min-h-full">
+				<!-- <div class="flex-1"></div> -->
+
+				<!-- BANDS SECTION -->
+				<div
+					class="w-full max-h-[600px] min-h-[600px] flex flex-col border-black border rounded-r-xl"
+				>
+					<h2 class="w-full text-2xl font-bold text-center text-black">
+						Bands ({gig.bandObjects.length})
+					</h2>
+					<div class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-y-auto">
+						{#each gig.bandObjects as bandObject (bandObject.bandname)}
+							<!-- Card container - this is the main change -->
+							<button
+								class="w-full max-w-md p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+								on:click={() => openBandModal(bandObject.bandname)}
+							>
+								<div class="flex flex-col">
+									<!-- Top section: Dot and Band Name -->
+									<div class="flex items-center">
+										<div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div>
+										<h2 class="text-lg font-bold text-blue-700 capitalize">
+											{bandObject.bandname}
+										</h2>
+									</div>
+
+									<!-- Instagram Info Section -->
+									<div class="pl-6">
+										{#if bandObject.instagram}
+											<div
+												class="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
+											>
+												<a
+													href={bandObject.instagram.url}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="text-xs text-blue-600 hover:underline"
+													on:click|stopPropagation
+												>
+													@{bandObject.instagram.username || bandObject.instagram}
+												</a>
+												{#if bandObject.instagram.followersCount}
+													<span class="text-sm text-gray-600 whitespace-nowrap">
+														({(bandObject.instagram.followersCount / 1000).toFixed(1)}k followers)
+													</span>
+												{/if}
+											</div>
+										{:else}
+											<div class="text-xs italic text-gray-500">No Instagram profile</div>
+										{/if}
+									</div>
+
+									<!-- Star Rating and External Link Section (only if Instagram exists) -->
+									{#if bandObject.instagram}
+										<div
+											class="flex flex-col pt-3 mt-auto space-y-3 border-t-0 border-gray-200 sm:flex-row sm:justify-between sm:items-center sm:space-y-0"
+										>
+											<!-- Star Rating -->
+											<div class="flex items-center">
+												<div class="flex">
+													{#each Array(5) as _, i}
+														{#if i < getStarCount(bandObject.instagram.followersCount)}
+															<!-- Filled Star -->
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																viewBox="0 0 24 24"
+																fill="currentColor"
+																class="text-yellow-400 size-5"
+															>
+																<path
+																	fill-rule="evenodd"
+																	d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006Z"
+																	clip-rule="evenodd"
+																/>
+															</svg>
+														{:else}
+															<!-- Outline Star -->
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																fill="none"
+																viewBox="0 0 24 24"
+																stroke-width="1.5"
+																stroke="currentColor"
+																class="text-gray-300 size-5"
+															>
+																<path
+																	stroke-linecap="round"
+																	stroke-linejoin="round"
+																	d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+																/>
+															</svg>
+														{/if}
+													{/each}
+												</div>
+											</div>
+
+											<!-- External Link -->
+											{#if bandObject.instagram.externalUrl}
+												<a
+													href={bandObject.instagram.externalUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="flex items-center text-xs text-green-600 hover:text-green-700"
+													on:click|stopPropagation
+												>
+													Linktree
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 24 24"
+														stroke-width="1.5"
+														stroke="currentColor"
+														class="ml-1 size-4"
+													>
+														<path
+															stroke-linecap="round"
+															stroke-linejoin="round"
+															d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+														/>
+													</svg>
+												</a>
+											{/if}
+										</div>
+									{/if}
+								</div>
+							</button>
+						{/each}
+					</div>
+				</div>
 			</div>
 		</div>
 		<!-- 🎟️ Tickets Section -->
@@ -116,7 +245,7 @@
 						target="_blank"
 						class="justify-end w-full mr-6 text-xs row gig-ticket-button"
 					>
-						Ticket Site ({gig.tickets.length})
+						Ticket Site
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -137,145 +266,41 @@
 				{/if}
 			</h2>
 
-			<!-- Toggle Button -->
-			<button
-				on:click={() => (showTickets = !showTickets)}
-				class="mb-2 text-lg font-bold text-black"
-			>
-				{showTickets ? 'Hide Tickets' : `Show Tickets (${gig.tickets.length})`}
-			</button>
-
-			<!-- Tickets List -->
-			{#if showTickets}
-				<div
-					class="flex flex-col w-full max-w-full gap-1 p-2 text-xs text-black rounded-lg"
-					in:fade
-				>
-					{#each gig.tickets as ticket, i}
-						<div
-							in:fly={{ y: 10, duration: 300, delay: i * 70 }}
-							class="grid [grid-template-columns:auto_1fr_auto_auto] w-full max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
+			<div class="flex flex-col w-full max-w-full gap-1 p-2 text-xs text-black rounded-lg" in:fade>
+				{#each gig.tickets as ticket, i}
+					<div
+						in:fly={{ y: 10, duration: 300, delay: i * 70 }}
+						class="grid [grid-template-columns:auto_1fr_auto_auto] w-full max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							stroke="1.5"
+							class="w-4"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								fill="currentColor"
-								stroke="1.5"
-								class="w-4"
-							>
-								<path
-									d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"
-								></path>
-							</svg>
-							<div class="font-serif capitalise">{ticket.ticketType}</div>
-							<div class="mr-4">
-								{#if ticket.price != 0}
-									${ticket.price}
-								{:else}
-									<div class="text-gray-300">Free</div>
-								{/if}
-							</div>
-							{#if ticket.availability === 'SoldOut'}
-								<SoldOut />
+							<path
+								d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"
+							></path>
+						</svg>
+						<div class="font-serif capitalise">{@html ticket.ticketType}</div>
+						<div class="mr-4">
+							{#if ticket.price != 0}
+								${ticket.price}
 							{:else}
-								<span>{ticket.availability}</span>
+								<div class="text-gray-300">Free</div>
 							{/if}
 						</div>
-					{/each}
-				</div>
-			{/if}
-		{/if}
-
-		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Bands</h3>
-		<div class="flex flex-col items-start max-w-full mx-4 mb-4 text-blue-500 hover:cursor-pointer">
-			{#each gig.bandObjects as bandObject}
-				<button
-					class="grid w-full grid-cols-[auto_1fr_1fr_auto_auto] items-center gap-2 text-left px-2 py-1 rounded"
-					on:click={openBandModal(bandObject.bandname)}
-				>
-					<!-- 🔵 Dot -->
-					<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-
-					<!-- 🎸 Band Name & IG -->
-					<div class="">
-						<span class="font-bold capitalize">{bandObject.bandname}</span>
-					</div>
-
-					<div>
-						{#if bandObject.instagram}
-							<a href={bandObject.instagram?.url} class="text-sm text-blue-600"
-								>@{bandObject.instagram?.username || bandObject.instagram}
-								<!-- 📊 Followers -->
-								<span class="text-sm font-bold text-blue-600 whitespace-nowrap">
-									- {(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
-								</span></a
-							>
+						{#if ticket.availability === 'SoldOut'}
+							<SoldOut />
 						{:else}
-							<div class="text-xs">No instagram</div>
+							<span>{ticket.availability}</span>
 						{/if}
 					</div>
-					{#if bandObject.instagram}
-						<!-- ⭐ Star Rating -->
-						<div class="flex ml-1">
-							{#each Array(5) as _, i}
-								{#if i < getStarCount(bandObject.instagram?.followersCount)}
-									<!-- Filled -->
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="#FACC15"
-										stroke="#FA9910"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										class="size-5"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-										/>
-									</svg>
-								{:else}
-									<!-- Outline -->
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="#FAeeaa"
-										stroke-width="1.5"
-										class="size-5"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-										/>
-									</svg>
-								{/if}
-							{/each}
-						</div>
+				{/each}
+			</div>
+		{/if}
 
-						<!-- 🌐 External Link -->
-						<a href={bandObject.instagram?.externalUrl} class="ml-1 text-xs text-green-500 row">
-							Linktree
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-5"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-								/>
-							</svg>
-						</a>
-					{/if}
-				</button>
-			{/each}
-		</div>
 		<!-- <h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3> -->
 		{#if htmlDescription}
 			<div class="p-4 text-black rounded-lg description" in:fade>
@@ -371,7 +396,7 @@
 		gap: 1rem;
 		background-color: white;
 
-		max-width: 900px;
+		max-width: 1200px;
 		width: auto;
 
 		padding: 2rem;

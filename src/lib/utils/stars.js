@@ -1,5 +1,5 @@
 // THIS IS THE PLACE TO TINKER WITH THE NUMBER OF FOLLOWERS NEEDED FOR STARS (in k)
-const starGroupThresholds = [0, 1, 5, 25, 100]; // get a star for breaking each milestone (k) of insta followers
+const starGroupThresholds = [0, 1, 5, 25, 50]; // get a star for breaking each milestone (k) of insta followers
 
 export function getStarCount(followers) {
 	if (!followers) return 0;

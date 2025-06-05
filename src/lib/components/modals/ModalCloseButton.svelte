@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="absolute top-0 bg-purple-500 rounded-full size-8 center hover:bg-pink-500 -right-10"
+	class="absolute bg-purple-500 rounded-full top-4 size-8 center hover:bg-pink-500 right-5"
 	on:click={() => {
 		$showGigModal = false;
 		$showBandModal = false;
