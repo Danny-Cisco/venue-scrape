@@ -1,5 +1,6 @@
 <script>
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
+	import { fade } from 'svelte/transition';
 	import { getWeekday, getDay, getMonth, getYear, getTime, getTimeZone } from '$lib/utils/date.ts';
 	export let gig = {};
 
@@ -114,7 +115,7 @@
 		</div>
 		<!-- 🎟️ Tickets Section -->
 		{#if gig.tickets && gig.tickets.length > 0}
-			<div class="flex flex-col max-w-full gap-2 p-2 bg-black">
+			<div class="flex flex-col w-full max-w-full gap-2 p-2 bg-black">
 				{#each gig.tickets as ticket}
 					<div
 						class="grid [grid-template-columns:3fr_1fr_1fr] w-full max-w-full gap-2 border p-2 rounded"
@@ -218,9 +219,15 @@
 		</div>
 		<!-- <h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3> -->
 		{#if htmlDescription}
-			<div class="text-black">{@html htmlDescription}</div>
+			<div class="text-black description" in:fade>{@html htmlDescription}</div>
 		{:else}{#if formatting}
-				<div class="text-xs text-gray-500">A nice, formatted description is on it's way...</div>
+				<div class="relative overflow-hidden text-xs text-gray-500">
+					<span
+						class="wave-mask bg-gradient-to-r from-gray-400 via-gray-800 to-gray-400 bg-[length:200%_100%] bg-clip-text text-transparent"
+					>
+						A nice, formatted description is on its way...
+					</span>
+				</div>
 			{/if}
 			<div class="text-black elipsis">{gig.descriptionHtml || gig.description}</div>
 		{/if}
@@ -228,34 +235,60 @@
 </div>
 
 <style>
-	:global(p) {
+	.wave-mask {
+		animation: waveMove 2.5s linear infinite;
+	}
+
+	@keyframes waveMove {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
+	:global(.description p) {
 		margin-bottom: 1rem;
+		margin-top: 1rem;
 	}
 
-	:global(h1) {
-		font-size: 1.5rem;
+	:global(.description h1) {
+		font-size: 1.8rem;
 		font-weight: bold;
+		padding-bottom: 1rem;
 	}
 
-	:global(ul) {
+	:global(.description h2) {
+		font-size: 1.3rem;
+		font-weight: bold;
+		padding-top: 1rem;
+	}
+
+	:global(.description h3) {
+		font-size: 1.3rem;
+		font-weight: bold;
+		padding-top: 1rem;
+	}
+
+	:global(.description ul) {
 		margin-left: 1.5rem;
 		list-style-type: disc;
 		margin-bottom: 1rem;
 	}
 
-	:global(li) {
+	:global(.description li) {
 		margin-bottom: 0.5rem;
 	}
 
-	:global(strong) {
+	:global(.description strong) {
 		font-weight: bold;
 	}
 
-	:global(.footer-class) {
+	:global(.description .footer-class) {
 		font-size: 0.5rem;
 	}
 
-	:global(.info-class) {
+	:global(.description .info-class) {
 		font-size: 0.5rem;
 	}
 	.gig-card {
