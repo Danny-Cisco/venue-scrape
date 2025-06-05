@@ -153,7 +153,7 @@
 							{/if}
 						</td>
 						<td title={gig.description} class="px-4 py-2 overflow-hidden min-w-[200px]"
-							>{gig.title}</td
+							>{@html gig.title}</td
 						>
 						<td class="px-4 py-2 whitespace-nowrap">
 							<div>{convertToDayOfWeek(gig.startDate)}</div>
