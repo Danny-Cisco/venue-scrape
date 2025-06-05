@@ -5,6 +5,8 @@
 
 	import { marked } from 'marked';
 
+	import { getStarCount } from '$lib/utils/stars.js';
+
 	import { onMount } from 'svelte';
 
 	import { htmlFormatter } from '$lib/utils/prompts.ts';
@@ -130,13 +132,86 @@
 		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Bands</h3>
 		<div class="flex flex-col items-start max-w-full mb-4 ml-8 text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
-				<button class="w-full row" on:click={openBandModal(bandObject.bandname)}
-					><div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-					<span class="font-bold capitalize whitespace-nowrap">{bandObject.bandname} </span>-
-					<a href={bandObject.instagram?.url}>@{bandObject.instagram?.username}</a>{(
-						bandObject.instagram?.followersCount / 1000
-					).toFixed(1)}k</button
+				<button
+					class="grid w-full grid-cols-[auto_1fr_1fr_auto_auto] items-center gap-2 text-left px-2 py-1 rounded"
+					on:click={openBandModal(bandObject.bandname)}
 				>
+					<!-- 🔵 Dot -->
+					<div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+
+					<!-- 🎸 Band Name & IG -->
+					<div class="">
+						<span class="font-bold capitalize">{bandObject.bandname}</span>
+					</div>
+
+					<div>
+						<a href={bandObject.instagram?.url} class="text-sm text-blue-600"
+							>@{bandObject.instagram?.username}
+							<!-- 📊 Followers -->
+							<span class="text-sm text-blue-600 whitespace-nowrap">
+								{(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
+							</span></a
+						>
+					</div>
+
+					<!-- ⭐ Star Rating -->
+					<div class="flex ml-1">
+						{#each Array(5) as _, i}
+							{#if i < getStarCount(bandObject.instagram?.followersCount)}
+								<!-- Filled -->
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="#FACC15"
+									stroke="#FA9910"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									class="size-5"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+									/>
+								</svg>
+							{:else}
+								<!-- Outline -->
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="#FAeeaa"
+									stroke-width="1.5"
+									class="size-5"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+									/>
+								</svg>
+							{/if}
+						{/each}
+					</div>
+
+					<!-- 🌐 External Link -->
+					<a href={bandObject.instagram?.externalUrl} class="ml-1 text-green-500 row">
+						Linktree
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-5"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+							/>
+						</svg>
+					</a>
+				</button>
 			{/each}
 		</div>
 		<!-- <h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3> -->
@@ -163,7 +238,7 @@
 	:global(.footer-class) {
 		font-size: 0.5rem;
 	}
-	:global(.additional-info-class) {
+	:global(.info-class) {
 		font-size: 0.5rem;
 	}
 	.gig-card {
