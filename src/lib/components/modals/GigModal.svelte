@@ -51,10 +51,10 @@
 	<div class="w-full gig-details">
 		<!-- Genres -->
 		<div class="block mt-1">
-			<div class="justify-end w-full row">
+			<div class="justify-center w-full row">
 				{#each gig.genres as genre}
 					<div
-						class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black rounded-full"
+						class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black border-dashed rounded-full"
 					>
 						{genre}
 					</div>
@@ -115,13 +115,27 @@
 		</div>
 		<!-- 🎟️ Tickets Section -->
 		{#if gig.tickets && gig.tickets.length > 0}
-			<div class="flex flex-col w-full max-w-full gap-2 p-2 bg-black">
+			<div class="flex flex-col w-full max-w-full gap-1 p-2 text-xs text-black rounded-lg">
 				{#each gig.tickets as ticket}
 					<div
-						class="grid [grid-template-columns:3fr_1fr_1fr] w-full max-w-full gap-2 border p-2 rounded"
+						class="grid [grid-template-columns:auto_1fr_auto_auto] w-full max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
 					>
-						<div>{ticket.ticketType}</div>
-						<div>${ticket.price}</div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							fill="currentColor"
+							stroke="1.5"
+							class="w-4"
+							><path
+								d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"
+							></path></svg
+						>
+						<div class="font-serif capitalise">{ticket.ticketType}</div>
+						<div class="mr-4">
+							{#if ticket.price != 0}${ticket.price}
+							{:else}
+								<div class="text-gray-300">Free</div>{/if}
+						</div>
 						{#if ticket.availability === 'SoldOut'}
 							<SoldOut />
 						{:else}
@@ -148,13 +162,17 @@
 					</div>
 
 					<div>
-						<a href={bandObject.instagram?.url} class="text-sm text-blue-600"
-							>@{bandObject.instagram?.username}
-							<!-- 📊 Followers -->
-							<span class="text-sm font-bold text-blue-600 whitespace-nowrap">
-								- {(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
-							</span></a
-						>
+						{#if bandObject.instagram}
+							<a href={bandObject.instagram?.url} class="text-sm text-blue-600"
+								>@{bandObject.instagram?.username || bandObject.instagram}
+								<!-- 📊 Followers -->
+								<span class="text-sm font-bold text-blue-600 whitespace-nowrap">
+									- {(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
+								</span></a
+							>
+						{:else}
+							no instagram account
+						{/if}
 					</div>
 
 					<!-- ⭐ Star Rating -->
@@ -219,17 +237,31 @@
 		</div>
 		<!-- <h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3> -->
 		{#if htmlDescription}
-			<div class="text-black description" in:fade>{@html htmlDescription}</div>
+			<div class="p-4 text-black rounded-lg description" in:fade>
+				{@html htmlDescription}
+			</div>
 		{:else}{#if formatting}
 				<div class="relative overflow-hidden text-xs text-gray-500">
 					<span
-						class="wave-mask bg-gradient-to-r from-gray-400 via-gray-800 to-gray-400 bg-[length:200%_100%] bg-clip-text text-transparent"
+						class="wave-mask bg-gradient-to-r from-gray-400 via-gray-900 to-gray-400 bg-[length:200%_100%] bg-clip-text text-transparent"
 					>
 						A nice, formatted description is on its way...
 					</span>
 				</div>
 			{/if}
-			<div class="text-black elipsis">{gig.descriptionHtml || gig.description}</div>
+			<div class="p-4 text-black rounded-lg">
+				<p class={showDescription ? '' : 'line-clamp-3'}>
+					{@html gig.descriptionHtml || gig.description}
+				</p>
+
+				<!-- Toggle button -->
+				<button
+					class="mt-2 text-sm text-blue-600 hover:underline"
+					on:click={() => (showDescription = !showDescription)}
+				>
+					{showDescription ? 'Show less ▲' : 'Show more ▼'}
+				</button>
+			</div>
 		{/if}
 	</div>
 </div>
