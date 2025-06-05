@@ -3,7 +3,41 @@
 	import { getWeekday, getDay, getMonth, getYear, getTime, getTimeZone } from '$lib/utils/date.ts';
 	export let gig = {};
 
+	import { marked } from 'marked';
+
+	import { onMount } from 'svelte';
+
+	import { htmlFormatter } from '$lib/utils/prompts.ts';
+
 	export let showDescription = false;
+
+	let question = gig.description;
+	let systemPrompt = htmlFormatter;
+
+	let formatting = false;
+
+	let htmlDescription;
+	onMount(async () => {
+		if (!gig.descriptionHtml) htmlDescription = await formatText();
+	});
+
+	async function formatText() {
+		formatting = true;
+		const parsedBody = JSON.stringify({ question, systemPrompt });
+
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: parsedBody
+		});
+
+		const data = await response.json();
+		console.log('🚀 ~ formatText ~ data:', data);
+		formatting = false;
+		return data.answer;
+	}
 
 	function openBandModal(band) {
 		console.log('band clicked 👉 ', band);
@@ -94,46 +128,53 @@
 		{/if}
 
 		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Bands</h3>
-		<div class="flex flex-col items-start max-w-full text-blue-500 hover:cursor-pointer">
+		<div class="flex flex-col items-start max-w-full mb-4 ml-8 text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
-				<button on:click={openBandModal(bandObject.bandname)}
-					>{bandObject.bandname} - {(bandObject.instagram?.followersCount / 1000).toFixed(
-						1
-					)}k</button
+				<button class="w-full row" on:click={openBandModal(bandObject.bandname)}
+					><div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+					<span class="font-bold capitalize whitespace-nowrap">{bandObject.bandname} </span>-
+					<a href={bandObject.instagram?.url}>@{bandObject.instagram?.username}</a>{(
+						bandObject.instagram?.followersCount / 1000
+					).toFixed(1)}k</button
 				>
 			{/each}
 		</div>
-		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3>
-
-		<div>
-			<p
-				class="text-sm text-gray-800 transition-all duration-300 ease-in-out gig-description"
-				class:line-clamp-3={!showDescription}
-			>
-				{gig.description}
-			</p>
-
-			{#if gig.description.length > 120}
-				<button
-					on:click={() => (showDescription = !showDescription)}
-					class="mt-1 text-sm text-blue-600 underline hover:text-blue-800"
-				>
-					{showDescription ? 'Show less' : 'Show more'}
-				</button>
+		<!-- <h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Description</h3> -->
+		{#if htmlDescription}
+			<div class="text-black">{@html htmlDescription}</div>
+		{:else}{#if formatting}
+				<div class="text-xs text-gray-500">A nice, formatted description is on it's way...</div>
 			{/if}
-		</div>
+			<div class="text-black elipsis">{gig.descriptionHtml || gig.description}</div>
+		{/if}
 	</div>
 </div>
 
 <style>
+	:global(p) {
+		margin-bottom: 1rem;
+	}
+
+	:global(h1) {
+		font-size: 1.5rem;
+		font-weight: bold;
+	}
+
+	:global(.footer-class) {
+		font-size: 0.5rem;
+	}
+	:global(.additional-info-class) {
+		font-size: 0.5rem;
+	}
 	.gig-card {
 		display: flex;
 		flex-direction: column;
 		align-items: end;
 		gap: 1rem;
-		background-color: #fff;
+		background-color: white;
 
 		max-width: 900px;
+		width: auto;
 
 		padding: 2rem;
 		height: 100%;
