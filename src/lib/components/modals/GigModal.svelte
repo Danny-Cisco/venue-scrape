@@ -52,7 +52,9 @@
 		<div class="block mt-1">
 			<div class="justify-end w-full row">
 				{#each gig.genres as genre}
-					<div class="px-3 py-1 bg-white border-[1px] border-black text-black rounded-full">
+					<div
+						class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black rounded-full"
+					>
 						{genre}
 					</div>
 				{/each}
@@ -89,14 +91,14 @@
 					<a
 						href={gig.ticketUrl}
 						target="_blank"
-						class="absolute right-0 bottom-2 row gig-ticket-button"
-						>Ticketing Site <svg
+						class="absolute text-xs right-6 bottom-2 row gig-ticket-button"
+						>Tickets <svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							stroke-width="1.5"
 							stroke="currentColor"
-							class="size-6"
+							class="size-5"
 						>
 							<path
 								stroke-linecap="round"
@@ -130,7 +132,7 @@
 		{/if}
 
 		<h3 class="mt-4 mb-0 text-lg font-bold text-black uppercase">Bands</h3>
-		<div class="flex flex-col items-start max-w-full mb-4 ml-8 text-blue-500 hover:cursor-pointer">
+		<div class="flex flex-col items-start max-w-full mx-4 mb-4 text-blue-500 hover:cursor-pointer">
 			{#each gig.bandObjects as bandObject}
 				<button
 					class="grid w-full grid-cols-[auto_1fr_1fr_auto_auto] items-center gap-2 text-left px-2 py-1 rounded"
@@ -148,8 +150,8 @@
 						<a href={bandObject.instagram?.url} class="text-sm text-blue-600"
 							>@{bandObject.instagram?.username}
 							<!-- 📊 Followers -->
-							<span class="text-sm text-blue-600 whitespace-nowrap">
-								{(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
+							<span class="text-sm font-bold text-blue-600 whitespace-nowrap">
+								- {(bandObject.instagram?.followersCount / 1000).toFixed(1)}k
 							</span></a
 						>
 					</div>
@@ -194,7 +196,7 @@
 					</div>
 
 					<!-- 🌐 External Link -->
-					<a href={bandObject.instagram?.externalUrl} class="ml-1 text-green-500 row">
+					<a href={bandObject.instagram?.externalUrl} class="ml-1 text-xs text-green-500 row">
 						Linktree
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -235,9 +237,24 @@
 		font-weight: bold;
 	}
 
+	:global(ul) {
+		margin-left: 1.5rem;
+		list-style-type: disc;
+		margin-bottom: 1rem;
+	}
+
+	:global(li) {
+		margin-bottom: 0.5rem;
+	}
+
+	:global(strong) {
+		font-weight: bold;
+	}
+
 	:global(.footer-class) {
 		font-size: 0.5rem;
 	}
+
 	:global(.info-class) {
 		font-size: 0.5rem;
 	}
