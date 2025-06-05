@@ -19,6 +19,18 @@
 
 	let formatting = false;
 
+	function moshtix140to600image(url) {
+		if (typeof url !== 'string') return url;
+
+		const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
+
+		if (isMoshtix) {
+			return url.replace('x140x140', 'x600x600');
+		}
+
+		return url;
+	}
+
 	let htmlDescription;
 	onMount(async () => {
 		if (!gig.descriptionHtml) htmlDescription = await formatText();
@@ -65,7 +77,11 @@
 		<div class="relative flex items-start w-full gap-4 pt-10">
 			<!-- 🎨 Poster -->
 			{#if gig.image}
-				<img src={gig.image} alt={gig.title} class="object-cover w-32 h-32 rounded" />
+				<img
+					src={moshtix140to600image(gig.image)}
+					alt={gig.title}
+					class="object-cover w-[600px] h-[600px] rounded"
+				/>
 			{/if}
 
 			<!-- 📝 Details -->
