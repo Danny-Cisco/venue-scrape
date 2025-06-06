@@ -67,15 +67,28 @@
 <div class="overflow-y-auto gig-card">
 	<div class="w-full gig-details">
 		<!-- Gig Title -->
-		<h2 class="text-4xl font-bold text-black">{@html gig.title}</h2>
+		<h2 class="px-4 mb-2 font-sans text-4xl font-black text-white uppercase bg-black">
+			{@html gig.title}
+		</h2>
+
+		<ul class="flex flex-col mb-4 font-sans font-black text-black">
+			<p>Featuring:</p>
+			{#each gig.bandObjects as bandObject, i}
+				{#if i == 0}
+					<li class="ml-2 text-2xl">{bandObject.bandname}</li>
+				{:else}
+					<li class="ml-2">{bandObject.bandname}</li>
+				{/if}
+			{/each}
+		</ul>
 
 		<div class="grid grid-cols-2">
 			<div class="flex flex-col">
 				<!-- Venue -->
 				{#if gig.venue}
-					<p class="mb-3 text-2xl font-bold text-gray-700">
+					<p class="mb-3 font-sans text-2xl font-extrabold text-gray-700 uppercase">
 						<a href={gig.venue.website}>
-							<u>{gig.venue.name}</u>
+							<u>@ {gig.venue.name}</u>
 						</a>
 					</p>
 				{/if}
@@ -438,7 +451,6 @@
 	.gig-details {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
 	}
 
 	.gig-title {
