@@ -274,7 +274,7 @@
 				{#each gig.tickets as ticket, i}
 					<div
 						in:fly={{ y: 10, duration: 300, delay: i * 70 }}
-						class="grid [grid-template-columns:auto_1fr_auto_auto] w-full max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
+						class="grid [grid-template-columns:auto_1fr_auto_auto] w-full shadow-lg max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
