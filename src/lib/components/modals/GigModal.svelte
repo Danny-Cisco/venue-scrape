@@ -67,7 +67,9 @@
 <div class="overflow-y-auto gig-card">
 	<div class="w-full gig-details">
 		<!-- Gig Title -->
-		<h2 class="px-4 mb-2 font-sans text-4xl font-black text-white uppercase bg-black">
+		<h2
+			class="px-4 py-2 mb-2 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
+		>
 			{@html gig.title}
 		</h2>
 
@@ -100,7 +102,7 @@
 				<div class="flex items-end justify-end w-full gap-2">
 					{#each gig.genres as genre}
 						<div
-							class="px-6 py-2 bg-white whitespace-nowrap border-[1px] border-black text-3xl text-black border-dashed rounded-full"
+							class="px-6 py-2 bg-white shadow-xl whitespace-nowrap border-[1px] border-black text-3xl text-black border-dashed rounded-full"
 						>
 							{genre}
 						</div>
@@ -109,7 +111,7 @@
 			</div>
 		</div>
 
-		<div class="relative flex items-start w-full pt-10">
+		<div class="relative flex items-start w-full mt-4 bg-black">
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img
@@ -124,19 +126,17 @@
 				<!-- <div class="flex-1"></div> -->
 
 				<!-- BANDS SECTION -->
-				<div
-					class="w-full max-h-[600px] min-h-[600px] flex flex-col border-l-0 overflow-hidden border-black bg-gradient-to-b from-black to-transparent rounded-r-xl"
-				>
-					<h2 class="w-full pb-1 text-2xl font-bold text-center text-white">
-						Bands ({gig.bandObjects.length})
+				<div class="flex flex-col w-full overflow-hidden bg-black border-l-0 border-black">
+					<h2 class="w-full pb-1 font-sans text-2xl font-black text-center text-white">
+						BANDS <span class="font-mono">({gig.bandObjects.length})</span>
 					</h2>
 					<div
-						class="flex flex-col items-center flex-1 min-w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
+						class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
 					>
 						{#each gig.bandObjects as bandObject (bandObject.bandname)}
 							<!-- Card container - this is the main change -->
 							<button
-								class="w-full max-w-md min-w-full p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+								class="w-full max-w-md p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
 								on:click={() => openBandModal(bandObject.bandname)}
 							>
 								<div class="flex min-w-full">
