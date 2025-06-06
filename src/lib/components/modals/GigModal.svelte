@@ -6,6 +6,9 @@
 	import { marked } from 'marked';
 
 	import { getStarCount } from '$lib/utils/stars.js';
+	import { weserv, imgHaste, photon } from '$lib/utils/image.js';
+
+	import RetryingImage from '$lib/components/ui/RetryingImage.svelte';
 
 	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
 
@@ -84,7 +87,7 @@
 				<div class="flex items-end justify-end w-full gap-2">
 					{#each gig.genres as genre}
 						<div
-							class="px-6 py-2 bg-white border-[1px] border-black text-3xl text-black border-dashed rounded-full"
+							class="px-6 py-2 bg-white whitespace-nowrap border-[1px] border-black text-3xl text-black border-dashed rounded-full"
 						>
 							{genre}
 						</div>
@@ -109,125 +112,146 @@
 
 				<!-- BANDS SECTION -->
 				<div
-					class="w-full max-h-[600px] min-h-[600px] flex flex-col border-black border rounded-r-xl"
+					class="w-full max-h-[600px] min-h-[600px] flex flex-col border-l-0 overflow-hidden border-black bg-gradient-to-b from-black to-transparent rounded-r-xl"
 				>
-					<h2 class="w-full text-2xl font-bold text-center text-black">
+					<h2 class="w-full pb-1 text-2xl font-bold text-center text-white">
 						Bands ({gig.bandObjects.length})
 					</h2>
-					<div class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-y-auto">
+					<div
+						class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
+					>
 						{#each gig.bandObjects as bandObject (bandObject.bandname)}
 							<!-- Card container - this is the main change -->
 							<button
 								class="w-full max-w-md p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
 								on:click={() => openBandModal(bandObject.bandname)}
 							>
-								<div class="flex flex-col">
-									<!-- Top section: Dot and Band Name -->
-									<div class="flex items-center">
-										<div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div>
-										<h2 class="text-lg font-bold text-blue-700 capitalize">
-											{bandObject.bandname}
-										</h2>
-									</div>
-
-									<!-- Instagram Info Section -->
-									<div class="pl-6">
-										{#if bandObject.instagram}
-											<div
-												class="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
-											>
-												<a
-													href={bandObject.instagram.url}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="text-xs text-blue-600 hover:underline"
-													on:click|stopPropagation
-												>
-													@{bandObject.instagram.username || bandObject.instagram}
-												</a>
-												{#if bandObject.instagram.followersCount}
-													<span class="text-sm text-gray-600 whitespace-nowrap">
-														({(bandObject.instagram.followersCount / 1000).toFixed(1)}k followers)
-													</span>
-												{/if}
-											</div>
-										{:else}
-											<div class="text-xs italic text-gray-500">No Instagram profile</div>
+								<div class="flex">
+									<!-- Instagram Profile Picture via Weserv -->
+									<div
+										class="bg-gradient-to-br from-gray-500 to-black min-w-[100px] max-w-[100px] rounded-xl overflow-hidden min-h-[100px] max-h-[100px]"
+									>
+										{#if bandObject.instagram?.profilePicUrl}
+											<img
+												src={weserv(bandObject.instagram.profilePicUrl)}
+												alt="Band profile"
+												fallback="/fallback-avatar.png"
+											/>
 										{/if}
 									</div>
-
-									<!-- Star Rating and External Link Section (only if Instagram exists) -->
-									{#if bandObject.instagram}
-										<div
-											class="flex flex-col pt-3 mt-auto space-y-3 border-t-0 border-gray-200 sm:flex-row sm:justify-between sm:items-center sm:space-y-0"
-										>
-											<!-- Star Rating -->
-											<div class="flex items-center">
-												<div class="flex">
-													{#each Array(5) as _, i}
-														{#if i < getStarCount(bandObject.instagram.followersCount)}
-															<!-- Filled Star -->
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																viewBox="0 0 24 24"
-																fill="currentColor"
-																class="text-yellow-400 size-5"
-															>
-																<path
-																	fill-rule="evenodd"
-																	d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006Z"
-																	clip-rule="evenodd"
-																/>
-															</svg>
-														{:else}
-															<!-- Outline Star -->
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																fill="none"
-																viewBox="0 0 24 24"
-																stroke-width="1.5"
-																stroke="currentColor"
-																class="text-gray-300 size-5"
-															>
-																<path
-																	stroke-linecap="round"
-																	stroke-linejoin="round"
-																	d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-																/>
-															</svg>
-														{/if}
-													{/each}
-												</div>
+									<div class="flex flex-col ml-4">
+										<!-- Top section: Dot and Band Name -->
+										<div class="flex items-center">
+											<!-- <div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div> -->
+											<h2 class="text-lg font-bold text-blue-700 capitalize">
+												{bandObject.bandname}
+											</h2>
+										</div>
+										<!-- Star Rating -->
+										<div class="flex items-center">
+											<div class="flex">
+												{#each Array(5) as _, i}
+													{#if i < getStarCount(bandObject.instagram.followersCount)}
+														<!-- Filled Star -->
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															viewBox="0 0 24 24"
+															fill="currentColor"
+															class="text-yellow-400 size-5"
+														>
+															<path
+																fill-rule="evenodd"
+																d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006Z"
+																clip-rule="evenodd"
+															/>
+														</svg>
+													{:else}
+														<!-- Outline Star -->
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															fill="none"
+															viewBox="0 0 24 24"
+															stroke-width="1.5"
+															stroke="currentColor"
+															class="text-gray-300 size-5"
+														>
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+															/>
+														</svg>
+													{/if}
+												{/each}
 											</div>
+										</div>
 
-											<!-- External Link -->
-											{#if bandObject.instagram.externalUrl}
-												<a
-													href={bandObject.instagram.externalUrl}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="flex items-center text-xs text-green-600 hover:text-green-700"
-													on:click|stopPropagation
+										<!-- Instagram Info Section -->
+										<div class="">
+											{#if bandObject.instagram}
+												{#if bandObject.instagram.followersCount}
+													<span class="ml-4 text-sm text-blue-500 whitespace-nowrap">
+														{(bandObject.instagram.followersCount / 1000).toFixed(1)}k
+													</span>
+												{/if}
+												<div
+													class="flex flex-col space-y-1 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
 												>
-													Linktree
-													<svg
-														xmlns="http://www.w3.org/2000/svg"
-														fill="none"
-														viewBox="0 0 24 24"
-														stroke-width="1.5"
-														stroke="currentColor"
-														class="ml-1 size-4"
+													<a
+														href={bandObject.instagram.url}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="text-xs text-blue-600 hover:underline"
+														on:click|stopPropagation
 													>
-														<path
-															stroke-linecap="round"
-															stroke-linejoin="round"
-															d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-														/>
-													</svg>
-												</a>
+														@{bandObject.instagram.username || bandObject.instagram}
+													</a>
+												</div>
+											{:else}
+												<div class="text-xs italic text-gray-500">No Instagram profile</div>
 											{/if}
 										</div>
-									{/if}
+
+										<!-- Star Rating and External Link Section (only if Instagram exists) -->
+										{#if bandObject.instagram}
+											<div
+												class="flex flex-col pt-3 mt-auto space-y-3 border-t-0 border-gray-200 sm:flex-row sm:justify-between sm:items-center sm:space-y-0"
+											>
+												<!-- External Link -->
+												{#if bandObject.instagram.externalUrl}
+													<a
+														href={bandObject.instagram.externalUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="flex items-center text-xs text-green-600 hover:text-green-700"
+														on:click|stopPropagation
+													>
+														Linktree
+														<svg
+															xmlns="http://www.w3.org/2000/svg"
+															fill="none"
+															viewBox="0 0 24 24"
+															stroke-width="1.5"
+															stroke="currentColor"
+															class="ml-1 size-4"
+														>
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+															/>
+														</svg>
+													</a>
+												{/if}
+											</div>
+										{/if}
+									</div>
+								</div>
+
+								<div>
+									<p class="ml-4 font-sans text-sm text-left text-black">
+										{bandObject.instagram?.biography || ''}
+									</p>
 								</div>
 							</button>
 						{/each}
