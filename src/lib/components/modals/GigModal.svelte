@@ -88,11 +88,14 @@
 			<div class="flex flex-col">
 				<!-- Venue -->
 				{#if gig.venue}
-					<p class="mb-3 font-sans text-2xl font-extrabold text-gray-700 uppercase">
+					<div class="mb-3 font-sans text-2xl font-extrabold text-gray-700 row">
 						<a href={gig.venue.website}>
-							<u>@ {gig.venue.name}</u>
+							<div class="uppercase row whitespace-nowrap">
+								<span>@ {gig.venue.name}</span>
+							</div>
 						</a>
-					</p>
+						<div class="ml-2 font-sans text-gray-400 font-extralight">{gig.venue.suburb}</div>
+					</div>
 				{/if}
 				<!-- Date + Time -->
 				<DateTextMinimal date={gig.startDate} />
@@ -117,7 +120,7 @@
 				<img
 					src={moshtix140to600image(gig.image)}
 					alt={gig.title}
-					class="object-cover w-[600px] h-[600px] rounded-l-xl rounded-r-0"
+					class="object-cover w-[600px] h-[600px]"
 				/>
 			{/if}
 
@@ -127,7 +130,7 @@
 
 				<!-- BANDS SECTION -->
 				<div class="flex flex-col w-full overflow-hidden bg-black border-l-0 border-black">
-					<h2 class="w-full pb-1 font-sans text-2xl font-black text-center text-white">
+					<h2 class="w-full pt-1 font-sans text-2xl font-black text-center text-white">
 						BANDS <span class="font-mono">({gig.bandObjects.length})</span>
 					</h2>
 					<div

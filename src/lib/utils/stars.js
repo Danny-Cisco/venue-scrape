@@ -13,8 +13,6 @@ export function getStarCount(followers) {
 		followersK = Math.round(followersK / 10) * 10;
 	}
 
-	console.log('🚀 ~ getStarCount ~ followersK:', followersK);
-
 	let stars = 0;
 	for (const threshold of starGroupThresholds) {
 		if (followersK >= threshold) {
