@@ -10,7 +10,7 @@
 	import RetryingImage from '$lib/components/ui/RetryingImage.svelte';
 
 	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
-	import StarRating from '../ui/StarRating.svelte';
+	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
 
 	import { onMount } from 'svelte';
 
@@ -77,9 +77,12 @@
 			<p>Featuring:</p>
 			{#each gig.bandObjects as bandObject, i}
 				{#if i == 0}
-					<li class="ml-2 text-2xl row">{bandObject.bandname} <StarRating {bandObject} /></li>
+					<li class="ml-2 text-2xl row">
+						{bandObject.bandname}
+						<StarRatingBarColor {bandObject} />
+					</li>
 				{:else}
-					<li class="ml-2 row">{bandObject.bandname} <StarRating {bandObject} /></li>
+					<li class="ml-2 row">{bandObject.bandname} <StarRatingBarColor {bandObject} /></li>
 				{/if}
 			{/each}
 		</ul>
@@ -164,7 +167,7 @@
 											</h2>
 										</div>
 										<!-- Star Rating -->
-										<StarRating {bandObject} />
+										<StarRatingBarColor {bandObject} />
 
 										<!-- Instagram Info Section -->
 										<div class="">
