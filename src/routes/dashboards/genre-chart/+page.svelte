@@ -6,7 +6,7 @@
 	import GoogleMaps from '$lib/components/outputs/GoogleMaps.svelte';
 
 	import { dateRangePrompt } from '$lib/utils/prompts.ts';
-
+	import { toISOStringLocal } from '$lib/utils/date.ts';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
 	import {
@@ -161,8 +161,8 @@
 
 		const params = new URLSearchParams({
 			table: 'gigs',
-			dateRangeStart: start.toISOString(),
-			dateRangeEnd: end.toISOString()
+			dateRangeStart: toISOStringLocal(start),
+			dateRangeEnd: toISOStringLocal(end)
 		});
 
 		const res = await fetch(`/api/supabase/get-filtered-date?${params}`);

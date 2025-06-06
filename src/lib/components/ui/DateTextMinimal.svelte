@@ -32,13 +32,13 @@
 	let displayDate;
 
 	if (isSameDay(givenDate, now)) {
-		displayDate = format(givenDate, 'p'); // 2:45 PM
+		displayDate = 'Today, ' + format(givenDate, 'p'); // 2:45 PM
 	} else if (isTomorrow(givenDate)) {
-		displayDate = 'Tomorrow';
+		displayDate = 'Tomorrow, ' + format(givenDate, 'p'); // 2:45 PM;
 	} else if (isThisWeek(givenDate)) {
-		displayDate = format(givenDate, 'EEEE'); // Wednesday
+		displayDate = format(givenDate, 'EEEE') + ', ' + format(givenDate, 'p'); // 2:45 PM; // Wednesday
 	} else if (givenDate.getFullYear() === now.getFullYear()) {
-		displayDate = format(givenDate, 'EEEE MMM d'); // Jun 5
+		displayDate = format(givenDate, 'EEEE MMM d') + ', ' + format(givenDate, 'p'); // 2:45 PM; // Jun 5
 	} else {
 		displayDate = format(givenDate, 'EEEE MMM d, yyyy'); // Jun 5, 2023
 	}

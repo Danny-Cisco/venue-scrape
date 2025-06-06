@@ -5,15 +5,21 @@ export async function GET({ locals, url }) {
 
 	// Read optional date range
 	let dateRangeStart = url.searchParams.get('dateRangeStart');
+
 	let dateRangeEnd = url.searchParams.get('dateRangeEnd');
 
+	// WARNING 'NOW' WILL BE WRONG ON THE SERVER SIDE
 	// Use UTC now + 7 days if missing (defaults will be overridden by client-side logic)
 	const now = new Date();
 	const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+	// WARNING 'NOW' WILL BE WRONG ON THE SERVER SIDE
 	// Fall back to ISO strings
 	dateRangeStart = dateRangeStart || now.toISOString();
 	dateRangeEnd = dateRangeEnd || in7Days.toISOString();
+
+	console.log('🚀 ~ GET ~ dateRangeStart:', dateRangeStart);
+	console.log('🚀 ~ GET ~ dateRangeEnd:', dateRangeEnd);
 
 	try {
 		let records;

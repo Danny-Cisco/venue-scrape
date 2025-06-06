@@ -118,18 +118,18 @@
 						Bands ({gig.bandObjects.length})
 					</h2>
 					<div
-						class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
+						class="flex flex-col items-center flex-1 min-w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
 					>
 						{#each gig.bandObjects as bandObject (bandObject.bandname)}
 							<!-- Card container - this is the main change -->
 							<button
-								class="w-full max-w-md p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+								class="w-full max-w-md min-w-full p-3 text-gray-800 transition-shadow duration-300 ease-in-out bg-white shadow-lg rounded-xl hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
 								on:click={() => openBandModal(bandObject.bandname)}
 							>
-								<div class="flex">
+								<div class="flex min-w-full">
 									<!-- Instagram Profile Picture via Weserv -->
 									<div
-										class="bg-gradient-to-br from-gray-500 to-black min-w-[100px] max-w-[100px] rounded-xl overflow-hidden min-h-[100px] max-h-[100px]"
+										class="bg-gradient-to-br from-gray-500 to-black min-w-[150px] max-w-[150px] rounded-xl overflow-hidden min-h-[150px] max-h-[150px]"
 									>
 										{#if bandObject.instagram?.profilePicUrl}
 											<img
