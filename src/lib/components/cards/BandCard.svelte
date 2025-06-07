@@ -10,7 +10,7 @@
 </script>
 
 <button
-	class="w-full max-w-md p-3 pb-0 mx-4 text-gray-800 transition-shadow duration-300 ease-in-out bg-white rounded-sm shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+	class="w-full max-w-md p-3 pb-0 mx-4 text-gray-800 h-[245px] transition-shadow duration-300 ease-in-out bg-white rounded-sm shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
 	on:click={() => openBandModal(bandObject.bandname)}
 >
 	<div class="flex min-w-full">
@@ -26,57 +26,60 @@
 				/>
 			{/if}
 		</div>
-		<div class="flex flex-col w-full ml-4">
-			<!-- Top section: Dot and Band Name -->
-			<div class="">
-				<!-- <div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div> -->
-				<h2 class="mb-0 font-sans text-2xl font-black text-black capitalize text-start">
-					{bandObject.bandname}
-				</h2>
-				{#if bandObject.instagram}
-					<p>
-						<a
-							href={bandObject.instagram?.url}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="flex text-xs text-gray-400 font-extralight hover:underline"
-							on:click|stopPropagation
-							>@{bandObject.instagram?.username || bandObject.instagram}
-						</a>
-					</p>
-				{/if}
-			</div>
-			<!-- Star Rating -->
-			<div class="flex mt-3 mb-3">
-				<StarRatingBarColor {bandObject} />
-			</div>
+		<div class="flex flex-col w-full h-full ml-4">
+			<div class="grid w-full h-[150px] grid-cols-2">
+				<!-- Top section: Dot and Band Name -->
+				<div class="flex flex-col justify-between h-full">
+					<!-- <div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div> -->
+					<div>
+						<h2
+							class="mb-0 font-sans text-2xl font-black text-black capitalize whitespace-nowrap text-start"
+						>
+							{bandObject.bandname}
+						</h2>
+						{#if bandObject.instagram}
+							<p>
+								<a
+									href={bandObject.instagram?.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="flex text-xs text-gray-400 font-extralight hover:underline"
+									on:click|stopPropagation
+									>@{bandObject.instagram?.username || bandObject.instagram}
+								</a>
+							</p>
+						{/if}
+					</div>
 
-			<!-- <div class="flex-1"></div> -->
+					<!-- Star Rating -->
+					<div class="flex mt-3 mb-3">
+						<StarRatingBarColor {bandObject} />
+					</div>
 
-			<!-- Instagram Info Section -->
-			<div class="grid w-full h-full grid-cols-2">
-				<div>
-					{#if bandObject.instagram}
-						<div class="flex flex-col items-start space-y-1">
+					<!-- <div class="flex-1"></div> -->
+
+					<!-- Instagram Info Section -->
+					<div class="block">
+						{#if bandObject.instagram}
 							{#if bandObject.instagram.followersCount}
-								<div class="flex gap-2 text-sm text-blue-500">
+								<div class="flex items-end gap-2 text-sm text-blue-500">
 									{(bandObject.instagram.followersCount / 1000).toFixed(1)}k
 									<div class="font-sans text-sm font-bold">Followers</div>
 								</div>
 							{/if}
 							{#if bandObject.instagram.postsCount}
-								<div class="flex gap-2 text-sm text-blue-500">
+								<div class="flex items-end gap-2 text-sm text-blue-500">
 									{bandObject.instagram.postsCount}
 									<div class="font-sans text-sm font-bold">Posts</div>
 								</div>
 							{/if}
-						</div>
-					{:else}
-						<div class="text-xs italic text-gray-500">No Instagram profile</div>
-					{/if}
+						{:else}
+							<div class="text-xs italic text-gray-500">No Instagram profile</div>
+						{/if}
+					</div>
 				</div>
-				<!-- links section -->
 
+				<!-- links section -->
 				{#if bandObject.instagram}
 					<div
 						class="flex flex-col items-end h-full pt-3 mt-auto space-y-1 border-t-0 border-gray-200"
@@ -138,6 +141,7 @@
 			</div>
 		</div>
 	</div>
+
 	<!-- Biography section -->
 	<div>
 		<div
