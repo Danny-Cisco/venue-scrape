@@ -18,6 +18,11 @@
 
 	export let showDescription = false;
 
+	function scrollToTickets() {
+		const el = document.getElementById('ticket-lower');
+		if (el) el.scrollIntoView({ behavior: 'smooth' });
+	}
+
 	let question = gig.description;
 	let systemPrompt = htmlFormatter;
 
@@ -116,8 +121,8 @@
 
 			<!-- right hand side -->
 			<div class="flex flex-col justify-end gap-4 mt-1">
-				<!-- TICKET SECTION -->
-				<div class="flex justify-end gap-1">
+				<!-- TICKET SECTION UPPER-->
+				<div class="flex justify-end gap-1 hover:cursor-pointer" on:click={scrollToTickets}>
 					{#each gig.tickets as ticket}
 						<TicketCardSmall {ticket} />
 					{/each}
@@ -193,8 +198,9 @@
 		</div>
 
 		{#if gig.tickets && gig.tickets.length > 0}
-			<!-- TICKETS SECTION -->
+			<!-- TICKETS SECTION LOWER-->
 			<div
+				id="ticket-lower"
 				class="flex flex-col w-full max-w-full gap-1 p-5 font-sans text-2xl font-black text-white bg-black rounded-sm"
 				in:fade
 			>
