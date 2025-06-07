@@ -44,4 +44,4 @@
 	}
 </script>
 
-<p class="text-xl font-bold text-black">{displayDate}</p>
+{displayDate}
