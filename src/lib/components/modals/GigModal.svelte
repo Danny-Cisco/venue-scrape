@@ -155,8 +155,28 @@
 
 				<!-- BANDS SECTION -->
 				<div class="flex flex-col w-full overflow-hidden bg-black border-l-0 border-black">
-					<h2 class="w-full pt-1 font-sans text-2xl font-black text-center text-white">
-						<span class="font-mono">{gig.bandObjects.length}</span> LIVE ACTS
+					<h2
+						class="justify-center w-full pt-1 font-sans text-2xl font-black text-center text-white row"
+					>
+						<span class="font-mono border-[1px] border-white rounded-full px-4"
+							>{gig.bandObjects.length}</span
+						>
+
+						LIVE ACT{#if gig.bandObjects.length != 1}S{/if}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"
+							/>
+						</svg>
 					</h2>
 					<div
 						class="flex flex-col items-center flex-1 w-full pb-10 space-y-4 overflow-hidden overflow-y-auto"
@@ -198,7 +218,7 @@
 							<a
 								href={gig.ticketUrl}
 								target="_blank"
-								class="justify-end w-full mr-2 row gig-ticket-button"
+								class="justify-end w-full mr-2 row gig-ticket-button hover:underline"
 							>
 								Visit Ticketing Site
 								<svg
