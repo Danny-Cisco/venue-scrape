@@ -157,7 +157,7 @@
 				<div class="flex flex-col w-full overflow-hidden bg-black border-l-0 border-black">
 					{#if gig.bandObjects?.length > 0}
 						<h2
-							class="justify-center w-full pt-1 font-sans text-2xl font-black text-center text-white row"
+							class="justify-center w-full pt-2 font-sans text-2xl font-black text-center text-white row"
 						>
 							<span class="font-mono border-[1px] border-white rounded-full px-4"
 								>{gig.bandObjects.length}</span
