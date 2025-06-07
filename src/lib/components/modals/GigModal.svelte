@@ -69,43 +69,47 @@
 	<div class="w-full gig-details">
 		<!-- Gig Title -->
 		<h2
-			class="px-4 py-2 mb-2 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
+			class="px-5 py-3 mb-1 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
 		>
 			{@html gig.title}
+			<!-- Venue -->
+			{#if gig.venue}
+				<div class="mt-3 font-sans text-3xl font-extrabold text-gray-700 row">
+					<a href={gig.venue.website}>
+						<div class="uppercase row whitespace-nowrap hover:cursor-pointer hover:underline">
+							<span>@ {gig.venue.name}</span>
+						</div>
+					</a>
+					<div class="ml-2 font-sans text-gray-400 font-extralight">
+						{gig.venue.suburb === 'Melbourne' ? 'Melbourne, City' : gig.venue.suburb}
+					</div>
+				</div>
+			{/if}
 		</h2>
 
-		<ul class="flex flex-col mb-4 font-sans font-black text-black">
-			<p>Featuring:</p>
-			{#each gig.bandObjects as bandObject, i}
-				{#if i == 0}
-					<li class="ml-2 text-2xl row">
-						{bandObject.bandname}
-						<StarRatingBarColor {bandObject} />
-					</li>
-				{:else}
-					<li class="ml-2 row">{bandObject.bandname} <StarRatingBarColor {bandObject} /></li>
-				{/if}
-			{/each}
+		<ul class="flex flex-col mt-2 mb-4 ml-4 font-sans font-black text-black">
+			<!-- <p class="">Featuring...</p> -->
+			<ul class="my-1">
+				{#each gig.bandObjects as bandObject, i}
+					{#if i == 0}
+						<li class="ml-2 text-2xl row">
+							{bandObject.bandname}
+							<StarRatingBarColor {bandObject} />
+						</li>
+					{:else}
+						<li class="ml-2 row">{bandObject.bandname} <StarRatingBarColor {bandObject} /></li>
+					{/if}
+				{/each}
+			</ul>
 		</ul>
 
 		<div class="grid grid-cols-2">
 			<div class="flex flex-col">
-				<!-- Venue -->
-				{#if gig.venue}
-					<div class="mb-3 font-sans text-2xl font-extrabold text-gray-700 row">
-						<a href={gig.venue.website}>
-							<div class="uppercase row whitespace-nowrap hover:cursor-pointer hover:underline">
-								<span>@ {gig.venue.name}</span>
-							</div>
-						</a>
-						<div class="ml-2 font-sans text-gray-400 font-extralight">
-							{gig.venue.suburb === 'Melbourne' ? 'Melbourne, City' : gig.venue.suburb}
-						</div>
-					</div>
-				{/if}
 				<!-- Date + Time -->
 				<div class="flex">
-					<div class="px-4 py-2 text-xl text-white bg-black rounded-sm font-regular">
+					<div
+						class="px-4 py-2 text-xl text-black bg-white border border-black rounded-sm font-regular"
+					>
 						<DateTextMinimal date={gig.startDate} />
 					</div>
 				</div>
@@ -221,7 +225,7 @@
 
 											{#if bandObject.instagram}
 												<div
-													class="flex flex-col items-end h-full pt-3 mt-auto space-y-3 border-t-0 border-gray-200"
+													class="flex flex-col items-end h-full pt-3 mt-auto space-y-1 border-t-0 border-gray-200"
 												>
 													<div class="flex-1"></div>
 													<div class="">
@@ -231,7 +235,7 @@
 															href={bandObject.instagram.url}
 															target="_blank"
 															rel="noopener noreferrer"
-															class="flex text-xs text-blue-600 hover:underline"
+															class="flex text-xs text-blue-600 row hover:underline"
 															on:click|stopPropagation
 															>Instagram
 															<svg
@@ -256,7 +260,7 @@
 															href={bandObject.instagram.externalUrl}
 															target="_blank"
 															rel="noopener noreferrer"
-															class="flex items-center text-xs text-green-600 hover:text-green-700"
+															class="flex items-center text-xs text-green-600 row hover:text-green-700"
 															on:click|stopPropagation
 														>
 															Linktree <svg
