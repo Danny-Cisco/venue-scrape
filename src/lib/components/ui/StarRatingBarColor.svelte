@@ -4,11 +4,11 @@
 	export let bandObject;
 
 	const levelColors = [
-		'bg-red-400 border-red-500',
-		'bg-orange-400 border-orange-500',
-		'bg-yellow-400 border-yellow-500',
 		'bg-lime-400 border-lime-500',
-		'bg-green-400 border-green-500'
+		'bg-green-400 border-green-500',
+		'bg-yellow-400 border-yellow-500',
+		'bg-orange-400 border-orange-500',
+		'bg-red-400 border-red-500'
 	];
 
 	$: level = getStarCount(bandObject?.instagram?.followersCount);
