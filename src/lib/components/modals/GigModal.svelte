@@ -1,5 +1,4 @@
 <script>
-	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 	import { fade, fly } from 'svelte/transition';
 	export let gig = {};
 
@@ -10,13 +9,14 @@
 	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
 	import BandCard from '../cards/BandCard.svelte';
+	import TicketCardLong from '../cards/TicketCardLong.svelte';
 
 	import { onMount } from 'svelte';
 
 	import { htmlFormatter } from '$lib/utils/prompts.ts';
+	import TicketCardSmall from '../cards/TicketCardSmall.svelte';
 
 	export let showDescription = false;
-	export let showTickets = true;
 
 	let question = gig.description;
 	let systemPrompt = htmlFormatter;
@@ -82,35 +82,50 @@
 			{/if}
 		</h2>
 
-		<ul class="flex flex-col mt-2 mb-4 ml-4 font-sans font-black text-black">
-			<!-- <p class="">Featuring...</p> -->
-			<ul class="my-1">
-				{#each gig.bandObjects as bandObject, i}
-					{#if i == 0}
-						<li class="ml-2 text-2xl row">
-							{bandObject.bandname}
-							<StarRatingBarColor {bandObject} />
-						</li>
-					{:else}
-						<li class="ml-2 row">{bandObject.bandname} <StarRatingBarColor {bandObject} /></li>
-					{/if}
-				{/each}
-			</ul>
-		</ul>
-
 		<div class="grid grid-cols-2">
-			<div class="flex flex-col">
-				<!-- Date + Time -->
-				<div class="flex">
-					<div
-						class="px-4 py-2 text-xl text-black bg-white border border-black rounded-sm font-regular"
-					>
-						<DateTextMinimal date={gig.startDate} />
+			<!-- left hand side -->
+			<div>
+				<ul class="flex flex-col mt-2 mb-4 ml-4 font-sans font-black text-black">
+					<!-- <p class="">Featuring...</p> -->
+					<ul class="my-1">
+						{#each gig.bandObjects as bandObject, i}
+							{#if i == 0}
+								<li class="ml-2 text-2xl row">
+									{bandObject.bandname}
+									<StarRatingBarColor {bandObject} />
+								</li>
+							{:else}
+								<li class="ml-2 row">{bandObject.bandname} <StarRatingBarColor {bandObject} /></li>
+							{/if}
+						{/each}
+					</ul>
+				</ul>
+				<div class="flex-grow"></div>
+
+				<div class="flex flex-col">
+					<!-- Date + Time -->
+					<div class="flex">
+						<div
+							class="px-4 py-2 text-xl text-black bg-white border border-black rounded-sm font-regular"
+						>
+							<DateTextMinimal date={gig.startDate} />
+						</div>
 					</div>
 				</div>
 			</div>
-			<!-- Genres -->
-			<div class="flex justify-end w-full mt-1">
+
+			<!-- right hand side -->
+			<div class="flex flex-col justify-end gap-4 mt-1">
+				<!-- TICKET SECTION -->
+				<div class="flex justify-end gap-1">
+					{#each gig.tickets as ticket}
+						<TicketCardSmall {ticket} />
+					{/each}
+				</div>
+
+				<div class="flex-1"></div>
+
+				<!-- Genres -->
 				<div class="flex items-end justify-end w-full gap-2">
 					{#each gig.genres as genre}
 						<div
@@ -154,68 +169,60 @@
 				</div>
 			</div>
 		</div>
-		<!-- 🎟️ Tickets Section -->
-		{#if gig.tickets && gig.tickets.length > 0}
-			<h2 class="text-lg font-bold text-black uppercase row">
-				<!-- Ticket Url -->
-				{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-					<a
-						href={gig.ticketUrl}
-						target="_blank"
-						class="justify-end w-full mr-6 text-xs row gig-ticket-button"
-					>
-						Ticket Site
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-							/>
-						</svg>
-					</a>
-				{:else}
-					<p class="gig-ticket-free">Free Entry</p>
-				{/if}
-			</h2>
 
-			<div class="flex flex-col w-full max-w-full gap-1 p-2 text-xs text-black rounded-lg" in:fade>
-				{#each gig.tickets as ticket, i}
-					<div
-						in:fly={{ y: 10, duration: 300, delay: i * 70 }}
-						class="grid [grid-template-columns:auto_1fr_auto_auto] w-full shadow-lg max-w-full gap-2 bg-white border-gray-300 border border-dashed p-4 rounded"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-							fill="currentColor"
-							stroke="1.5"
-							class="w-4"
+		{#if gig.tickets && gig.tickets.length > 0}
+			<!-- TICKETS SECTION -->
+			<div
+				class="flex flex-col w-full max-w-full gap-1 p-5 font-sans text-2xl font-black text-white bg-black rounded-sm"
+				in:fade
+			>
+				<div class="flex justify-between w-full">
+					<h1 class="row">
+						TICKETS INFO <span class="rotate-6"
+							><svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								stroke="1.5"
+								class="w-6"
+							>
+								<path
+									d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"
+								></path>
+							</svg></span
 						>
-							<path
-								d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"
-							></path>
-						</svg>
-						<div class="font-serif capitalise">{@html ticket.ticketType}</div>
-						<div class="mr-4">
-							{#if ticket.price != 0}
-								${ticket.price}
-							{:else}
-								<div class="text-gray-300">Free</div>
-							{/if}
-						</div>
-						{#if ticket.availability === 'SoldOut'}
-							<SoldOut />
+					</h1>
+					<h2 class="text-lg font-bold text-black uppercase row">
+						<!-- 🎟️ Tickets Link -->
+						{#if gig.ticketUrl && gig.ticketUrl !== '#'}
+							<a
+								href={gig.ticketUrl}
+								target="_blank"
+								class="justify-end w-full mr-2 row gig-ticket-button"
+							>
+								Visit Ticketing Site
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="size-5"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+									/>
+								</svg>
+							</a>
 						{:else}
-							<span>{ticket.availability}</span>
+							<p class="gig-ticket-free">Free Entry</p>
 						{/if}
-					</div>
+					</h2>
+				</div>
+				{#each gig.tickets as ticket}
+					<TicketCardLong {ticket} />
 				{/each}
 			</div>
 		{/if}
