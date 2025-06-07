@@ -50,12 +50,12 @@
 			<span class="text-gray-600 font-extralight">Free</span>
 		{/if}
 	</div>
-	<div class="font-mono font-extralight">
+	<div class="relative font-mono font-extralight">
 		<!-- Ticket availability -->
 		{#if ticket.availability === 'SoldOut'}
-			<SoldOut />
-		{:else}
-			<span class="text-green-500">{ticket.availability}</span>
-		{/if}
+			<div class="absolute inset-0 center">
+				<SoldOut />
+			</div>
+		{/if}<span class="text-green-500">{ticket.availability}</span>
 	</div>
 </div>

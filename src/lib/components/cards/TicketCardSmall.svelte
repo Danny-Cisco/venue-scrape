@@ -5,8 +5,18 @@
 </script>
 
 <div
-	class="flex flex-col items-center justify-start p-2 font-mono text-black bg-white rounded shadow-lg"
+	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white rounded shadow-lg"
 >
+	<!-- FANCY SHADOW CURLS -->
+	<div>
+		<div
+			class="absolute top-0 left-0 w-4 h-4 bg-gradient-to-br from-black/10 via-transparent to-transparent"
+		></div>
+		<!-- <div
+			class="absolute bottom-0 left-0 w-4 h-8 bg-gradient-to-tr from-black/10 via-transparent to-transparent"
+		></div> -->
+	</div>
+
 	<!-- <div class="font-serif capitalise">{@html ticket.ticketType}</div> -->
 	<div class="flex items-center justify-center w-full -ml-2 font-mono font-black text-center">
 		{#if ticket.price != 0}
@@ -31,11 +41,12 @@
 			<div class="ml-2 font-mono text-gray-600 font-extralight">Free</div>
 		{/if}
 	</div>
-	<div class="font-mono center">
+	<div class="relative font-mono center">
 		{#if ticket.availability === 'SoldOut'}
-			<SoldOut />
-		{:else}
-			<div class="w-full text-center text-green-500">{ticket.availability}</div>
+			<div class="absolute top-0">
+				<SoldOut />
+			</div>
 		{/if}
+		<div class="w-full text-center text-green-500">{ticket.availability}</div>
 	</div>
 </div>

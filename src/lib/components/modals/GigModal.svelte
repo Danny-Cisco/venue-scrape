@@ -150,7 +150,7 @@
 				<img
 					src={moshtix140to600image(gig.image)}
 					alt={gig.title}
-					class="object-cover w-[600px] h-[600px]"
+					class="object-cover border-4 border-black w-[600px] h-[600px]"
 				/>
 			{/if}
 
@@ -249,9 +249,11 @@
 						{/if}
 					</h2>
 				</div>
-				{#each gig.tickets as ticket}
-					<TicketCardLong {ticket} />
-				{/each}
+				<div class="space-y-4">
+					{#each gig.tickets as ticket}
+						<TicketCardLong {ticket} />
+					{/each}
+				</div>
 			</div>
 		{/if}
 
