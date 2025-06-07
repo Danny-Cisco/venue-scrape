@@ -87,9 +87,9 @@
 			{/if}
 		</h2>
 
-		<div class="grid grid-cols-2">
+		<div class="grid items-stretch grid-cols-2">
 			<!-- left hand side -->
-			<div>
+			<div class="flex flex-col justify-between">
 				<ul class="flex flex-col mt-2 mb-4 ml-4 font-sans font-black text-black">
 					<!-- <p class="">Featuring...</p> -->
 					<ul class="my-1">
