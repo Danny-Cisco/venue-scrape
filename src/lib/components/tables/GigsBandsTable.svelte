@@ -88,7 +88,9 @@
 		<span
 			class="absolute inset-0 z-0 transition-opacity duration-200 opacity-0 bg-gradient-to-br from-purple-500 to-pink-500 group-hover:opacity-100 rounded-t-2xl"
 		></span>
-		<span class="relative z-10">Gigs ({gigs?.length || 0})</span>
+		<span class="relative z-10 font-sans text-lg font-semibold uppercase"
+			>Gigs ({gigs?.length || 0})</span
+		>
 	</button>
 
 	<button
@@ -105,7 +107,9 @@
 			class="absolute inset-0 z-0 text-white transition-opacity duration-200 opacity-0 bg-gradient-to-br from-green-400 to-green-600 group-hover:opacity-100 rounded-t-2xl"
 		>
 		</span>
-		<span class="relative z-10">Bands ({uniqueBands?.length || 0})</span>
+		<span class="relative z-10 font-sans text-lg font-semibold uppercase"
+			>Bands ({uniqueBands?.length || 0})</span
+		>
 	</button>
 </div>
 
