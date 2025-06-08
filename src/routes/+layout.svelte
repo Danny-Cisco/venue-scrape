@@ -697,36 +697,40 @@
 
 	<!-- Button to toggle left sidebar -->
 	<button
-		class="absolute left-0 z-20 p-2 px-4 my-1 z-[999999] rounded-r-full top-[101px] bg-white/10 btn-hover"
+		class="absolute left-0 z-20 p-2 pr-4 my-1 z-[999999] text-center rounded-r-full top-[101px] bg-purple-500 text-white btn-hover hover:bg-pink-500"
 		on:click={() => showLeftSidebar.update((v) => !v)}
 	>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke-width="1.5"
-			stroke="currentColor"
-			class="size-6"
-			style="transition: transform 0.3s ease;"
-			style:transform={$showLeftSidebar ? 'rotate(0deg)' : 'rotate(180deg)'}
-		>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-			/>
-		</svg>
+		MENU <div class="center">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="size-6"
+				style="transition: transform 0.3s ease;"
+				style:transform={$showLeftSidebar ? 'rotate(0deg)' : 'rotate(180deg)'}
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+				/>
+			</svg>
+		</div>
 	</button>
 </div>
 
 <!-- Header -->
 <header
-	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-extrabold leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-gradient-to-br from-purple-500 to-pink-500"
+	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-extrabold leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-black"
 >
 	<!-- Logo -->
-	<strong class="flex items-end gap-1 p-4 pt-0 text-3xl">
+	<strong class="flex items-end p-2 text-3xl bg-black border-[1px] rounded-sm border-purple-500">
 		<img src="/icon.svg" class="size-10" alt="" />
-		<span class="text-2xl uppercase"> Melbourne Music Scene </span>
+		<span class="px-3 py-1 font-sans text-2xl font-black text-white uppercase bg-black">
+			Melbourne Music Scene
+		</span>
 	</strong>
 
 	<!-- User Authentication -->
@@ -810,7 +814,6 @@
 
 	.btn-hover:hover {
 		transform: translateY(-2px);
-		background: hsla(0deg, 0%, 100%, 0.2);
 	}
 	h2 {
 		margin-top: 1.2rem;
