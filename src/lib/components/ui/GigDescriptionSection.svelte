@@ -38,12 +38,12 @@
 <div class="">
 	{#if htmlDescription}
 		<!-- Formatted HTML Description -->
-		<div class="min-w-full p-4 font-sans text-white bg-black description font-extralight" in:fade>
+		<div class="min-w-full p-5 font-sans text-white bg-black description font-extralight" in:fade>
 			{@html htmlDescription}
 		</div>
 	{:else if formatting}
 		<!-- Loading Animation -->
-		<div class="relative pl-4 overflow-hidden text-xs text-gray-400 bg-black">
+		<div class="relative pl-5 overflow-hidden text-xs text-gray-400 bg-black">
 			<span
 				class="wave-mask bg-gradient-to-r from-gray-500 via-white to-gray-500 bg-[length:200%_100%] bg-clip-text text-transparent"
 			>
@@ -53,17 +53,17 @@
 
 		<!-- Fallback Raw Description with toggle -->
 		<div class="max-w-full p-4 font-sans text-white bg-black font-extralight">
-			<p class={showDescription ? '' : 'line-clamp-3'}>
+			<!-- <p class={showDescription ? '' : 'line-clamp-3'}>
 				{@html gig.descriptionHtml || gig.description}
-			</p>
+			</p> -->
 
 			<!-- Toggle Button -->
-			<button
+			<!-- <button
 				class="mt-2 text-sm text-blue-400 hover:text-blue-300 hover:underline"
 				on:click={() => (showDescription = !showDescription)}
 			>
 				{showDescription ? 'Show less ▲' : 'Show more ▼'}
-			</button>
+			</button> -->
 		</div>
 	{/if}
 </div>

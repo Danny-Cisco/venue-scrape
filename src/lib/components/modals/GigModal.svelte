@@ -160,6 +160,7 @@
 				</div>
 			</div>
 		</div>
+		<GigDescriptionSection {gig} />
 
 		{#if gig.tickets && gig.tickets.length > 0}
 			<!-- TICKETS SECTION LOWER-->
@@ -220,7 +221,6 @@
 				</div>
 			</div>
 		{/if}
-		<GigDescriptionSection {gig} />
 	</div>
 </div>
 

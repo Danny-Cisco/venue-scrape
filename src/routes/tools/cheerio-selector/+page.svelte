@@ -15,7 +15,8 @@
 		'moshtix-venueUrls-to-gigs',
 		'humanitix-json',
 		'eventbrite-json',
-		'john-curtain-links'
+		'john-curtain-links',
+		'linktree-profile-pic'
 	];
 
 	async function useCheerio(endpoint) {
