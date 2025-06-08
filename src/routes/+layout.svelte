@@ -101,8 +101,8 @@
 			transition:slide={{ axis: 'x' }}
 			on:click={() => ($showLeftSidebar = false)}
 		>
-			<div class="h-[101px]"></div>
-			<h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Melbourne Music Scene</h2>
+			<div class="h-[121px]"></div>
+			<!-- <h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Melbourne Music Scene</h2> -->
 			<ul>
 				<li class="mb-2 row">
 					<a
@@ -173,7 +173,9 @@
 				</li>
 			</ul>
 			<a href="/dashboards">
-				<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+				<h2
+					class="justify-start mb-2 ml-0 font-sans text-base text-white uppercase font-extralight whitespace-nowrap"
+				>
 					Dashboards
 				</h2></a
 			>
@@ -226,7 +228,9 @@
 
 			{#if !profile?.read_only}
 				<a href="/venues">
-					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+					<h2
+						class="justify-start mb-2 ml-0 font-sans text-base text-white uppercase font-extralight whitespace-nowrap"
+					>
 						Venues
 					</h2></a
 				>
@@ -322,7 +326,9 @@
 					</li>
 				</ul>
 				<a href="/gig-guides">
-					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+					<h2
+						class="justify-start mb-2 ml-0 font-sans text-base text-white uppercase font-extralight whitespace-nowrap"
+					>
 						Gig Guides
 					</h2></a
 				>
@@ -353,7 +359,9 @@
 				</ul>
 
 				<a href="/ticket-sites">
-					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+					<h2
+						class="justify-start mb-2 ml-0 font-sans text-base text-white uppercase font-extralight whitespace-nowrap"
+					>
 						Ticket Sites
 					</h2></a
 				>
@@ -386,7 +394,9 @@
 
 			{#if profile?.dev_mode}
 				<a href="/tools">
-					<h2 class="justify-start mb-2 ml-0 text-lg font-semibold text-white whitespace-nowrap">
+					<h2
+						class="justify-start mb-2 ml-0 font-sans text-base text-white uppercase font-extralight whitespace-nowrap"
+					>
 						Tools
 					</h2></a
 				>
@@ -726,7 +736,9 @@
 	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-extrabold leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-black"
 >
 	<!-- Logo -->
-	<strong class="flex items-end p-2 text-3xl bg-black border-[1px] rounded-sm border-purple-500">
+	<strong
+		class="flex items-end p-2 px-4 text-3xl bg-black border-[1px] rounded-full border-purple-500"
+	>
 		<img src="/icon.svg" class="size-10" alt="" />
 		<span class="px-3 py-1 font-sans text-2xl font-black text-white uppercase bg-black">
 			Melbourne Music Scene
@@ -738,7 +750,7 @@
 		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-white rounded-md">
 			{#if session}
 				<a href="/account" class="flex items-center gap-4"
-					><p class="font-bold text-white">
+					><p class="font-sans text-lg text-white font-extralight">
 						{profile?.username || session.user.email || session.user.displayName}
 					</p>
 

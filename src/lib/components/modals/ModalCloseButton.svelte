@@ -3,7 +3,7 @@
 </script>
 
 <div
-	class="absolute bg-purple-500 rounded-full top-4 size-8 center hover:bg-pink-500 right-5"
+	class="absolute bg-purple-500 rounded-full shadow-xl top-4 size-10 center hover:bg-pink-500 btn-hover right-5"
 	on:click={() => {
 		$showGigModal = false;
 		$showBandModal = false;
@@ -16,8 +16,18 @@
 		viewBox="0 0 24 24"
 		stroke-width="1.5"
 		stroke="currentColor"
-		class="size-6"
+		class="size-8"
 	>
 		<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
 	</svg>
 </div>
+
+<style>
+	.btn-hover {
+		transition: transform 250ms;
+	}
+
+	.btn-hover:hover {
+		transform: translateY(-2px);
+	}
+</style>
