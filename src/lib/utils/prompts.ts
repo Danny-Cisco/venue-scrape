@@ -28,7 +28,10 @@ export const genres = [
 	'Ska & Reggae',
 	'Indie',
 	'Religious',
-	"Kid's Music"
+	"Kid's Music",
+	'Podcaster',
+	'Performance Art',
+	'Other'
 ];
 
 export const liveMusicCheck = `You are to act as a simple music classifier. with the prime function of weeding out gigs that are heavily relying on djs to fill the night rather than bands. You will be given a description of an event, and you are to determine if the event is PREDOMINANTLY a live music event. Some events may be predominantly DJs, so these events will therefore NOT be live music events.  The output must be in the following json format. {"thinking": <please use this field to explain your thinking process, beginning with "So, I have been asked to determine if this gig is PREDOMINANTLY a live music event, billed with bands and/or solo artists, not djs.>, "liveMusic": [ <here is where you place the boolean TRUE or FALSE> ]} . Please dont say anything else or you will spoil the program. please dont include backticks or anything else like the word json. just provide the json, and do your thinking inside the provided field.  `;

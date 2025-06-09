@@ -30,7 +30,7 @@
 
 <div class="min-w-full overflow-y-auto gig-card">
 	<!-- Top Summary Section -->
-	<div class="w-full gig-details">
+	<div class="w-[1100px] gig-details">
 		<!-- Gig Title -->
 		<h2
 			class="px-5 py-3 mb-1 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"

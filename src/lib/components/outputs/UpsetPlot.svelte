@@ -32,7 +32,7 @@
 	// --- Constants ---
 	// Adjust margins/gaps for combined label layout
 	const MARGIN = { top: 30, right: 100, bottom: 10, left: 100 }; // Minimal left margin before bars
-	const SET_LABEL_WIDTH = 80; // Increased width for name + count
+	const SET_LABEL_WIDTH = 90; // Increased width for name + count
 	const BAR_LABEL_GAP = 5; // Gap between bar plot end and set labels start
 	const LABEL_MATRIX_GAP = 1; // Gap between set labels end and matrix start
 	const MATRIX_AXIS_GAP = 10; // Vertical gap
