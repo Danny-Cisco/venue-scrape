@@ -61,13 +61,14 @@
 	<div class="flex min-w-full">
 		<!-- Instagram Profile Picture via Weserv -->
 		<div
-			class="bg-gradient-to-br from-gray-500/5 gap-4 to-black/5 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
+			class="bg-black gap-4 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
 		>
 			{#key key}
 				{#if showLinktreePic}
 					<img src={profilePicUrl} alt="_linktree pic" fallback="/fallback-avatar.png" />
 				{:else if loading}
-					<div class="w-full h-full bg-black"></div>
+					<!-- SHOW ANIMATED GRADIENT WAVE WHILE LOADING -->
+					<div class="w-full h-full loading-wave"></div>
 				{:else if bandObject.instagram?.profilePicUrl}
 					<img
 						src={weserv(bandObject.instagram.profilePicUrl)}
@@ -75,6 +76,9 @@
 						fallback="/fallback-avatar.png"
 						on:error={getLinktreePic(bandObject.instagram?.externalUrl)}
 					/>
+				{:else}
+					<!-- FALLBACK TO SOLID BLACK IF NOT LOADING AND NOTHING ELSE -->
+					<div class="w-full h-full bg-black"></div>
 				{/if}
 			{/key}
 		</div>
@@ -206,3 +210,25 @@
 		</div>
 	</div>
 </button>
+
+<style>
+	.loading-wave {
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, black, #555, black);
+		background-size: 200% 100%;
+		animation: wave 2s ease-in-out infinite;
+	}
+
+	@keyframes wave {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
+</style>
