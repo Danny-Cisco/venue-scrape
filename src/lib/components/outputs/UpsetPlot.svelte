@@ -15,7 +15,8 @@
 	export let data = defaultData;
 	export let soloSetMode = 'all';
 	export let className = '';
-	export let color = 'hsl(210, 60%, 60%)';
+	// export let color = 'hsl(210, 60%, 60%)';
+	export let color = 'hsl(330, 60%, 60%)';
 	export let inactiveColor = '#555';
 	export let setPlotWidth = 150;
 	export let intersectionPlotHeight = 250;
