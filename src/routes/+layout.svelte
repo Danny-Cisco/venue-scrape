@@ -102,7 +102,7 @@
 			on:click={() => ($showLeftSidebar = false)}
 		>
 			<div class="h-[121px]"></div>
-			<!-- <h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Melbourne Music Scene</h2> -->
+			<!-- <h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Music Naarm</h2> -->
 			<ul>
 				<li class="mb-2 row">
 					<a
@@ -741,7 +741,7 @@
 	>
 		<img src="/icon.svg" class="size-10" alt="" />
 		<span class="px-3 py-1 font-sans text-2xl font-black text-white uppercase bg-black">
-			Melbourne Music Scene
+			Music Naarm
 		</span>
 	</strong>
 

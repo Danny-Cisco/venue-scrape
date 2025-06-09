@@ -28,7 +28,7 @@
 	}
 </script>
 
-<div class="w-full overflow-y-auto gig-card">
+<div class="min-w-full overflow-y-auto gig-card">
 	<!-- Top Summary Section -->
 	<div class="w-full gig-details">
 		<!-- Gig Title -->
@@ -233,7 +233,6 @@
 		background-color: white;
 
 		max-width: 1200px;
-		width: auto;
 
 		padding: 2rem;
 		height: 100%;

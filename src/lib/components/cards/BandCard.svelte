@@ -6,6 +6,9 @@
 	export let bandObject;
 
 	let key = 0;
+	let loading = false;
+	let showLinktreePic = false;
+	let failed = false;
 
 	let profilePicUrl = '';
 
@@ -14,6 +17,8 @@
 	}
 
 	async function getLinktreePic(url) {
+		if (failed) return;
+		loading = true;
 		try {
 			const response = await fetch(
 				`/api/cheerio/linktree-profile-pic?url=${encodeURIComponent(url)}`
@@ -26,20 +31,27 @@
 			console.log('🚀 ~ getLinktreePic ~ data:', data);
 
 			if (data.image) {
-				key += key;
-				return data.image; // The profile pic URL
+				showLinktreePic = true;
+
+				profilePicUrl = data.image;
+				return;
 			} else {
+				failed = true;
 				throw new Error(data.error || 'Image not found');
 			}
 		} catch (err) {
 			console.error('Failed to fetch Linktree profile picture:', err);
+			failed = true;
 			return null;
+		} finally {
+			loading = false;
+			key += key;
 		}
 	}
 
-	onMount(async () => {
-		profilePicUrl = await getLinktreePic(bandObject.instagram?.externalUrl);
-	});
+	// onMount(async () => {
+	// 	profilePicUrl = await getLinktreePic(bandObject.instagram?.externalUrl);
+	// });
 </script>
 
 <button
@@ -51,16 +63,18 @@
 		<div
 			class="bg-gradient-to-br from-gray-500/5 gap-4 to-black/5 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
 		>
-			<!-- {#if bandObject.instagram?.profilePicUrl}
-				<img
-					src={weserv(bandObject.instagram.profilePicUrl)}
-					alt="_profile pic"
-					fallback="/fallback-avatar.png"
-				/>
-			{/if} -->
 			{#key key}
-				{#if bandObject.instagram?.externalUrl}
+				{#if showLinktreePic}
 					<img src={profilePicUrl} alt="_linktree pic" fallback="/fallback-avatar.png" />
+				{:else if loading}
+					<div class="w-full h-full bg-black"></div>
+				{:else if bandObject.instagram?.profilePicUrl}
+					<img
+						src={weserv(bandObject.instagram.profilePicUrl)}
+						alt="_insta pic"
+						fallback="/fallback-avatar.png"
+						on:error={getLinktreePic(bandObject.instagram?.externalUrl)}
+					/>
 				{/if}
 			{/key}
 		</div>

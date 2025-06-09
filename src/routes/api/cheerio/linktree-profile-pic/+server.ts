@@ -1,42 +1,33 @@
-import { CheerioCrawler, RequestQueue } from 'crawlee';
-import { v4 as uuidv4 } from 'uuid';
+// src/routes/api/scrape/+server.js (or wherever your endpoint is)
+
+import { gotScraping } from 'crawlee';
+import * as cheerio from 'cheerio';
 import { json } from '@sveltejs/kit';
 
-async function runProfilePicScraper(targets: string[]) {
-	const results: any[] = [];
-	const requestQueue = await RequestQueue.open();
+// No need for global configuration or crawler setup here.
 
-	for (const target of targets) {
-		await requestQueue.addRequest({
-			url: target,
-			uniqueKey: `${target}#${uuidv4()}`
-		});
-	}
+async function scrapeSingleProfile(url: string) {
+	try {
+		// Use got-scraping to fetch the page. It mimics a real browser's headers.
+		const response = await gotScraping({ url });
 
-	const crawler = new CheerioCrawler({
-		requestQueue,
-		maxConcurrency: 1, // 👈 Limit concurrency to 1
+		// Load the HTML into Cheerio for parsing.
+		const $ = cheerio.load(response.body);
 
-		async requestHandler({ $, request, body }) {
-			const scrapedData = { source: request.url };
+		// Your scraping logic remains the same.
+		const img = $('#profile-picture img'); // More specific selector for Linktree
+		const src = img.attr('src');
 
-			console.log(`🧪 Raw HTML body:\n${body.slice(0, 1000)}`);
-
-			const img = $('#profile-picture img');
-			const src = img.attr('src');
-
-			if (src) {
-				scrapedData.image = src;
-			} else {
-				scrapedData.error = 'Profile image not found';
-			}
-
-			results.push(scrapedData);
+		if (src) {
+			return { source: url, image: src };
+		} else {
+			return { source: url, error: 'Profile image not found.' };
 		}
-	});
-
-	await crawler.run();
-	return results;
+	} catch (error) {
+		console.error(`❌ Failed to scrape ${url}:`, error);
+		// Re-throw or handle the error as needed. Here we pass it up.
+		throw new Error(`Scraping failed for ${url}: ${error.message}`);
+	}
 }
 
 export async function GET({ url }) {
@@ -47,8 +38,8 @@ export async function GET({ url }) {
 	}
 
 	try {
-		const result = await runProfilePicScraper([singleUrl]);
-		return json(result[0]);
+		const result = await scrapeSingleProfile(singleUrl);
+		return json(result);
 	} catch (err) {
 		return json({ error: 'Scraping failed', details: err.message }, { status: 500 });
 	}

@@ -5,7 +5,7 @@
 		> Better Gigs
 	</h1>
 	<p class="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-		Venue Scrape gives you a birds eye view like never before. See the entire Melbourne Music Scene
-		from the air.
+		Venue Scrape gives you a birds eye view like never before. See the entire Music Naarm from the
+		air.
 	</p>
 </div>
