@@ -1,12 +1,45 @@
 <script>
 	import { weserv, imgHaste, photon } from '$lib/utils/image.js';
+	import { onMount } from 'svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
 
 	export let bandObject;
 
+	let key = 0;
+
+	let profilePicUrl = '';
+
 	function openBandModal(band) {
 		console.log('band clicked . Open Modal COde goes here 👉 ', band);
 	}
+
+	async function getLinktreePic(url) {
+		try {
+			const response = await fetch(
+				`/api/cheerio/linktree-profile-pic?url=${encodeURIComponent(url)}`
+			);
+			if (!response.ok) {
+				throw new Error(`Server error: ${response.status}`);
+			}
+
+			const data = await response.json();
+			console.log('🚀 ~ getLinktreePic ~ data:', data);
+
+			if (data.image) {
+				key += key;
+				return data.image; // The profile pic URL
+			} else {
+				throw new Error(data.error || 'Image not found');
+			}
+		} catch (err) {
+			console.error('Failed to fetch Linktree profile picture:', err);
+			return null;
+		}
+	}
+
+	onMount(async () => {
+		profilePicUrl = await getLinktreePic(bandObject.instagram?.externalUrl);
+	});
 </script>
 
 <button
@@ -18,13 +51,18 @@
 		<div
 			class="bg-gradient-to-br from-gray-500/5 gap-4 to-black/5 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
 		>
-			{#if bandObject.instagram?.profilePicUrl}
+			<!-- {#if bandObject.instagram?.profilePicUrl}
 				<img
 					src={weserv(bandObject.instagram.profilePicUrl)}
 					alt="_profile pic"
 					fallback="/fallback-avatar.png"
 				/>
-			{/if}
+			{/if} -->
+			{#key key}
+				{#if bandObject.instagram?.externalUrl}
+					<img src={profilePicUrl} alt="_linktree pic" fallback="/fallback-avatar.png" />
+				{/if}
+			{/key}
 		</div>
 		<div class="flex flex-col w-full h-full ml-4">
 			<!-- Top section: Dot and Band Name -->
