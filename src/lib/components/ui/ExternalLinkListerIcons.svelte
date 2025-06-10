@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 	import { socialIcons } from '$lib/utils/icons.js';
 
 	export let url;
@@ -47,7 +48,7 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		title={new URL(url).hostname}
-		class="w-6 h-6 text-purple-500 rounded-full hover:cursor-pointer hover:text-pink-500"
+		class="w-6 h-6 text-purple-500 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
 	>
 		{@html fallbackIcon}
 	</a>
@@ -55,18 +56,30 @@
 	<div class="text-xs text-gray-400">Loading links…</div>
 {:else if error}
 	<div class="text-xs text-red-500">Error: {error}</div>
-{:else}
-	<div class="flex flex-wrap-reverse justify-end gap-2">
-		{#each links as link}
-			<a
-				href={link}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="flex items-center justify-center w-6 h-6 text-purple-500 rounded-full hover:cursor-pointer hover:text-pink-500"
-				title={getIcon(link)?.label || new URL(link).hostname}
-			>
-				{@html getIcon(link)?.svg || fallbackIcon}
-			</a>
-		{/each}
-	</div>
 {/if}
+<!-- note: for FLY animation, it is important to render an empty list first, then change its contents -->
+<!-- placing this in the ELSE of the LOADING will spawn the container full populated instantly, and will not animate its contents-->
+<div class="flex flex-wrap-reverse justify-end gap-2">
+	{#each links as link, index}
+		<a
+			href={link}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="flex items-center justify-center w-6 h-6 text-purple-500 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
+			title={getIcon(link)?.label || new URL(link).hostname}
+			in:fly={{ x: 100, delay: index * 50 }}
+		>
+			{@html getIcon(link)?.svg || fallbackIcon}
+		</a>
+	{/each}
+</div>
+
+<style>
+	.btn-hover {
+		transition: transform 250ms;
+	}
+
+	.btn-hover:hover {
+		transform: translateY(-2px);
+	}
+</style>
