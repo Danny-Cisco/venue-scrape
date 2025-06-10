@@ -53,13 +53,13 @@
 {:else if error}
 	<div class="text-xs text-red-500">Error: {error}</div>
 {:else}
-	<div class="flex flex-wrap gap-2">
+	<div class="flex flex-wrap-reverse justify-end gap-2">
 		{#each links as link}
 			<a
 				href={link}
 				target="_blank"
 				rel="noopener noreferrer"
-				class="flex items-center justify-center w-6 h-6 text-green-700 bg-gray-100 rounded-full hover:text-green-800"
+				class="flex items-center justify-center w-6 h-6 text-purple-500 rounded-full hover:cursor-pointer hover:text-pink-500"
 				title={getIcon(link)?.label || new URL(link).hostname}
 			>
 				{@html getIcon(link)?.svg || '🔗'}
