@@ -2,6 +2,7 @@
 	import { weserv, imgHaste, photon } from '$lib/utils/image.js';
 	import { onMount } from 'svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
+	import ExternalLinkLister from '$lib/components/ui/ExternalLinkLister.svelte';
 
 	export let bandObject;
 
@@ -145,7 +146,7 @@
 						<div class="">
 							<!-- InstagramLink -->
 
-							<a
+							<!-- <a
 								href={bandObject.instagram.url}
 								target="_blank"
 								rel="noopener noreferrer"
@@ -166,32 +167,11 @@
 										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
 									/>
 								</svg></a
-							>
+							> -->
 						</div>
 						<!-- External Link -->
 						{#if bandObject.instagram.externalUrl}
-							<a
-								href={bandObject.instagram.externalUrl}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="flex items-center text-xs text-green-600 row hover:text-green-700"
-								on:click|stopPropagation
-							>
-								Linktree <svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke-width="1.5"
-									stroke="currentColor"
-									class="ml-1 size-4"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-									/>
-								</svg>
-							</a>
+							<ExternalLinkLister url={bandObject.instagram.externalUrl} />
 						{/if}
 					{/if}
 				</div>
