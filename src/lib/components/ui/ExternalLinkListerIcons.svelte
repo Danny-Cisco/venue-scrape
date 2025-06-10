@@ -59,7 +59,7 @@
 {/if}
 <!-- note: for FLY animation, it is important to render an empty list first, then change its contents -->
 <!-- placing this in the ELSE of the LOADING will spawn the container full populated instantly, and will not animate its contents-->
-<div class="flex flex-wrap-reverse justify-end gap-2">
+<div class="flex flex-wrap-reverse items-center justify-end gap-2">
 	{#each links as link, index}
 		<a
 			href={link}
