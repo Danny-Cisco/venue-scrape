@@ -41,7 +41,7 @@
 			]);
 
 			if (!sameAsRes.ok || !allLinksRes.ok) {
-				throw new Error('One or both endpoints failed');
+				throw new Error('Link error');
 			}
 
 			const sameAsData = await sameAsRes.json();

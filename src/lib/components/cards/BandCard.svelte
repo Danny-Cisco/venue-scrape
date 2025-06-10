@@ -4,6 +4,10 @@
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
 	import ExternalLinkListerIcons from '$lib/components/ui/ExternalLinkListerIcons.svelte';
 
+	import { bioWriter } from '$lib/utils/prompts.ts';
+
+	let writingBio = false;
+
 	export let bandObject;
 
 	let key = 0;
@@ -50,9 +54,40 @@
 		}
 	}
 
-	// onMount(async () => {
-	// 	profilePicUrl = await getLinktreePic(bandObject.instagram?.externalUrl);
-	// });
+	async function getBio() {
+		writingBio = true;
+
+		const systemPrompt = bioWriter;
+
+		const question =
+			bandObject.bandname +
+			bandObject.instagram?.biography +
+			bandObject.instagram?.latestPosts
+				.map((post) => `${post.caption}${post.locationName}${post.hashTags}`)
+				.join('');
+		const parsedBody = JSON.stringify({ question, systemPrompt });
+
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: parsedBody
+		});
+
+		const data = await response.json();
+		console.log('🚀 ~ formatText ~ data:', data);
+		writingBio = false;
+		return data.answer;
+	}
+
+	let bio = '';
+	onMount(async () => {
+		const bioResponse = await getBio();
+		console.log('🚀 ~ onMount ~ bio:', bioResponse);
+		const bioObj = await JSON.parse(bioResponse);
+		bio = bioObj.bio;
+	});
 </script>
 
 <button
@@ -157,7 +192,7 @@
 			class=" font-sans min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
 		>
 			<p>
-				{bandObject.instagram?.biography || ''}
+				{bio || bandObject.instagram?.biography || ''}
 			</p>
 		</div>
 	</div>
