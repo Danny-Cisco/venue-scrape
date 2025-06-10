@@ -3,7 +3,8 @@
 	import { onMount } from 'svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
 	import ExternalLinkListerIcons from '$lib/components/ui/ExternalLinkListerIcons.svelte';
-
+	import BioSection from '$lib/components/ui/BioSection.svelte';
+	import { fade } from 'svelte/transition';
 	import { bioWriter } from '$lib/utils/prompts.ts';
 
 	let writingBio = false;
@@ -16,6 +17,9 @@
 	let failed = false;
 
 	let profilePicUrl = '';
+
+	let bandnameElement;
+	let needsSpacer = false;
 
 	function openBandModal(band) {
 		console.log('band clicked . Open Modal COde goes here 👉 ', band);
@@ -110,6 +114,11 @@
 
 	let bio = '';
 	onMount(async () => {
+		// Get the computed height of the h2 bandname element and add spacer if needed
+		const lineHeight = parseFloat(getComputedStyle(bandnameElement).lineHeight);
+		const elementHeight = bandnameElement.clientHeight;
+		needsSpacer = elementHeight > lineHeight * 1.2; // Use 1.2 to account for minor height variations
+
 		const bioResponse = await getBio();
 		console.log('🚀 ~ onMount ~ bio:', bioResponse);
 		const bioObj = await JSON.parse(bioResponse);
@@ -118,7 +127,7 @@
 </script>
 
 <button
-	class="w-full max-w-md p-3 pb-0 mx-4 text-gray-800 h-[245px] transition-shadow duration-300 ease-in-out bg-white rounded-sm shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
+	class="flex flex-col w-full max-w-md p-3 pb-0 mx-4 text-gray-800 transition-shadow duration-300 ease-in-out bg-white rounded-sm shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75"
 	on:click={() => openBandModal(bandObject.bandname)}
 >
 	<div class="flex min-w-full">
@@ -151,6 +160,7 @@
 				<div>
 					<h2
 						class="pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
+						bind:this={bandnameElement}
 					>
 						{bandObject.bandname}
 					</h2>
@@ -212,20 +222,46 @@
 			</div>
 		</div>
 	</div>
-
+	<!-- spacer appears for LONG BANDNAME-->
+	{#if needsSpacer}
+		<div class="h-[2rem]"></div>
+	{/if}
 	<!-- Biography section -->
-	<div>
-		<div
-			class=" font-sans min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
-		>
-			<p>
-				{bio || bandObject.instagram?.biography || ''}
+
+	<div
+		class=" font-sans min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
+	>
+		{#if writingBio}
+			<!-- Loading Animation -->
+			<div class="relative pl-5 overflow-hidden text-base text-gray-400">
+				<span
+					class="wave-mask bg-gradient-to-r from-gray-300 via-black to-gray-300 bg-[length:200%_100%] bg-clip-text text-transparent"
+				>
+					A detailed bio is on its way...
+				</span>
+			</div>
+		{:else}
+			<p in:fade>
+				<!-- {bio || bandObject.instagram?.biography || ''} -->
+				<BioSection {bio} />
 			</p>
-		</div>
+		{/if}
 	</div>
 </button>
 
 <style>
+	.wave-mask {
+		animation: waveMove 2.5s linear infinite;
+	}
+
+	@keyframes waveMove {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
 	.loading-wave {
 		width: 100%;
 		height: 100%;
