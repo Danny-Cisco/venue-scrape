@@ -56,9 +56,7 @@
 
 	async function getBio() {
 		writingBio = true;
-
 		const systemPrompt = bioWriter;
-
 		const question =
 			bandObject.bandname +
 			bandObject.instagram?.biography +
@@ -67,18 +65,39 @@
 				.join('');
 		const parsedBody = JSON.stringify({ question, systemPrompt });
 
-		const response = await fetch('/api/openai/qabot', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: parsedBody
-		});
-
-		const data = await response.json();
-		console.log('🚀 ~ formatText ~ data:', data);
-		writingBio = false;
-		return data.answer;
+		try {
+			const response = await fetch('/api/openai/qabot', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: parsedBody
+			});
+			const data = await response.json();
+			console.log('🚀 ~ writingBio ~ data:', data);
+			writingBio = false;
+			return data.answer;
+		} catch (error) {
+			console.error('Initial attempt failed:', error);
+			// Retry once
+			try {
+				const response = await fetch('/api/openai/qabot', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: parsedBody
+				});
+				const data = await response.json();
+				console.log('🚀 ~ writingBio ~ retry data:', data);
+				writingBio = false;
+				return data.answer;
+			} catch (retryError) {
+				console.error('Retry attempt failed:', retryError);
+				writingBio = false;
+				throw retryError;
+			}
+		}
 	}
 
 	let bio = '';
