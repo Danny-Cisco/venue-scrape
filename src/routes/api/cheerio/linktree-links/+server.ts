@@ -22,9 +22,11 @@ async function scrapeLinktreeLinks(url) {
 			return { source: url, error: '"sameAs" links not found in ld+json.' };
 		}
 
+		const urls = [...sameAs, url];
+
 		return {
 			source: url,
-			links: sameAs
+			links: urls
 		};
 	} catch (error) {
 		console.error(`❌ Failed to scrape ${url}:`, error);

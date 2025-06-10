@@ -84,9 +84,8 @@
 			{/key}
 		</div>
 		<div class="flex flex-col w-full h-[150px] ml-4">
-			<!-- Top section: Dot and Band Name -->
+			<!-- Top section: Band Name -->
 			<div class="flex flex-col justify-between w-full h-full max-w-full">
-				<!-- <div class="w-3 h-3 mr-3 bg-blue-500 rounded-full shrink-0"></div> -->
 				<div>
 					<h2
 						class="pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
@@ -109,12 +108,10 @@
 			</div>
 			<div class="grid items-stretch w-full grid-cols-2">
 				<div class="flex flex-col justify-between">
-					<!-- Star Rating -->
+					<!-- Star Rating : Bar graph, not stars-->
 					<div class="flex mt-3 mb-3">
 						<StarRatingBarColor {bandObject} />
 					</div>
-
-					<!-- <div class="flex-1"></div> -->
 
 					<!-- Instagram Info Section -->
 					<div class="block">
@@ -143,32 +140,7 @@
 					<!-- links section -->
 					{#if bandObject.instagram}
 						<div class="flex-1"></div>
-						<div class="">
-							<!-- InstagramLink -->
 
-							<!-- <a
-								href={bandObject.instagram.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="flex text-xs text-blue-600 row hover:underline"
-								on:click|stopPropagation
-								>Instagram
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke-width="1.5"
-									stroke="currentColor"
-									class="ml-1 size-4"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-									/>
-								</svg></a
-							> -->
-						</div>
 						<!-- External Link -->
 						{#if bandObject.instagram.externalUrl}
 							<ExternalLinkListerIcons url={bandObject.instagram.externalUrl} />
