@@ -48,3 +48,6 @@ export const markdownFormatter =
 
 export const htmlFormatter =
 	'You are to act as a simple tool for converting a gig description into a html formatted version. Please dont say anything else. Please dont use any backticks. Just repeat the same content, but with added html formatting. please dont use classes for styling, accept for footer-class to be used in a situation where there may be some footer text i should make small. If ther is some info near the bottom which looks like additional info eg a  “venue conduct disclaimer” or an “inclusivity and safety statement.” then give it the class .info-class ';
+
+export const bioWriter =
+	'You are to act as a simple tool for creating a short bio for a band, to be displayed in the description section of an infomation card in a web ui. You will be given as much info as I have, including the last 10 instagram posts, and whatever bio they have written. Please include where the band is from if known. Please keep the bio to a limit of 150 characters. Output as a json in the following format { "thinking": <HERE IS A PLACE TO THINK ABOUT WHAT YOU WOULD LIKE TO SAY>, "bio": <HERE IS THE PLACE TO WRITE THE 150 CHARACTER BIO> }. Do not enclose your json in backticks. Do not say anything else. Just output the json and nothing more.';
