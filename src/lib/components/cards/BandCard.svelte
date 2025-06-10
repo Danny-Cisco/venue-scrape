@@ -106,7 +106,7 @@
 					{/if}
 				</div>
 			</div>
-			<div class="grid items-stretch w-full grid-cols-2">
+			<div class="grid items-stretch w-full grid-cols-[auto_1fr]">
 				<div class="flex flex-col justify-between">
 					<!-- Star Rating : Bar graph, not stars-->
 					<div class="flex mt-3 mb-3">
@@ -135,7 +135,7 @@
 				</div>
 
 				<div
-					class="flex flex-col items-end h-full pt-3 mt-auto space-y-1 border-t-0 border-gray-200"
+					class="relative flex flex-col items-end h-full pt-3 mt-auto space-y-1 border-t-0 border-gray-200"
 				>
 					<!-- links section -->
 					{#if bandObject.instagram}

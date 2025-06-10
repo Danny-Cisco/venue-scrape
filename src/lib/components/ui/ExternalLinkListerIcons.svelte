@@ -83,6 +83,12 @@
 	const fallbackIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"></path></svg>`;
 </script>
 
+{#if links.length > 12}
+	<div class="absolute text-xs text-purple-500 -top-2 right-2">
+		{`${links.length} links`}
+	</div>
+{/if}
+
 {#if !isLinktree}
 	<!-- Default fallback link -->
 	<a
@@ -101,7 +107,10 @@
 {/if}
 <!-- note: for FLY animation, it is important to render an empty list first, then change its contents -->
 <!-- placing this in the ELSE of the LOADING will spawn the container full populated instantly, and will not animate its contents-->
-<div class="flex flex-wrap-reverse items-center justify-end gap-2">
+<div
+	class="flex flex-wrap-reverse items-center justify-end gap-2 max-h-[5.7rem] overflow-y-auto overflow-x-hidden custom-scrollbar"
+	style="padding-top: 2px;"
+>
 	{#each links as link, index}
 		<a
 			href={link}
@@ -122,6 +131,35 @@
 	}
 
 	.btn-hover:hover {
-		transform: translateY(-2px);
+		transform: translateY(-1px); /* Reduced translation to minimize layout impact */
+	}
+
+	/* Custom scrollbar styles */
+	.custom-scrollbar::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		background: rgba(139, 92, 246, 0.3);
+		border-radius: 4px;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: rgba(139, 92, 246, 0.5);
+	}
+
+	/* Firefox scrollbar styles */
+	.custom-scrollbar {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+	}
+
+	/* Prevent horizontal scrolling globally */
+	body {
+		overflow-x: hidden;
 	}
 </style>
