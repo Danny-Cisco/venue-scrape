@@ -2,7 +2,7 @@
 	import { weserv, imgHaste, photon } from '$lib/utils/image.js';
 	import { onMount } from 'svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
-	import ExternalLinkLister from '$lib/components/ui/ExternalLinkLister.svelte';
+	import ExternalLinkListerIcons from '$lib/components/ui/ExternalLinkListerIcons.svelte';
 
 	export let bandObject;
 
@@ -171,7 +171,7 @@
 						</div>
 						<!-- External Link -->
 						{#if bandObject.instagram.externalUrl}
-							<ExternalLinkLister url={bandObject.instagram.externalUrl} />
+							<ExternalLinkListerIcons url={bandObject.instagram.externalUrl} />
 						{/if}
 					{/if}
 				</div>
