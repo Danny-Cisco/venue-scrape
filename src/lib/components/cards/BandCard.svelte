@@ -119,10 +119,27 @@
 		const elementHeight = bandnameElement.clientHeight;
 		needsSpacer = elementHeight > lineHeight * 1.2; // Use 1.2 to account for minor height variations
 
-		const bioResponse = await getBio();
-		console.log('🚀 ~ onMount ~ bio:', bioResponse);
-		const bioObj = await JSON.parse(bioResponse);
-		bio = bioObj.bio;
+		let bioResponse = await getBio();
+		console.log('🚀 ~ Raw response from getBio:', bioResponse);
+
+		let cleanedResponse = bioResponse.trim();
+
+		// This regex finds a comma (,) optionally followed by whitespace (\s*) right before the end of the string ($) and a curly brace (}).
+		if (cleanedResponse.endsWith('}')) {
+			cleanedResponse = cleanedResponse.replace(/,(\s*})$/, '$1}');
+		}
+
+		// --- Parsing with Error Handling ---
+		try {
+			// Attempt to parse the cleaned string
+			const bioObj = JSON.parse(cleanedResponse);
+			bio = bioObj.bio;
+		} catch (error) {
+			console.error('Failed to parse bio JSON:', error);
+			console.error('Original malformed string was:', bioResponse);
+			// Provide a fallback value so the UI doesn't break
+			bio = 'Bio currently unavailable.';
+		}
 	});
 </script>
 
