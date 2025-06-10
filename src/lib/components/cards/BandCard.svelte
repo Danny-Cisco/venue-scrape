@@ -65,39 +65,47 @@
 				.join('');
 		const parsedBody = JSON.stringify({ question, systemPrompt });
 
-		try {
-			const response = await fetch('/api/openai/qabot', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: parsedBody
-			});
-			const data = await response.json();
-			console.log('🚀 ~ writingBio ~ data:', data);
-			writingBio = false;
-			return data.answer;
-		} catch (error) {
-			console.error('Initial attempt failed:', error);
-			// Retry once
+		async function tryApiCall(body) {
 			try {
 				const response = await fetch('/api/openai/qabot', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: parsedBody
+					body
 				});
+				if (!response.ok) {
+					throw new Error(`Server error: ${response.status}`);
+				}
 				const data = await response.json();
-				console.log('🚀 ~ writingBio ~ retry data:', data);
-				writingBio = false;
+				console.log('🚀 ~ writingBio ~ data:', data);
 				return data.answer;
-			} catch (retryError) {
-				console.error('Retry attempt failed:', retryError);
-				writingBio = false;
-				throw retryError;
+			} catch (error) {
+				console.error('API call failed:', error);
+				throw error;
 			}
 		}
+
+		const maxRetries = 2;
+		let lastError = null;
+
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			try {
+				const result = await tryApiCall(parsedBody);
+				writingBio = false;
+				return result;
+			} catch (error) {
+				lastError = error;
+				console.error(`Attempt ${attempt} failed:`, error);
+				if (attempt < maxRetries) {
+					// Optional: Add delay between retries (e.g., 1 second)
+					await new Promise((resolve) => setTimeout(resolve, 1000));
+				}
+			}
+		}
+
+		writingBio = false;
+		throw lastError || new Error('Failed to fetch bio after retries');
 	}
 
 	let bio = '';
