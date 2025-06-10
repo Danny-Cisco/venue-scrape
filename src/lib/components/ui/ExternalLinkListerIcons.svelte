@@ -36,6 +36,8 @@
 			}
 		}
 	});
+
+	const fallbackIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"></path></svg>`;
 </script>
 
 {#if !isLinktree}
@@ -44,9 +46,10 @@
 		href={url}
 		target="_blank"
 		rel="noopener noreferrer"
-		class="text-xs text-green-600 hover:text-green-700"
+		title={new URL(url).hostname}
+		class="w-6 h-6 text-purple-500 rounded-full hover:cursor-pointer hover:text-pink-500"
 	>
-		Visit External Link
+		{@html fallbackIcon}
 	</a>
 {:else if loading}
 	<div class="text-xs text-gray-400">Loading links…</div>
@@ -62,7 +65,7 @@
 				class="flex items-center justify-center w-6 h-6 text-purple-500 rounded-full hover:cursor-pointer hover:text-pink-500"
 				title={getIcon(link)?.label || new URL(link).hostname}
 			>
-				{@html getIcon(link)?.svg || '🔗'}
+				{@html getIcon(link)?.svg || fallbackIcon}
 			</a>
 		{/each}
 	</div>
