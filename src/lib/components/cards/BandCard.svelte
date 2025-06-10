@@ -120,13 +120,13 @@
 					<div class="block">
 						{#if bandObject.instagram}
 							{#if bandObject.instagram.followersCount}
-								<div class="flex items-end gap-2 text-sm text-blue-500">
+								<div class="flex items-end gap-2 text-sm text-black">
 									{(bandObject.instagram.followersCount / 1000).toFixed(1)}k
 									<div class="font-sans text-sm font-bold">Followers</div>
 								</div>
 							{/if}
 							{#if bandObject.instagram.postsCount}
-								<div class="flex items-end gap-2 text-sm text-blue-500">
+								<div class="flex items-end gap-2 text-sm text-black">
 									{bandObject.instagram.postsCount}
 									<div class="font-sans text-sm font-bold">Posts</div>
 								</div>
