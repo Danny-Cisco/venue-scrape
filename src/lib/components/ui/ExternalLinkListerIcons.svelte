@@ -19,22 +19,64 @@
 		return null;
 	}
 
+	function getDomain(link) {
+		try {
+			const { hostname } = new URL(link);
+			return hostname.replace(/^www\./, '').toLowerCase();
+		} catch {
+			return null;
+		}
+	}
+
 	onMount(async () => {
 		isLinktree = /^https?:\/\/(www\.)?linktr\.ee\/.+$/i.test(url);
 
-		if (isLinktree) {
-			loading = true;
-			try {
-				const res = await fetch(`/api/cheerio/linktree-links?url=${encodeURIComponent(url)}`);
-				if (!res.ok) throw new Error(`Status ${res.status}`);
-				const data = await res.json();
-				if (Array.isArray(data.links)) links = data.links;
-				else throw new Error('No links found');
-			} catch (err) {
-				error = err.message;
-			} finally {
-				loading = false;
+		if (!isLinktree) return;
+
+		loading = true;
+		try {
+			const [sameAsRes, allLinksRes] = await Promise.all([
+				fetch(`/api/cheerio/linktree-links?url=${encodeURIComponent(url)}`),
+				fetch(`/api/cheerio/linktree-links-all?url=${encodeURIComponent(url)}`)
+			]);
+
+			if (!sameAsRes.ok || !allLinksRes.ok) {
+				throw new Error('One or both endpoints failed');
 			}
+
+			const sameAsData = await sameAsRes.json();
+			const allLinksData = await allLinksRes.json();
+			console.log('🚀 ~ onMount ~ allLinksData:', allLinksData);
+
+			const sameAsLinks = Array.isArray(sameAsData.links) ? sameAsData.links : [];
+			const allLinks = Array.isArray(allLinksData.links) ? allLinksData.links : [];
+
+			// Create a Map to track one link per domain
+			const linkMap = new Map();
+
+			// First pass: add from sameAsLinks
+			for (const link of sameAsLinks) {
+				const domain = getDomain(link);
+				if (domain && !linkMap.has(domain)) {
+					linkMap.set(domain, link);
+				}
+			}
+
+			// Second pass: fill in from allLinks if domain not already used
+			for (const link of allLinks) {
+				const domain = getDomain(link);
+				if (domain && !linkMap.has(domain)) {
+					linkMap.set(domain, link);
+				}
+			}
+
+			// Final list
+			links = Array.from(linkMap.values());
+		} catch (err) {
+			error = err.message;
+			console.error('Linktree scrape error:', err);
+		} finally {
+			loading = false;
 		}
 	});
 

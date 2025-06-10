@@ -17,7 +17,8 @@
 		'eventbrite-json',
 		'john-curtain-links',
 		'linktree-profile-pic',
-		'linktree-links'
+		'linktree-links',
+		'linktree-links-all'
 	];
 
 	async function useCheerio(endpoint) {
