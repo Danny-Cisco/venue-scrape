@@ -85,7 +85,7 @@
 
 {#if links.length > 12}
 	<div class="absolute text-xs text-purple-500 -top-2 right-2">
-		{`${links.length} links`}
+		{`(${links.length})`}
 	</div>
 {/if}
 
@@ -103,7 +103,7 @@
 {:else if loading}
 	<div class="text-xs text-gray-400">Loading links…</div>
 {:else if error}
-	<div class="text-xs text-red-500">Error: {error}</div>
+	<div class="text-xs text-red-500">{error}</div>
 {/if}
 <!-- note: for FLY animation, it is important to render an empty list first, then change its contents -->
 <!-- placing this in the ELSE of the LOADING will spawn the container full populated instantly, and will not animate its contents-->
