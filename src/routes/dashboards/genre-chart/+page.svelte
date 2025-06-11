@@ -25,6 +25,7 @@
 	export let data;
 
 	let pageInitialising = true;
+	let error = null;
 
 	let gigsData = [];
 
@@ -34,7 +35,6 @@
 	let firstIsBlocked = false;
 
 	let showDatePickerText = 'need an old-school date-picker';
-
 	let showDatePicker = false;
 
 	let nowForChat = '';
@@ -48,19 +48,32 @@
 	let timeRangePrompt = '';
 	let loading = false;
 
+	// *** NEW: Filter Reset Functions ***
+
+	// Resets only the genre selections from the chart
+	function resetGenreSelection() {
+		console.log('🔄 Resetting Genre Selection');
+		clickedGenres.set(null);
+		filteredGigIds.set([]);
+	}
+
+	// Resets everything, including the text prompt (for the manual button)
+	function handleManualReset() {
+		console.log('🔄 Manual Filters Reset');
+		resetGenreSelection();
+	}
+
 	// Auto-scroll when `filteredGigIds` changes and has values
 	$: if ($filteredGigIds?.length > 0 && tableSectionRef) {
-		// Slight delay can help with reactivity
 		setTimeout(() => {
 			tableSectionRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		}, 50);
 	}
 
-	// Auto-scroll when `filteredGigIds` changes and has values
+	// Auto-scroll when `gigsStoreDateFiltered` changes and has values
 	$: if ($gigsStoreDateFiltered?.length > 0 && chartSectionRef) {
 		if (!firstIsBlocked) firstIsBlocked = true;
 		else
-			// Slight delay can help with reactivity
 			setTimeout(() => {
 				chartSectionRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
 			}, 50);
@@ -79,7 +92,6 @@
 	$: console.log('✅ gigsStoreDateFiltered:', $gigsStoreDateFiltered);
 	$: console.log('✅ dateRangeStore:', $dateRangeStore);
 
-	// Format date as yyyy-mm-dd
 	function formatDateForInput(date) {
 		if (!(date instanceof Date) || isNaN(date.getTime())) {
 			console.warn('Invalid date passed to formatDateForInput:', date);
@@ -92,7 +104,10 @@
 	}
 
 	function updateDateRange(type, event) {
-		$filteredGigIds = [];
+		// *** MODIFIED: Reset filters before updating date range ***
+		resetGenreSelection();
+		timeRangePrompt = '';
+
 		const newDateString = event.target.value;
 		console.log(`🟡 updateDateRange: ${type} =`, newDateString);
 		if (!newDateString) {
@@ -133,48 +148,57 @@
 	}
 
 	async function getDateRange(timeRangePrompt) {
+		// *** MODIFIED: Reset genre filters before using AI prompt ***
+		resetGenreSelection();
+
 		const systemPrompt = `The current date, day and time is ${nowForChat}. ${dateRangePrompt} `;
 		const question = timeRangePrompt;
-		// fetch from openai qa endpoint
 
 		loading = true;
 
-		const jsonBody = await JSON.stringify({ question, systemPrompt });
-		const response = await fetch('/api/openai/qabot', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application./json'
-			},
-			body: jsonBody
-		});
+		try {
+			const jsonBody = await JSON.stringify({ question, systemPrompt });
+			const response = await fetch('/api/openai/qabot', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json' // Corrected content type
+				},
+				body: jsonBody
+			});
 
-		const data = await response.json();
-		const answerJson = data.answer;
-		const dateRangeJson = await JSON.parse(answerJson);
-		console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
+			if (!response.ok) {
+				const errorText = await response.text();
+				throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+			}
 
-		// dateRangeStore.set({ start: dateRangeJson.startDate, end: dateRangeJson.endDate });
-		// INSTEAD, THIS IS THE PLACE I NEED TO CALL THE get filtered endpoint again...
+			const data = await response.json();
+			const answerJson = data.answer;
+			const dateRangeJson = await JSON.parse(answerJson);
+			console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
 
-		const start = new Date(dateRangeJson.startDate + 'T00:00:00');
-		const end = new Date(dateRangeJson.endDate + 'T23:59:59.999');
+			const start = new Date(dateRangeJson.startDate + 'T00:00:00');
+			const end = new Date(dateRangeJson.endDate + 'T23:59:59.999');
 
-		const params = new URLSearchParams({
-			table: 'gigs',
-			dateRangeStart: toISOStringLocal(start),
-			dateRangeEnd: toISOStringLocal(end)
-		});
+			const params = new URLSearchParams({
+				table: 'gigs',
+				dateRangeStart: toISOStringLocal(start),
+				dateRangeEnd: toISOStringLocal(end)
+			});
 
-		const res = await fetch(`/api/supabase/get-filtered-date?${params}`);
-		if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+			const res = await fetch(`/api/supabase/get-filtered-date?${params}`);
+			if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
 
-		const json = await res.json();
-		if (!json.success) throw new Error(json.message);
+			const json = await res.json();
+			if (!json.success) throw new Error(json.message);
 
-		gigsRecords = json.records; // 🎉 Success!
-		console.log('🚀 ~ onMount ~ gigsData:', gigsData);
-		loading = false;
-		return;
+			gigsRecords = json.records;
+			console.log('🚀 ~ getDateRange ~ new gigsRecords:', gigsRecords);
+		} catch (err) {
+			console.error('❌ Error in getDateRange:', err);
+			error = err.message;
+		} finally {
+			loading = false;
+		}
 	}
 
 	let upsetPlotData;
@@ -184,7 +208,6 @@
 		try {
 			const now = new Date();
 
-			// 🎤 Human-readable string for LLMs
 			const formatter = new Intl.DateTimeFormat('en-AU', {
 				weekday: 'long',
 				day: 'numeric',
@@ -197,12 +220,10 @@
 			});
 			nowForChat = formatter.format(now);
 
-			// 🕓 ISO strings for querying
 			nowISO = now.toISOString();
 			const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 			dateRangeEndISO = in7Days.toISOString();
 
-			// 🛰️ Fetch gigs from filtered endpoint
 			const params = new URLSearchParams({
 				table: 'gigs',
 				dateRangeStart: nowISO,
@@ -215,8 +236,8 @@
 			const json = await res.json();
 			if (!json.success) throw new Error(json.message);
 
-			gigsRecords = json.records; // 🎉 Success!
-			console.log('🚀 ~ onMount ~ gigsData:', gigsData);
+			gigsRecords = json.records;
+			console.log('🚀 ~ onMount ~ initial gigsRecords:', gigsRecords);
 		} catch (err) {
 			console.error('❌ Error loading gigs:', err);
 			error = err.message;
@@ -240,12 +261,6 @@
 {:else}
 	<!-- UI -->
 	<div class="absolute inset-0 isolate" in:fade>
-		<!-- <div class="w-screen text-center">
-		<h1 class="mt-4 mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-300">
-			Genre Chart
-		</h1>
-	</div> -->
-
 		<!-- Main content -->
 		<div
 			class="flex flex-col items-stretch items-center justify-center max-w-full min-w-full gap-6 p-4 pt-12"
@@ -268,14 +283,15 @@
 						getDateRange(timeRangePrompt);
 					}
 				}}
-				placeholder="Ask for a date range..."
-				class="w-full px-5 rounded-full"
+				placeholder="Ask for a date range (e.g. 'NEXT WEEKEND' or 'JUNE')"
+				class="w-full px-5 font-sans capitalize rounded-full"
 			/>
-
-			<div class="absolute text-gray-500 right-10 row">
+			<button
+				class="absolute text-gray-500 right-5 row hover:text-green-500 hover:font-bold"
+				on:click={getDateRange(timeRangePrompt)}
+			>
 				{#if !loading}
 					enter
-
 					<svg
 						fill="none"
 						height="24"
@@ -290,7 +306,7 @@
 				{:else}
 					<p class="font-semibold text-green-400">loading..</p>
 				{/if}
-			</div>
+			</button>
 		</div>
 
 		<!-- Old school datepicker -->
@@ -301,52 +317,73 @@
 			}}>{showDatePickerText}?</button
 		>
 		{#if showDatePicker}
-			<!-- Date Range Inputs -->
 			<div
 				class="flex items-center justify-center gap-4 p-4 text-sm text-gray-300"
 				transition:slide
 			>
-				<div class="block">
-					<label for="startDate">Start</label>
+				<div>
+					<label for="startDate" class="block">Start</label>
 					<input
 						type="date"
 						id="startDate"
 						bind:value={startDateInput}
-						on:change={(e) => {
-							console.log('🔁 Start date changed:', e.target.value);
-							updateDateRange('start', e);
-						}}
+						on:change={(e) => updateDateRange('start', e)}
 						class="px-2 py-1 text-white border border-gray-600 rounded"
 					/>
 				</div>
 
-				<div class="block">
-					<label for="endDate">End</label>
+				<div>
+					<label for="endDate" class="block">End</label>
 					<input
 						type="date"
 						id="endDate"
 						bind:value={endDateInput}
-						on:change={(e) => {
-							console.log('🔁 End date changed:', e.target.value);
-							updateDateRange('end', e);
-						}}
+						on:change={(e) => updateDateRange('end', e)}
 						class="px-2 py-1 text-white border border-gray-600 rounded"
 					/>
 				</div>
 			</div>
 		{/if}
 
-		<!-- Filtered gigs -->
+		<!-- *** MODIFIED: Filtered Gigs Section with Reset Button *** -->
+		<div class="p-4 my-4" bind:this={tableSectionRef}>
+			<!-- Centered container for the heading and reset button -->
+			<div
+				class="flex items-center justify-center w-screen gap-4 p-8 mb-2 font-sans font-black bg-black"
+			>
+				{#if !$clickedGenres && !timeRangePrompt}
+					<h2 class="mb-0 text-3xl">NOW SHOWING: 7 Days - ALL Genres</h2>
+				{:else}
+					<h2 class="mb-0 text-3xl">
+						NOW SHOWING: <span class="capitalize">{`${timeRangePrompt} - ` || '7 Days - '}</span>
+						{$clickedGenres || 'ALL Genres'}
+					</h2>
+					<!-- The Reset Button -->
+					<div class="center">
+						<button
+							on:click={handleManualReset}
+							class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
+							aria-label="Reset filters"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								class="w-8 h-8"
+								fill="currentColor"
+								><path
+									d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
+								></path></svg
+							>
+							Reset Genre Filter
+						</button>
+					</div>
+				{/if}
+			</div>
 
-		<!-- Add this above your GigsBandsTable -->
-		<div class="p-4 mt-4" bind:this={tableSectionRef}>
-			{#if !$clickedGenres && !timeRangePrompt}
-				<div class="text-center"><h2>NOW SHOWING: ALL GIGS</h2></div>
-			{:else}
-				<div class="text-center"><h2>NOW SHOWING: {$clickedGenres} {timeRangePrompt}</h2></div>
-			{/if}
 			{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
-				<p class="italic text-gray-500">Click on chart to see those gigs</p>
+				<p class="italic text-center text-gray-500">
+					Click on a chart intersection to see a filtered list of gigs.
+				</p>
 			{:else}
 				<!-- google maps -->
 				{#key $gigsStoreFiltered}
