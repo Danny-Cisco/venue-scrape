@@ -60,7 +60,7 @@
 
 {#if $showGigModal && $lastClicked}
 	<div
-		class="fixed inset-0 top-[50px] flex flex-col isolate w-full items-center justify-center bg-black/80"
+		class="fixed inset-0 top-[100px] flex flex-col isolate w-full items-center justify-center bg-black/80"
 		transition:fade={{ duration: 100 }}
 	>
 		<div class="relative h-full" transition:fly={{ y: 500 }}>
