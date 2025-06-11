@@ -19,6 +19,7 @@
 		clickedGenres
 	} from '$lib/stores/gigsStore.js';
 
+	let spellCheckedTimeRange = '';
 	let gigs = {};
 	let bands = {};
 	let gigsRecords;
@@ -173,11 +174,14 @@
 
 			const data = await response.json();
 			const answerJson = data.answer;
+			console.log('🚀 ~ raw LLM date range resonse ~ Json:', data);
 			const dateRangeJson = await JSON.parse(answerJson);
 			console.log('🚀 ~ getDateRange ~ dateRangeJson:', dateRangeJson);
 
 			const start = new Date(dateRangeJson.startDate + 'T00:00:00');
 			const end = new Date(dateRangeJson.endDate + 'T23:59:59.999');
+			spellCheckedTimeRange = dateRangeJson.correctedDateRelatedInput;
+			console.log('🚀 ~ getDateRange ~ timeRangePrompt:', timeRangePrompt);
 
 			const params = new URLSearchParams({
 				table: 'gigs',
@@ -331,7 +335,11 @@
 		{:else}
 			<!-- <h2 class="mb-0 text-3xl">NOW SHOWING:</h2> -->
 			<h2 class="mb-0 text-3xl">
-				<span class="capitalize">{timeRangePrompt || '7 Days'}</span><span class="px-2"> - </span>
+				<span class="capitalize">{spellCheckedTimeRange || timeRangePrompt || '7 Days'}</span><span
+					class="px-2"
+				>
+					-
+				</span>
 				{$clickedGenres || 'ALL Genres'}
 			</h2>
 			<!-- The Reset Button -->
@@ -339,7 +347,7 @@
 				<div class="center">
 					<button
 						on:click={handleManualReset}
-						class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
+						class="px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full font-extralight row hover:bg-pink-500"
 						aria-label="Reset filters"
 					>
 						<svg
@@ -351,8 +359,11 @@
 								d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
 							></path></svg
 						>
-						Reset Genre Filter
-					</button>
+						<div class="flex flex-col items-start p-1">
+							<div>See All</div>
+							<div>Genres</div>
+						</div></button
+					>
 				</div>
 			{/if}
 		{/if}

@@ -522,7 +522,7 @@
 </script>
 
 <!-- Controls Section (Unchanged) -->
-<div class="relative h-[35px] flex items-center justify-end w-screen right-[50px] gap-2 p-4">
+<div class="relative h-[35px] flex items-center justify-end w-screen right-[50px] top-10 gap-2 p-4">
 	<!-- ... -->
 	<button
 		on:click={() => {
