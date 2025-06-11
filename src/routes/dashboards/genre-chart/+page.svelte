@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade, slide, fly } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
 	import GoogleMaps from '$lib/components/outputs/GoogleMaps.svelte';
@@ -329,12 +329,14 @@
 {/if}
 <div class="fixed top-[100px] left-0 right-0 bg-black min-w-screen">
 	<!-- Centered container for the heading and reset button -->
-	<div class="flex items-center justify-center w-screen gap-8 mb-0 font-sans font-black bg-black">
+	<div
+		class="flex items-center justify-center w-screen h-12 gap-8 mb-0 font-sans font-black bg-black"
+	>
 		{#if !$clickedGenres && !timeRangePrompt}
-			<h2 class="mb-0 text-3xl">7 Days - ALL Genres</h2>
+			<h2 class="mb-0 text-3xl" in:fade={{ duration: 1000 }}>7 Days - ALL Genres</h2>
 		{:else}
 			<!-- <h2 class="mb-0 text-3xl">NOW SHOWING:</h2> -->
-			<h2 class="mb-0 text-3xl">
+			<h2 class="mb-0 text-3xl" in:fade={{ duration: 1000 }}>
 				<span class="capitalize">{spellCheckedTimeRange || timeRangePrompt || '7 Days'}</span><span
 					class="px-2"
 				>
@@ -344,10 +346,10 @@
 			</h2>
 			<!-- The Reset Button -->
 			{#if $clickedGenres}
-				<div class="center">
+				<div class="relative center left-10" in:fade>
 					<button
 						on:click={handleManualReset}
-						class="px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full font-extralight row hover:bg-pink-500"
+						class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full font-extralight row hover:bg-pink-500"
 						aria-label="Reset filters"
 					>
 						<svg
@@ -370,7 +372,7 @@
 	</div>
 	<!-- TimeRange chatGpt input -->
 	<div
-		class="relative flex items-center justify-center w-full max-w-xl gap-4 my-2 mx-auto border-purple-500 border-[2px] rounded-full text-sm text-gray-300"
+		class="relative flex items-center justify-center w-full max-w-xl gap-4 my-2 mb-4 mx-auto border-purple-500 border-[2px] rounded-full text-sm text-gray-300"
 	>
 		<input
 			type="text"
