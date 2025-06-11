@@ -736,9 +736,7 @@
 	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-extrabold leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-black"
 >
 	<!-- Logo -->
-	<strong
-		class="flex items-end p-2 px-4 text-3xl bg-black border-[1px] rounded-full border-purple-500"
-	>
+	<strong class="flex items-end p-2 px-4 text-3xl bg-black border-0 border-purple-500 rounded-full">
 		<img src="/icon.svg" class="size-10" alt="" />
 		<span class="px-3 py-1 font-sans text-2xl font-black text-white uppercase bg-black">
 			Music Naarm
