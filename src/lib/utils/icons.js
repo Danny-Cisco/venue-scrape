@@ -40,6 +40,44 @@ export const socialIcons = [
 		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.6734 7.22198C10.7974 7.22198 9.44138 6.22598 8.01338 6.26198C6.12938 6.28598 4.40138 7.35397 3.42938 9.04597C1.47338 12.442 2.92538 17.458 4.83338 20.218C5.76938 21.562 6.87338 23.074 8.33738 23.026C9.74138 22.966 10.2694 22.114 11.9734 22.114C13.6654 22.114 14.1454 23.026 15.6334 22.99C17.1454 22.966 18.1054 21.622 19.0294 20.266C20.0974 18.706 20.5414 17.194 20.5654 17.11C20.5294 17.098 17.6254 15.982 17.5894 12.622C17.5654 9.81397 19.8814 8.46998 19.9894 8.40998C18.6694 6.47798 16.6414 6.26198 15.9334 6.21398C14.0854 6.06998 12.5374 7.22198 11.6734 7.22198ZM14.7934 4.38998C15.5734 3.45398 16.0894 2.14598 15.9454 0.849976C14.8294 0.897976 13.4854 1.59398 12.6814 2.52998C11.9614 3.35798 11.3374 4.68998 11.5054 5.96198C12.7414 6.05798 14.0134 5.32598 14.7934 4.38998Z"></path></svg>`
 	},
 	{
+		label: 'Buy Our Stuff',
+		match: [
+			// Square Online (AU-friendly, free “square.site” sub-domains)
+			'square.site', //  🄰 [oai_citation:0‡my.squareup.com](https://my.squareup.com/help/au/en/article/6966-use-a-custom-subdomain-with-your-online-store?utm_source=chatgpt.com)
+
+			// Shopify (default sub-domain given to every new store)
+			'myshopify.com', //  🄱 [oai_citation:1‡community.shopify.com](https://community.shopify.com/c/shopify-discussions/where-can-i-find-my-domain-in-the-store-setup-process/m-p/1210819?utm_source=chatgpt.com) [oai_citation:2‡help.shopify.com](https://help.shopify.com/en/manual/domains?utm_source=chatgpt.com)
+
+			// Big Cartel (artist-centric store builder)
+			'bigcartel.com', //  🄲 [oai_citation:3‡bigcartel.com](https://www.bigcartel.com/resources/help/article/use-a-custom-domain?utm_source=chatgpt.com)
+
+			// Bandcamp (digital & physical merch for musicians)
+			// 'bandcamp.com', //  🄳 [oai_citation:4‡store.bandcamp.com](https://store.bandcamp.com/?utm_source=chatgpt.com)
+
+			// Storenvy (DIY marketplace + standalone stores)
+			'storenvy.com', //  🄴 [oai_citation:5‡support.storenvy.com](https://support.storenvy.com/hc/en-us/articles/360039208831-How-do-I-set-up-a-custom-domain-for-my-Storenvy-store?utm_source=chatgpt.com)
+
+			// BigCommerce (enterprise & SMB SaaS storefronts)
+			'mybigcommerce.com',
+			'bigcommerce.com', //  🄵 [oai_citation:6‡developer.bigcommerce.com](https://developer.bigcommerce.com/docs/storefront/multi-storefront?utm_source=chatgpt.com)
+
+			// Spring / Teespring (print-on-demand merch for creators)
+			'creator-spring.com',
+			'spri.ng',
+			'teespring.com', //  🄶 [oai_citation:7‡spri.ng](https://www.spri.ng/?utm_source=chatgpt.com) [oai_citation:8‡teespring.com](https://teespring.com/?utm_source=chatgpt.com)
+
+			// Spreadshirt / Spreadshop (POD apparel stores)
+			'spreadshirt.com', //  🄷 [oai_citation:9‡spreadshirt.com](https://www.spreadshirt.com/create-your-own?utm_source=chatgpt.com)
+
+			// Printful (white-label POD storefronts & landing pages)
+			'printful.com', //  🄸 [oai_citation:10‡printful.com](https://www.printful.com/blog/how-to-start-an-online-store-with-printful?utm_source=chatgpt.com)
+
+			// Merchbar (band-merch specialist)
+			'merchbar.com' //  🄹 [oai_citation:11‡merchbar.com](https://www.merchbar.com/?utm_source=chatgpt.com)
+		],
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path></svg>`
+	},
+	{
 		label: 'YouTube',
 		match: ['youtube.com', 'youtu.be'],
 		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"></path></svg>`
@@ -48,25 +86,46 @@ export const socialIcons = [
 		label: 'Bandcamp',
 		match: ['bandcamp.com'],
 		svg: `<svg
-   fill="currentColor"
-   version="1.1"
-   id="Capa_1"
-   width="24"
-   height="40"
-   viewBox="0 0  24 10"
-   xml:space="preserve"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs1" />
-
-<path
-   id="path2"
-   d="M 23.755195,-1.2359009e-7 6.4359502,0.05873578 0,13.302377 17.019332,13.585841 Z M 7.2330135,2.5894817 h 1.024024 L 7.5599448,5.452212 C 7.8977173,5.229082 8.2283012,5.046458 8.5515457,4.905714 8.8747904,4.761538 9.2337237,4.688648 9.6296078,4.688648 c 0.5920092,0 1.0440102,0.17425 1.3563592,0.52096 0.31598,0.346711 0.475536,0.833414 0.475536,1.45818 0,0.559543 -0.09307,1.093138 -0.278297,1.601189 -0.18523,0.508051 -0.431606,0.94196 -0.740323,1.302401 -0.323246,0.377606 -0.6866519,0.671638 -1.0861673,0.881038 -0.3995165,0.205966 -0.8408857,0.309001 -1.3239367,0.309001 -0.3232445,0 -0.6245487,-0.04274 -0.9078418,-0.125129 C 6.845276,10.557327 6.5926539,10.450949 6.3711043,10.317071 L 6.2360091,10.600535 H 5.2768307 Z M 16.097981,4.714185 c 0.355933,0 0.69006,0.04778 1.002409,0.140455 0.315981,0.09269 0.592479,0.202419 0.832188,0.329431 L 17.70832,6.228546 H 17.64887 C 17.57623,6.166756 17.484937,6.093866 17.375978,6.01148 17.267024,5.9291 17.138517,5.853732 16.989607,5.781643 16.840695,5.706123 16.676754,5.64328 16.495156,5.595222 c -0.181598,-0.05149 -0.388993,-0.0766 -0.621439,-0.0766 -0.7046,0 -1.279789,0.282309 -1.726521,0.845284 -0.443098,0.562975 -0.66467,1.246497 -0.66467,2.053198 0,0.484022 0.130273,0.857643 0.391776,1.118534 0.265135,0.260891 0.640015,0.390721 1.126698,0.390721 0.228814,0 0.457471,-0.03015 0.686285,-0.09193 0.228813,-0.06179 0.423806,-0.129653 0.583613,-0.201745 0.177966,-0.07896 0.344609,-0.163567 0.497151,-0.252819 0.152542,-0.08925 0.263328,-0.157119 0.332336,-0.201745 h 0.05945 l -0.218854,1.057244 c -0.315982,0.133871 -0.650109,0.250304 -1.002409,0.349853 -0.352302,0.09612 -0.709463,0.143009 -1.07266,0.143009 -0.384987,0 -0.726202,-0.04187 -1.024023,-0.127691 -0.294192,-0.08583 -0.551201,-0.220676 -0.77275,-0.406047 C 12.854854,10.015985 12.688211,9.791493 12.571988,9.520304 12.455771,9.249115 12.399065,8.933312 12.399065,8.572871 c 0,-0.538946 0.08682,-1.042397 0.264787,-1.509255 0.177967,-0.466858 0.432361,-0.877322 0.759239,-1.230897 0.315979,-0.343278 0.705035,-0.615539 1.169927,-0.81464 0.464891,-0.202535 0.967433,-0.303893 1.504963,-0.303894 z M 9.2000038,5.574792 c -0.3014526,0 -0.6143177,0.07122 -0.9375624,0.211958 C 7.9391967,5.927495 7.6369625,6.085795 7.3573015,6.264299 L 6.557536,9.556056 c 0.2324456,0.116708 0.4575598,0.208027 0.6754775,0.273249 0.2215498,0.06522 0.483873,0.09704 0.7889579,0.09704 0.3777241,0 0.7153955,-0.08797 1.0132168,-0.263034 C 9.3330087,9.488239 9.5820874,9.260399 9.7782135,8.978912 9.9816032,8.68026 10.13314,8.352733 10.234835,7.995726 c 0.101693,-0.357009 0.151307,-0.739004 0.151307,-1.14407 0,-0.408502 -0.09213,-0.72263 -0.280998,-0.942329 C 9.9162822,5.686199 9.6140475,5.57479 9.2000038,5.574789 Z" /></svg>
-`
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  version="1.1"
+  id="svg1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+  xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+  xmlns:svg="http://www.w3.org/2000/svg"
+  sodipodi:docname="shopping-bag-line.svg"
+  inkscape:export-filename="bandcamp-bag.svg"
+  inkscape:export-xdpi="96"
+  inkscape:export-ydpi="96"
+  width="24"
+  height="24"
+>
+  <defs id="defs1" />
+  <sodipodi:namedview
+    id="namedview1"
+    pagecolor="#505050"
+    bordercolor="#ffffff"
+    borderopacity="1"
+    inkscape:showpageshadow="0"
+    inkscape:pageopacity="0"
+    inkscape:pagecheckerboard="1"
+    inkscape:deskcolor="#505050"
+  />
+  <path
+    d="m 7.0508475,8.1186401 v -2 c 0,-2.76142 2.23858,-4.999996 5.0000205,-4.999996 2.761399,0 4.999999,2.238576 4.999999,4.999996 v 2 h 3 c 0.5523,0 1,0.44772 1,1 V 21.11868 c 0,0.5522 -0.4477,1 -1,1 H 4.0508475 c -0.55228,0 -1,-0.4478 -1,-1 V 9.1186401 c 0,-0.55228 0.44772,-1 1,-1 z m 0,1.9999999 h -2 V 20.11868 H 19.050867 V 10.11864 h -2 v 2.00004 h -2 V 10.11864 H 9.0508475 v 2.00004 h -2 z m 2,-1.9999999 h 6.0000195 v -2 c 0,-1.65685 -1.3432,-3 -2.999999,-3 -1.6569,0 -3.0000205,1.34315 -3.0000205,3 z"
+    fill="currentColor"
+  />
+  <path
+    id="text1"
+    style="font-style:italic;font-size:13.7115px;line-height:6;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:currentColor;stroke-width:0.765594"
+    d="M 3.2997415,8.3553082 V 21.882652 H 19.469663 V 8.3553082 Z m 1.3789062,1.7968748 h 1.8808594 v 3.535156 c 0.5802387,-0.660579 1.2680193,-0.992187 2.0625,-0.992187 0.8658946,0 1.5835419,0.315977 2.1503909,0.945312 0.566849,0.624873 0.849609,1.523399 0.849609,2.697266 0,1.214038 -0.290855,2.148571 -0.871093,2.804688 -0.575776,0.656116 -1.2758389,0.984374 -2.1015632,0.984374 -0.4061671,0 -0.8078378,-0.09993 -1.2050781,-0.300781 -0.392777,-0.205315 -0.7319222,-0.507056 -1.0175781,-0.904297 v 1.044922 H 4.6786477 Z m 11.4882803,2.542969 c 0.865895,0 1.553676,0.187576 2.0625,0.5625 0.513288,0.37046 0.8823,0.937935 1.105469,1.701172 l -1.855469,0.333984 c -0.06249,-0.37046 -0.204565,-0.648476 -0.427734,-0.835937 -0.218705,-0.187462 -0.504815,-0.28125 -0.857422,-0.28125 -0.468654,0 -0.843807,0.162455 -1.125,0.488281 -0.276729,0.321363 -0.414062,0.86232 -0.414062,1.621094 0,0.843577 0.140682,1.438966 0.421874,1.787109 0.285656,0.348143 0.666951,0.521484 1.144532,0.521484 0.35707,0 0.649321,-0.09993 0.876953,-0.300781 0.227632,-0.205315 0.388691,-0.555347 0.482422,-1.050781 l 1.847656,0.314453 c -0.191925,0.848041 -0.560937,1.488928 -1.105469,1.921875 -0.544531,0.432947 -1.274461,0.648437 -2.189453,0.648437 -1.039966,0 -1.869825,-0.328258 -2.490234,-0.984374 -0.615945,-0.656117 -0.923827,-1.564133 -0.923827,-2.72461 0,-1.173867 0.311231,-2.086628 0.931639,-2.738281 0.620409,-0.656116 1.457805,-0.984375 2.515625,-0.984375 z m -8.0468741,1.439453 c -0.4508008,0 -0.8259539,0.17669 -1.125,0.529297 -0.299046,0.348143 -0.4472656,0.87961 -0.4472656,1.59375 0,0.736457 0.1155608,1.280206 0.3476563,1.632812 0.3258263,0.499898 0.7587598,0.75 1.2988281,0.75 0.4150938,0 0.7665213,-0.17669 1.0566406,-0.529296 0.2945827,-0.35707 0.4433594,-0.916451 0.4433594,-1.679688 0,-0.812334 -0.1487767,-1.396836 -0.4433594,-1.753906 C 8.9563306,14.31604 8.5797815,14.134605 8.1200539,14.134605 Z"
+  />
+</svg>`
 	},
 	{
 		label: 'Tickets',
-		match: ['tix.com', 'ticketek', 'ticketmaster'],
+		match: ['tix', 'ticketek', 'ticketmaster'],
 		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2.00488 9.49979V3.99979C2.00488 3.4475 2.4526 2.99979 3.00488 2.99979H21.0049C21.5572 2.99979 22.0049 3.4475 22.0049 3.99979V9.49979C20.6242 9.49979 19.5049 10.6191 19.5049 11.9998C19.5049 13.3805 20.6242 14.4998 22.0049 14.4998V19.9998C22.0049 20.5521 21.5572 20.9998 21.0049 20.9998H3.00488C2.4526 20.9998 2.00488 20.5521 2.00488 19.9998V14.4998C3.38559 14.4998 4.50488 13.3805 4.50488 11.9998C4.50488 10.6191 3.38559 9.49979 2.00488 9.49979ZM4.00488 7.96755C5.4866 8.7039 6.50488 10.2329 6.50488 11.9998C6.50488 13.7666 5.4866 15.2957 4.00488 16.032V18.9998H20.0049V16.032C18.5232 15.2957 17.5049 13.7666 17.5049 11.9998C17.5049 10.2329 18.5232 8.7039 20.0049 7.96755V4.99979H4.00488V7.96755ZM9.00488 8.99979H15.0049V10.9998H9.00488V8.99979ZM9.00488 12.9998H15.0049V14.9998H9.00488V12.9998Z"></path></svg>`
 	},
 	{
@@ -118,13 +177,109 @@ export const socialIcons = [
 		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM12.0606 11.6829L5.64722 6.2377L4.35278 7.7623L12.0731 14.3171L19.6544 7.75616L18.3456 6.24384L12.0606 11.6829Z"></path></svg>`
 	},
 	{
-		lable: 'Article',
+		label: 'Article',
 		match: [
+			// ——— AUSTRALIA (must-catch) ———
 			'beat.com.au',
+			'thenote.com.au',
 			'thepointmusicnews.com.au',
 			'howgoodmelbourne.com',
+			'themusic.com.au',
+			'themusic.com',
+			'noise11.com',
+			'happymag.tv',
+			'themusicnetwork.com',
+			'musicfeeds.com.au',
+			'acidstag.com',
+			'au.rollingstone.com',
+			'heavymag.com.au',
+			'rhythms.com.au',
+			'stoneyroads.com',
+			'tonedeaf.com.au',
+			'thebrag.com',
+			'scenestr.com.au',
+			'stack.com.au',
+			'auspop.com.au',
+			'coolaccidents.com',
+			'maniacsonline.com.au',
+			'theaureview.com',
+			'whothehell.net',
+			'pilerats.com',
+			'purplesneakers.com.au',
+			'undertheradar.co.nz', // close NZ ally
+			'triplej.net.au',
+
+			// ——— UNITED STATES / NORTH AMERICA ———
 			'rollingstone.com',
-			'themusic.com'
+			'billboard.com',
+			'pitchfork.com',
+			'spin.com',
+			'stereogum.com',
+			'consequence.net',
+			'consequenceofsound.net',
+			'thefader.com',
+			'npr.org',
+			'complex.com',
+			'xxlmag.com',
+			'vibe.com',
+			'loudwire.com',
+			'ultimateclassicrock.com',
+			'brooklynvegan.com',
+			'undertheradarmag.com',
+			'aquariumdrunkard.com',
+			'gorillavsbear.net',
+			'paste.com',
+			'avclub.com',
+			'exclaim.ca', // Canada
+
+			// ——— UNITED KINGDOM & IRELAND ———
+			'nme.com',
+			'mojo4music.com',
+			'thequietus.com',
+			'clashmusic.com',
+			'thelineofbestfit.com',
+			'loudersound.com',
+			'kerrang.com',
+			'metalhammer.co.uk',
+			'rocksound.tv',
+			'recordcollectormag.com',
+			'loudandquiet.com',
+			'uncut.co.uk',
+			'jazzwise.com',
+
+			// ——— EUROPE (CONTINENTAL) ———
+			'laut.de',
+			'musikexpress.de',
+			'rollingstone.de',
+			'lesinrocks.com',
+			'tsugi.fr',
+			'rockol.it',
+
+			// ——— ASIA-PACIFIC (EX-AU) ———
+			'musicpressasia.com',
+			'bandwagon.asia',
+			'rollingstoneindia.com',
+			'soompi.com',
+			'allkpop.com',
+			'koreaboo.com',
+			'jame.world',
+			'natalie.mu',
+
+			// ——— LATIN AMERICA ———
+			'rollingstone.com.ar',
+			'indiehoy.com',
+			'sopitas.com',
+			'lamezcla.com',
+
+			// ——— AFRICA & PAN-AFRO DIASPORA ———
+			'okayafrica.com',
+			'afrobeatsmagazine.com',
+			'notjustok.com',
+
+			// ——— CATCH-ALL FOR ZINES / MISC ———
+			'houseofpoetry.org',
+			'homesickzine.com',
+			'zine'
 		],
 		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2 4C2 3.44772 2.44772 3 3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4ZM4 5V19H20V5H4ZM6 7H12V13H6V7ZM8 9V11H10V9H8ZM14 9H18V7H14V9ZM18 13H14V11H18V13ZM6 15V17L18 17V15L6 15Z"></path></svg>`
 	},
