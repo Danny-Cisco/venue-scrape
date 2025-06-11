@@ -89,7 +89,7 @@
 	>
 		<div class="relative w-full h-full" transition:fly={{ y: 500 }}>
 			<div class="w-full bg-blue h-">
-				<MapsModal gigs={$gigsStoreDateFiltered} />
+				<MapsModal gigs={$gigsStoreFiltered} />
 			</div>
 			<!-- close button -->
 			<div class="absolute top-0 -right-3">

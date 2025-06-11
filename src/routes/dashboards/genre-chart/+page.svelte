@@ -348,30 +348,36 @@
 				</span>
 				{$clickedGenres || 'ALL Genres'}
 			</h2>
-			<!-- The Reset Button -->
-			{#if $clickedGenres}
-				<div class="relative center left-10" in:fade>
-					<button
-						on:click={handleManualReset}
-						class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full btn-hover font-extralight row hover:bg-pink-500"
-						aria-label="Reset filters"
+		{/if}
+		<h2
+			class="mb-0 font-mono border-[1px] rounded-full px-4 py-1 text-3xl"
+			in:fade={{ duration: 1000 }}
+		>
+			{$gigsStoreFiltered.length}
+		</h2>
+		<!-- The Reset Button -->
+		{#if $clickedGenres}
+			<div class="relative center left-10" in:fade>
+				<button
+					on:click={handleManualReset}
+					class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full btn-hover font-extralight row hover:bg-pink-500"
+					aria-label="Reset filters"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						class="w-8 h-8"
+						fill="currentColor"
+						><path
+							d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
+						></path></svg
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 24 24"
-							class="w-8 h-8"
-							fill="currentColor"
-							><path
-								d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
-							></path></svg
-						>
-						<div class="flex flex-col items-start p-1">
-							<div>See All</div>
-							<div>Genres</div>
-						</div></button
-					>
-				</div>
-			{/if}
+					<div class="flex flex-col items-start p-1">
+						<div>See All</div>
+						<div>Genres</div>
+					</div></button
+				>
+			</div>
 		{/if}
 	</div>
 	<!-- TimeRange chatGpt input -->
