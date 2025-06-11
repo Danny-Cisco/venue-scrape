@@ -260,7 +260,7 @@
 	</div>
 {:else}
 	<!-- UI -->
-	<div class="absolute inset-0 top-[100px] isolate" in:fade>
+	<div class="absolute inset-0 top-[150px] isolate" in:fade>
 		<!-- Main content -->
 		<div
 			class="flex flex-col items-stretch items-center justify-center max-w-full min-w-full gap-6 p-4 pt-12"
@@ -269,44 +269,6 @@
 			{#key upsetPlotData}
 				<UpsetPlot data={upsetPlotData} />
 			{/key}
-		</div>
-
-		<!-- TimeRange chatGpt input -->
-		<div
-			class="relative flex items-center justify-center w-full max-w-xl gap-4 my-4 mx-auto border-purple-500 border-[2px] rounded-full text-sm text-gray-300"
-		>
-			<input
-				type="text"
-				bind:value={timeRangePrompt}
-				on:keydown={(e) => {
-					if (e.key === 'Enter') {
-						getDateRange(timeRangePrompt);
-					}
-				}}
-				placeholder="Ask for a date range (e.g. 'NEXT WEEKEND' or 'JUNE')"
-				class="w-full px-5 font-sans capitalize rounded-full"
-			/>
-			<button
-				class="absolute text-gray-500 right-5 row hover:text-green-500 hover:font-bold"
-				on:click={getDateRange(timeRangePrompt)}
-			>
-				{#if !loading}
-					enter
-					<svg
-						fill="none"
-						height="24"
-						viewBox="0 0 20 20"
-						width="24"
-						xmlns="http://www.w3.org/2000/svg"
-						><path
-							d="m3.76072 12 3.33197 3.136c.20108.1893.21067.5057.02141.7068s-.5057.2107-.70679.0214l-4.25-4c-.10039-.0945-.15731-.2263-.15731-.3641 0-.1379.05693-.2697.15732-.3641l4.25-3.99998c.20109-.18926.51753-.17967.70678.02142.18926.20109.17967.51753-.02142.70678l-3.33182 3.13578h11.23914c1.1046 0 2-.8954 2-2v-4.5c0-.27614.2239-.5.5-.5s.5.22386.5.5v4.5c0 1.6569-1.3431 3-3 3z"
-							fill="currentColor"
-						/></svg
-					>
-				{:else}
-					<p class="font-semibold text-green-400">loading..</p>
-				{/if}
-			</button>
 		</div>
 
 		<!-- Old school datepicker -->
@@ -361,39 +323,76 @@
 		</div>
 	</div>
 {/if}
-<div class="fixed top-[100px] left-0 right-0 min-w-screen">
+<div class="fixed top-[100px] left-0 right-0 bg-black min-w-screen">
 	<!-- Centered container for the heading and reset button -->
-	<div
-		class="flex items-center justify-center w-screen gap-8 p-8 mb-2 font-sans font-black bg-black"
-	>
+	<div class="flex items-center justify-center w-screen gap-8 mb-0 font-sans font-black bg-black">
 		{#if !$clickedGenres && !timeRangePrompt}
 			<h2 class="mb-0 text-3xl">7 Days - ALL Genres</h2>
 		{:else}
 			<!-- <h2 class="mb-0 text-3xl">NOW SHOWING:</h2> -->
 			<h2 class="mb-0 text-3xl">
-				<span class="capitalize">{timeRangePrompt || '7 Days'}</span><span class="px-8"> - </span>
+				<span class="capitalize">{timeRangePrompt || '7 Days'}</span><span class="px-2"> - </span>
 				{$clickedGenres || 'ALL Genres'}
 			</h2>
 			<!-- The Reset Button -->
-			<div class="center">
-				<button
-					on:click={handleManualReset}
-					class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
-					aria-label="Reset filters"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						class="w-8 h-8"
-						fill="currentColor"
-						><path
-							d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
-						></path></svg
+			{#if clickedGenres}
+				<div class="center">
+					<button
+						on:click={handleManualReset}
+						class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
+						aria-label="Reset filters"
 					>
-					Reset Genre Filter
-				</button>
-			</div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							class="w-8 h-8"
+							fill="currentColor"
+							><path
+								d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
+							></path></svg
+						>
+						Reset Genre Filter
+					</button>
+				</div>
+			{/if}
 		{/if}
+	</div>
+	<!-- TimeRange chatGpt input -->
+	<div
+		class="relative flex items-center justify-center w-full max-w-xl gap-4 my-2 mx-auto border-purple-500 border-[2px] rounded-full text-sm text-gray-300"
+	>
+		<input
+			type="text"
+			bind:value={timeRangePrompt}
+			on:keydown={(e) => {
+				if (e.key === 'Enter') {
+					getDateRange(timeRangePrompt);
+				}
+			}}
+			placeholder="Ask for a date range (e.g. 'NEXT WEEKEND' or 'JUNE')"
+			class="w-full px-5 font-sans capitalize rounded-full"
+		/>
+		<button
+			class="absolute text-gray-500 right-5 row hover:text-green-500 hover:font-bold"
+			on:click={getDateRange(timeRangePrompt)}
+		>
+			{#if !loading}
+				enter
+				<svg
+					fill="none"
+					height="24"
+					viewBox="0 0 20 20"
+					width="24"
+					xmlns="http://www.w3.org/2000/svg"
+					><path
+						d="m3.76072 12 3.33197 3.136c.20108.1893.21067.5057.02141.7068s-.5057.2107-.70679.0214l-4.25-4c-.10039-.0945-.15731-.2263-.15731-.3641 0-.1379.05693-.2697.15732-.3641l4.25-3.99998c.20109-.18926.51753-.17967.70678.02142.18926.20109.17967.51753-.02142.70678l-3.33182 3.13578h11.23914c1.1046 0 2-.8954 2-2v-4.5c0-.27614.2239-.5.5-.5s.5.22386.5.5v4.5c0 1.6569-1.3431 3-3 3z"
+						fill="currentColor"
+					/></svg
+				>
+			{:else}
+				<p class="font-semibold text-green-400">loading..</p>
+			{/if}
+		</button>
 	</div>
 </div>
 
