@@ -260,7 +260,7 @@
 	</div>
 {:else}
 	<!-- UI -->
-	<div class="absolute inset-0 isolate" in:fade>
+	<div class="absolute inset-0 top-[100px] isolate" in:fade>
 		<!-- Main content -->
 		<div
 			class="flex flex-col items-stretch items-center justify-center max-w-full min-w-full gap-6 p-4 pt-12"
@@ -347,39 +347,6 @@
 
 		<!-- *** MODIFIED: Filtered Gigs Section with Reset Button *** -->
 		<div class="p-4 my-4" bind:this={tableSectionRef}>
-			<!-- Centered container for the heading and reset button -->
-			<div
-				class="flex items-center justify-center w-screen gap-4 p-8 mb-2 font-sans font-black bg-black"
-			>
-				{#if !$clickedGenres && !timeRangePrompt}
-					<h2 class="mb-0 text-3xl">NOW SHOWING: 7 Days - ALL Genres</h2>
-				{:else}
-					<h2 class="mb-0 text-3xl">
-						NOW SHOWING: <span class="capitalize">{`${timeRangePrompt} - ` || '7 Days - '}</span>
-						{$clickedGenres || 'ALL Genres'}
-					</h2>
-					<!-- The Reset Button -->
-					<div class="center">
-						<button
-							on:click={handleManualReset}
-							class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
-							aria-label="Reset filters"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 24 24"
-								class="w-8 h-8"
-								fill="currentColor"
-								><path
-									d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
-								></path></svg
-							>
-							Reset Genre Filter
-						</button>
-					</div>
-				{/if}
-			</div>
-
 			{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 				<p class="italic text-center text-gray-500">
 					Click on a chart intersection to see a filtered list of gigs.
@@ -394,6 +361,41 @@
 		</div>
 	</div>
 {/if}
+<div class="fixed top-[100px] left-0 right-0 min-w-screen">
+	<!-- Centered container for the heading and reset button -->
+	<div
+		class="flex items-center justify-center w-screen gap-8 p-8 mb-2 font-sans font-black bg-black"
+	>
+		{#if !$clickedGenres && !timeRangePrompt}
+			<h2 class="mb-0 text-3xl">7 Days - ALL Genres</h2>
+		{:else}
+			<!-- <h2 class="mb-0 text-3xl">NOW SHOWING:</h2> -->
+			<h2 class="mb-0 text-3xl">
+				<span class="capitalize">{timeRangePrompt || '7 Days'}</span><span class="px-8"> - </span>
+				{$clickedGenres || 'ALL Genres'}
+			</h2>
+			<!-- The Reset Button -->
+			<div class="center">
+				<button
+					on:click={handleManualReset}
+					class="px-3 py-1 text-xs font-semibold text-white transition-colors bg-purple-500 rounded-full row hover:bg-pink-500"
+					aria-label="Reset filters"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						class="w-8 h-8"
+						fill="currentColor"
+						><path
+							d="M10.5859 12L2.79297 4.20706L4.20718 2.79285L12.0001 10.5857L19.793 2.79285L21.2072 4.20706L13.4143 12L21.2072 19.7928L19.793 21.2071L12.0001 13.4142L4.20718 21.2071L2.79297 19.7928L10.5859 12Z"
+						></path></svg
+					>
+					Reset Genre Filter
+				</button>
+			</div>
+		{/if}
+	</div>
+</div>
 
 <style>
 	.page {
