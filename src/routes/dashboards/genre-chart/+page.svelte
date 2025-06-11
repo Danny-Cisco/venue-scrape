@@ -329,7 +329,7 @@
 		</div>
 	</div>
 {/if}
-<div class="fixed top-[100px] left-0 right-0 bg-black min-w-screen">
+<div class="fixed top-[100px] left-0 right-0 bg-black pt-[2px] min-w-screen">
 	<!-- Centered container for the heading and reset button -->
 	<div
 		class="flex items-center justify-center w-screen h-12 gap-8 mb-0 font-sans font-black bg-black"
@@ -351,7 +351,7 @@
 				<div class="relative center left-10" in:fade>
 					<button
 						on:click={handleManualReset}
-						class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full font-extralight row hover:bg-pink-500"
+						class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full btn-hover font-extralight row hover:bg-pink-500"
 						aria-label="Reset filters"
 					>
 						<svg
