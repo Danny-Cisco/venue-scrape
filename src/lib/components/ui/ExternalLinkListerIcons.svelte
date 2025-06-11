@@ -11,8 +11,9 @@
 	let links = [];
 
 	function getIcon(link) {
+		const lowerLink = link.toLowerCase();
 		for (const icon of socialIcons) {
-			if (icon.match.some((substr) => link.includes(substr))) {
+			if (icon.match.some((substr) => lowerLink.includes(substr.toLowerCase()))) {
 				return icon;
 			}
 		}
@@ -131,7 +132,7 @@
 	}
 
 	.btn-hover:hover {
-		transform: translateY(-1px); /* Reduced translation to minimize layout impact */
+		transform: translateY(-2px);
 	}
 
 	/* Custom scrollbar styles */
