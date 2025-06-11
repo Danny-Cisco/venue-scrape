@@ -384,8 +384,8 @@
 					getDateRange(timeRangePrompt);
 				}
 			}}
-			placeholder="Ask for a date range (e.g. 'NEXT WEEKEND' or 'JUNE')"
-			class="w-full px-5 font-sans capitalize rounded-full"
+			placeholder="Type when... 'Today', 'Next Weekend', 'This Month' etc"
+			class="w-full px-5 font-sans rounded-full"
 		/>
 		<button
 			class="absolute text-gray-500 right-5 row hover:text-green-500 hover:font-bold"

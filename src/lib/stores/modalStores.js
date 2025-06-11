@@ -6,4 +6,4 @@ export const showGigModal = writable(false);
 
 export const showBandModal = writable(false);
 
-export const showMapsModal = writable(true);
+export const showMapsModal = writable(false);
