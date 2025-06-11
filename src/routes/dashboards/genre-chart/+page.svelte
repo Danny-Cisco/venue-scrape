@@ -257,7 +257,9 @@
 		</div>
 
 		<!-- TimeRange chatGpt input -->
-		<div class="relative flex items-center justify-center w-full gap-4 p-4 text-sm text-gray-300">
+		<div
+			class="relative flex items-center justify-center w-full max-w-xl gap-4 my-4 mx-auto border-purple-500 border-[2px] rounded-full text-sm text-gray-300"
+		>
 			<input
 				type="text"
 				bind:value={timeRangePrompt}
