@@ -98,7 +98,7 @@
 		title={new URL(url).hostname}
 		class="w-6 h-6 text-purple-500 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
 	>
-		{@html fallbackIcon}
+		{@html getIcon(url)?.svg || fallbackIcon}
 	</a>
 {:else if loading}
 	<div class="text-xs text-gray-400">Loading links…</div>
