@@ -215,6 +215,8 @@
 	$: upsetPlotData = $gigsGenreStore;
 
 	onMount(async () => {
+		resetGenreSelection();
+
 		try {
 			const now = new Date();
 
