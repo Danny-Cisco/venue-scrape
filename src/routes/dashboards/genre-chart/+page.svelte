@@ -343,7 +343,7 @@
 				{$clickedGenres || 'ALL Genres'}
 			</h2>
 			<!-- The Reset Button -->
-			{#if clickedGenres}
+			{#if $clickedGenres}
 				<div class="center">
 					<button
 						on:click={handleManualReset}
