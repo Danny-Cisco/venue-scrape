@@ -166,11 +166,11 @@
 	});
 </script>
 
-<div bind:this={mapDiv} class="mx-auto mb-8 map-container rounded-2xl"></div>
+<div bind:this={mapDiv} class="mx-auto -mt-[50px] map-container"></div>
 
 <style>
 	.map-container {
-		width: 70%;
-		height: 50dvh;
+		width: 100%;
+		height: 100dvh;
 	}
 </style>

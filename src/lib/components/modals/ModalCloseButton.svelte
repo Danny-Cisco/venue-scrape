@@ -1,5 +1,10 @@
 <script>
-	import { showGigModal, showBandModal, lastClicked } from '$lib/stores/modalStores.js';
+	import {
+		showGigModal,
+		showBandModal,
+		lastClicked,
+		showMapsModal
+	} from '$lib/stores/modalStores.js';
 </script>
 
 <div
@@ -7,6 +12,7 @@
 	on:click={() => {
 		$showGigModal = false;
 		$showBandModal = false;
+		$showMapsModal = false;
 		$lastClicked = null;
 	}}
 >

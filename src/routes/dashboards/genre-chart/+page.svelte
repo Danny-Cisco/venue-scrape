@@ -3,7 +3,6 @@
 	import { fade, slide, fly } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
-	import GoogleMaps from '$lib/components/outputs/GoogleMaps.svelte';
 
 	import { dateRangePrompt } from '$lib/utils/prompts.ts';
 	import { toISOStringLocal } from '$lib/utils/date.ts';
@@ -18,6 +17,13 @@
 		filteredGigIds,
 		clickedGenres
 	} from '$lib/stores/gigsStore.js';
+
+	import {
+		showGigModal,
+		showBandModal,
+		lastClicked,
+		showMapsModal
+	} from '$lib/stores/modalStores.js';
 
 	let spellCheckedTimeRange = '';
 	let gigs = {};
@@ -318,10 +324,6 @@
 					Click on a chart intersection to see a filtered list of gigs.
 				</p>
 			{:else}
-				<!-- google maps -->
-				{#key $gigsStoreFiltered}
-					<GoogleMaps gigs={$gigsStoreFiltered} />
-				{/key}
 				<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
 			{/if}
 		</div>
@@ -408,6 +410,17 @@
 		</button>
 	</div>
 </div>
+<button
+	class="fixed top-[100px] bg-purple-500 hover:bg-pink-500 py-6 px-4 rounded-l-full right-0"
+	on:click={() => ($showMapsModal = true)}
+>
+	<div>
+		<div class="flex flex-col">
+			<div>MAP</div>
+			<div></div>
+		</div>
+	</div>
+</button>
 
 <style>
 	.page {
