@@ -1,38 +1,45 @@
-// src/routes/api/scrape/+server.js (or wherever your endpoint is)
-
+// src/routes/api/scrape/+server.js
 import { gotScraping } from 'crawlee';
 import * as cheerio from 'cheerio';
 import { json } from '@sveltejs/kit';
 
-// No need for global configuration or crawler setup here.
-
-async function scrapeSingleProfile(url: string) {
+async function scrapeSingleProfile(url) {
 	try {
-		// Use got-scraping to fetch the page. It mimics a real browser's headers.
 		const response = await gotScraping({ url });
-
-		// Load the HTML into Cheerio for parsing.
 		const $ = cheerio.load(response.body);
 
-		// Your scraping logic remains the same.
-		const img = $('#profile-picture img'); // More specific selector for Linktree
-		const src = img.attr('src');
+		// Get the profile picture from DOM
+		const profilePic = $('#profile-picture img').attr('src');
 
-		if (src) {
-			return { source: url, image: src };
+		// Try to find customAvatar from embedded JSON
+		let customAvatar;
+		$('script[type="application/json"]').each((_, el) => {
+			try {
+				const data = JSON.parse($(el).text());
+				const avatar = data?.props?.pageProps?.account?.customAvatar;
+				if (avatar) {
+					customAvatar = avatar;
+				}
+			} catch (e) {
+				// Silent fail on JSON parse error
+			}
+		});
+
+		const image = customAvatar || profilePic;
+
+		if (image) {
+			return { source: url, image, profilePic, customAvatar };
 		} else {
-			return { source: url, error: 'Profile image not found.' };
+			return { source: url, error: 'No image found in DOM or embedded JSON.' };
 		}
 	} catch (error) {
 		console.error(`❌ Failed to scrape ${url}:`, error);
-		// Re-throw or handle the error as needed. Here we pass it up.
 		throw new Error(`Scraping failed for ${url}: ${error.message}`);
 	}
 }
 
 export async function GET({ url }) {
 	const singleUrl = url.searchParams.get('url');
-
 	if (!singleUrl) {
 		return json({ error: 'Missing ?url parameter' }, { status: 400 });
 	}
