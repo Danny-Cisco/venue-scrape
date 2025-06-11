@@ -561,7 +561,7 @@
 	{/if}
 </div>
 <!-- Container div -->
-<div class="flex justify-center w-screen overflow-x-auto">
+<div class="overflow-x-auto">
 	{#key soloSetMode}
 		<div bind:this={container} class="upset-plot-styled-container text-white {className}" in:fade>
 			<!-- SVG appended here -->

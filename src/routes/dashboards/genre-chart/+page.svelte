@@ -239,7 +239,7 @@
 	</div>
 {:else}
 	<!-- UI -->
-	<div class="page isolate" in:fade>
+	<div class="absolute inset-0 isolate" in:fade>
 		<!-- <div class="w-screen text-center">
 		<h1 class="mt-4 mb-4 text-xl font-extrabold leading-none tracking-tight text-gray-300">
 			Genre Chart
@@ -247,12 +247,13 @@
 	</div> -->
 
 		<!-- Main content -->
-		<div class="flex flex-col w-screen gap-6 p-4 pt-12 lg:flex-row" bind:this={chartSectionRef}>
-			<div class="flex-grow overflow-hidden">
-				{#key upsetPlotData}
-					<UpsetPlot data={upsetPlotData} />
-				{/key}
-			</div>
+		<div
+			class="flex flex-col items-stretch items-center justify-center max-w-full min-w-full gap-6 p-4 pt-12"
+			bind:this={chartSectionRef}
+		>
+			{#key upsetPlotData}
+				<UpsetPlot data={upsetPlotData} />
+			{/key}
 		</div>
 
 		<!-- TimeRange chatGpt input -->
@@ -292,7 +293,7 @@
 
 		<!-- Old school datepicker -->
 		<button
-			class="text-xs text-left text-gray-500"
+			class="w-full mx-auto text-xs text-center text-gray-500"
 			on:click={() => {
 				showDatePicker = !showDatePicker;
 			}}>{showDatePickerText}?</button
