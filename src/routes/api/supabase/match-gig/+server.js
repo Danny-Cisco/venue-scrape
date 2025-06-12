@@ -98,7 +98,7 @@ export async function POST({ request, locals }) {
 			if (inputBands.length > 0 && matchBands.length > 0) {
 				const hasBandOverlap = matchBands.some((b) => inputBands.includes(b));
 				if (hasBandOverlap) {
-					console.log('🥳 HOORAY!!!!! GIG MATCH FOUND IN DATABASE 🥳');
+					console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳');
 					return json({ matchId: potentialMatch.id, reason: 'Venue and band overlap' });
 				}
 			}
