@@ -23,7 +23,6 @@ export async function POST({ request, locals }) {
 
 	try {
 		const reqBody = await request.json();
-		// console.log('🔍 Incoming potentialMatch request body:', reqBody);
 
 		const { startDate, venueId, bandObjects } = reqBody;
 
@@ -51,11 +50,6 @@ export async function POST({ request, locals }) {
 
 		const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-		// console.log('Input startDate string:', startDate);
-		// console.log('Parsed inputDate (ISO):', inputDate.toISOString());
-		// console.log('Calculated dayStart (ISO):', dayStart.toISOString());
-		// console.log('Calculated dayEnd (ISO):', dayEnd.toISOString());
-
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
 			.select('id, start_date, venue_id, band_objects')
@@ -75,15 +69,26 @@ export async function POST({ request, locals }) {
 		for (const potentialMatch of potentialMatches) {
 			if (
 				typeof potentialMatch.venue_id !== 'string' ||
-				!Array.isArray(potentialMatch.bandObjects)
+				!Array.isArray(potentialMatch.band_objects)
 			) {
 				continue; // Skip malformed data from DB
 			}
 			// const matchVenue = normalize(potentialMatch.venue);
-			const matchVenue = potentialMatch.venueId || potentialMatch.venue_id;
-			const matchBands = potentialMatch.bandObjects
+			const matchVenue = potentialMatch.venue_id;
+			const matchBands = potentialMatch.band_objects
 				.map((b) => (typeof b.bandname === 'string' ? normalize(b.bandname) : ''))
 				.filter((name) => name.length > 0);
+
+			const comparisonLog = [
+				{
+					inputBands: inputBands,
+					matchVenueId: matchVenue
+				},
+				{
+					matchBands: matchBands,
+					inputVenueId: venueId
+				}
+			];
 
 			// Venue must potentialMatch
 			if (matchVenue !== venueId || matchVenue === '') continue; // Also skip if venue becomes empty after normalization
@@ -93,6 +98,7 @@ export async function POST({ request, locals }) {
 			if (inputBands.length > 0 && matchBands.length > 0) {
 				const hasBandOverlap = matchBands.some((b) => inputBands.includes(b));
 				if (hasBandOverlap) {
+					console.log('🥳 HOORAY!!!!! GIG MATCH FOUND IN DATABASE 🥳');
 					return json({ matchId: potentialMatch.id, reason: 'Venue and band overlap' });
 				}
 			}

@@ -27,7 +27,7 @@ export async function POST({ url }) {
 		const { items } = await client.dataset(run.defaultDatasetId).listItems();
 
 		// Log for debugging, optional
-		console.log('✅ Results from dataset:', items);
+		// console.log('✅ Results from dataset:', items);
 
 		// Respond with the scraped data
 		return json({ data: items }, { status: 200 });

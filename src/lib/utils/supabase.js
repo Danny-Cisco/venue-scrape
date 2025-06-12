@@ -1,13 +1,11 @@
 export async function gigsFuzzyDupeCheckWithUpdate(gig) {
 	const gigDupeData = await checkSupabaseForDuplicate(gig);
-	console.log('🌼 gigDupeData : ', gigDupeData);
+	console.log('🌼🌼🌼 gigDupeData : ', gigDupeData);
 	const gigDupeId = gigDupeData.matchId;
-	console.log('🚀 ~ gigsFuzzyDupeCheckWithUpdate ~ gigDupeId:', gigDupeId);
 
-	// temporary comment out
-
-	// if (!gigDupeId) await insertGigToSupabase(gig); // IM INSERTING HERE BECAUSE I DONT RETURN ANY MATCHES
-	// else await upsertGigToSupabase(gigDupeId, gig); // THIS IS WHAT I WANT TO TRIGGER!!
+	if (!gigDupeId)
+		await insertGigToSupabase(gig); // IF NO MATCH FOUND - CREATE NEW GIG
+	else await upsertGigToSupabase(gigDupeId, gig); // ELSE IF MATCH FOUND - UPDATE EXISTING GIG
 }
 
 export async function checkSupabaseForDuplicate(gig) {
@@ -15,7 +13,7 @@ export async function checkSupabaseForDuplicate(gig) {
 
 	// loading = true;
 	const body = { startDate: gig.startDate, venueId: gig.venueId, bandObjects: gig.bandObjects };
-	console.log('📦 checking gig for a match in Supabase:', body);
+	console.log('👀👀 checking gig for a match in Supabase:', body);
 
 	const response = await fetch('/api/supabase/match-gig', {
 		method: 'POST',
