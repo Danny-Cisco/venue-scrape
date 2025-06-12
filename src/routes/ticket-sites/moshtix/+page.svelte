@@ -14,7 +14,7 @@
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
-	let getAllVenues = true;
+	let getAllVenues = false; // this is switch to test one venue or many
 
 	let links = [];
 	let gigs = [];
@@ -29,9 +29,9 @@
 
 	let venues = [
 		{
-			name: 'Brunswick Ballroom',
+			name: 'The Toff',
 			id: 'd15de333-dc11-43e0-a468-4b285cf32390',
-			moshtix: 'https://www.moshtix.com.au/v2/venues/brunswick-ballroom-melbourne-vic/5479'
+			moshtix: 'https://www.moshtix.com.au/v2/venues/the-toff-in-town-melbourne/1007'
 		}
 	];
 

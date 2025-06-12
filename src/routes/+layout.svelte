@@ -4,6 +4,13 @@
 	import { showLeftSidebar } from '$lib/stores/ui';
 	import { message, error, loading } from '$lib/stores/auth';
 
+	import {
+		showGigModal,
+		showBandModal,
+		lastClicked,
+		showMapsModal
+	} from '$lib/stores/modalStores.js';
+
 	import { onMount } from 'svelte';
 	import { slide, fly, fade } from 'svelte/transition';
 
@@ -32,6 +39,14 @@
 			setTimeout(() => {
 				showContactTips = true;
 			}, 300);
+	}
+
+	function closeAll() {
+		$showLeftSidebar = false;
+		$showGigModal = false;
+		$showBandModal = false;
+		$showMapsModal = false;
+		$lastClicked = null;
 	}
 
 	$: if ($showLeftSidebar == false) showContactTips = false;
@@ -99,7 +114,7 @@
 			bind:this={leftSidebarContainer}
 			class="w-[270px] p-4 pt-16 bg-black top-0 isolate absolute z-[99999] left-0 h-full overflow-y-auto"
 			transition:slide={{ axis: 'x' }}
-			on:click={() => ($showLeftSidebar = false)}
+			on:click={closeAll}
 		>
 			<div class="h-[121px]"></div>
 			<!-- <h2 class="mb-2 text-lg font-semibold whitespace-nowrap">Music Naarm</h2> -->

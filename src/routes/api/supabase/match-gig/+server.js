@@ -23,12 +23,21 @@ export async function POST({ request, locals }) {
 
 	try {
 		const reqBody = await request.json();
-		// console.log('🔍 Incoming match request body:', reqBody);
+		// console.log('🔍 Incoming potentialMatch request body:', reqBody);
 
-		const { startDate, venue, bands } = reqBody;
+		const { startDate, venueId, bandObjects } = reqBody;
 
-		if (!startDate || !venue || !bands || !Array.isArray(bands) || typeof venue !== 'string') {
-			return json({ error: 'Missing or invalid startDate, venue, or bands' }, { status: 400 });
+		if (
+			!startDate ||
+			!venueId ||
+			!bandObjects ||
+			!Array.isArray(bandObjects) ||
+			typeof venueId !== 'string'
+		) {
+			return json(
+				{ error: 'Missing or invalid startDate, venue, or bandObjects' },
+				{ status: 400 }
+			);
 		}
 
 		// Get full-day range in UTC
@@ -49,7 +58,7 @@ export async function POST({ request, locals }) {
 
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
-			.select('id, start_date, venue, bands')
+			.select('id, start_date, venue_id, band_objects')
 			.gte('start_date', dayStart.toISOString())
 			.lt('start_date', dayEnd.toISOString());
 
@@ -58,47 +67,35 @@ export async function POST({ request, locals }) {
 			return json({ error: 'Supabase query failed' }, { status: 500 });
 		}
 
-		const normalizedVenue = normalize(venue);
 		// Ensure bands are strings before normalizing, then filter empty strings
-		const inputBands = bands
-			.filter((b) => typeof b === 'string') // Ensure elements are strings
-			.map(normalize)
-			.filter((b) => b.length > 0);
+		const inputBands = bandObjects
+			.map((b) => (typeof b.bandname === 'string' ? normalize(b.bandname) : ''))
+			.filter((name) => name.length > 0);
 
-		for (const match of potentialMatches) {
-			if (typeof match.venue !== 'string' || !Array.isArray(match.bands)) {
-				// console.warn('Skipping potential match with invalid structure:', match);
+		for (const potentialMatch of potentialMatches) {
+			if (
+				typeof potentialMatch.venue_id !== 'string' ||
+				!Array.isArray(potentialMatch.bandObjects)
+			) {
 				continue; // Skip malformed data from DB
 			}
-			const matchVenue = normalize(match.venue);
-			const matchBands = match.bands
-				.filter((b) => typeof b === 'string') // Ensure elements are strings
-				.map(normalize)
-				.filter((b) => b.length > 0);
+			// const matchVenue = normalize(potentialMatch.venue);
+			const matchVenue = potentialMatch.venueId || potentialMatch.venue_id;
+			const matchBands = potentialMatch.bandObjects
+				.map((b) => (typeof b.bandname === 'string' ? normalize(b.bandname) : ''))
+				.filter((name) => name.length > 0);
 
-			// Venue must match
-			if (matchVenue !== normalizedVenue || matchVenue === '') continue; // Also skip if venue becomes empty after normalization
+			// Venue must potentialMatch
+			if (matchVenue !== venueId || matchVenue === '') continue; // Also skip if venue becomes empty after normalization
 
 			// Band matching logic:
-			// If both inputBands and matchBands are empty AFTER normalization,
-			// it means there were no "significant" bands to compare.
-			// This could be a match if you only care about venue on a given day,
-			// or not a match if bands are crucial.
-			// Current logic: if one list is empty and the other is not, no band overlap.
-			// If both are empty, no band overlap according to `hasBandOverlap`.
 
 			if (inputBands.length > 0 && matchBands.length > 0) {
 				const hasBandOverlap = matchBands.some((b) => inputBands.includes(b));
 				if (hasBandOverlap) {
-					return json({ matchId: match.id, reason: 'Venue and band overlap' });
+					return json({ matchId: potentialMatch.id, reason: 'Venue and band overlap' });
 				}
 			}
-			// Optional: If you want to match even if one or both band lists are empty AFTER normalization,
-			// (e.g. only venue matters, or a gig with no listed bands matches another with no listed bands)
-			// you might add logic here. For instance:
-			// else if (inputBands.length === 0 && matchBands.length === 0) {
-			//     return json({ matchId: match.id, reason: "Venue overlap, no significant bands for either" });
-			// }
 		}
 
 		return json({ matchId: null, requested: reqBody, potentials: potentialMatches });

@@ -2,20 +2,19 @@ export async function gigsFuzzyDupeCheckWithUpdate(gig) {
 	const gigDupeData = await checkSupabaseForDuplicate(gig);
 	console.log('🌼 gigDupeData : ', gigDupeData);
 	const gigDupeId = gigDupeData.matchId;
-	if (!gigDupeId) await insertGigToSupabase(gig);
-	else await upsertGigToSupabase(gigDupeId, gig);
+	console.log('🚀 ~ gigsFuzzyDupeCheckWithUpdate ~ gigDupeId:', gigDupeId);
+
+	// temporary comment out
+
+	// if (!gigDupeId) await insertGigToSupabase(gig); // IM INSERTING HERE BECAUSE I DONT RETURN ANY MATCHES
+	// else await upsertGigToSupabase(gigDupeId, gig); // THIS IS WHAT I WANT TO TRIGGER!!
 }
 
 export async function checkSupabaseForDuplicate(gig) {
-	// new locaiton of bandnames is inside 'gig.bandObjects[].bandname'
-	let bands = [];
-	for (const bandObject of gig.bandObjects) {
-		bands = [...bands, bandObject.bandname];
-	}
-	console.log('🚀 ~ checkSupabaseForDuplicate ~ bands:', bands);
+	// new location of bandnames is inside 'gig.bandObjects[].bandname'
 
 	// loading = true;
-	const body = { startDate: gig.startDate, venue: gig.venue, bands: bands };
+	const body = { startDate: gig.startDate, venueId: gig.venueId, bandObjects: gig.bandObjects };
 	console.log('📦 checking gig for a match in Supabase:', body);
 
 	const response = await fetch('/api/supabase/match-gig', {
