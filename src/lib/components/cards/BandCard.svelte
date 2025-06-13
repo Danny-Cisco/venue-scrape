@@ -246,7 +246,7 @@
 	<!-- Biography section -->
 
 	<div
-		class=" font-sans min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
+		class=" font-body min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
 	>
 		{#if writingBio}
 			<!-- Loading Animation -->

@@ -38,7 +38,7 @@
 <div class="">
 	{#if htmlDescription}
 		<!-- Formatted HTML Description -->
-		<div class="min-w-full p-5 font-sans text-white bg-black description font-extralight" in:fade>
+		<div class="min-w-full p-5 font-sans text-white bg-black description font-thin" in:fade>
 			{@html htmlDescription}
 		</div>
 	{:else if formatting}
@@ -52,7 +52,7 @@
 		</div>
 
 		<!-- Fallback Raw Description with toggle -->
-		<div class="max-w-full p-4 font-sans text-white bg-black font-extralight">
+		<div class="max-w-full p-4 font-sans text-white bg-black font-thin">
 			<!-- <p class={showDescription ? '' : 'line-clamp-3'}>
 				{@html gig.descriptionHtml || gig.description}
 			</p> -->
@@ -87,7 +87,7 @@
 		margin-top: 1rem;
 		color: white;
 		font-family: sans-serif;
-		font-weight: 200; /* Tailwind: font-extralight */
+		font-weight: 200; /* Tailwind: font-thin */
 	}
 
 	:global(.description h1),

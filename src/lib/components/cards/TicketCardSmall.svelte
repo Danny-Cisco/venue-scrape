@@ -5,16 +5,23 @@
 </script>
 
 <div
-	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white rounded shadow-lg"
+	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px]"
 >
 	<!-- FANCY SHADOW CURLS -->
 	<div>
-		<div
+		<!-- <div
 			class="absolute top-0 left-0 w-4 h-4 bg-gradient-to-br from-black/10 via-transparent to-transparent"
-		></div>
+		></div> -->
 		<!-- <div
 			class="absolute bottom-0 left-0 w-4 h-8 bg-gradient-to-tr from-black/10 via-transparent to-transparent"
 		></div> -->
+	</div>
+
+	<div class="absolute left-0 flex-col justify-center">
+		<div class="w-1 h-12 bg-gray-100 border-gray-200 rounded-r-full rounded-l-0"></div>
+	</div>
+	<div class="absolute right-0 flex-col justify-center">
+		<div class="w-1 h-12 bg-gray-100 border-gray-200 rounded-l-full rounded-r-0"></div>
 	</div>
 
 	<!-- <div class="font-serif capitalise">{@html ticket.ticketType}</div> -->
@@ -38,7 +45,7 @@
 				></path>
 			</svg>{ticket.price}
 		{:else}
-			<div class="ml-2 font-mono text-gray-600 font-extralight">Free</div>
+			<div class="ml-2 font-mono font-thin text-gray-600">Free</div>
 		{/if}
 	</div>
 	<div class="relative font-mono center">

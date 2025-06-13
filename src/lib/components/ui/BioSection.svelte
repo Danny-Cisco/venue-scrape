@@ -18,4 +18,4 @@
 </script>
 
 <!-- Render the processed bio with HTML -->
-<div class="bio">{@html processedBio}</div>
+<div class=" bio">{@html processedBio}</div>

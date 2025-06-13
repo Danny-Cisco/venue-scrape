@@ -1,4 +1,5 @@
 import { join } from 'path';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
@@ -11,7 +12,17 @@ export default {
 		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
 	],
 	theme: {
-		extend: {}
+		extend: {
+			fontFamily: {
+				sans: ['Matangi ', ...defaultTheme.fontFamily.sans],
+				// sans: [...defaultTheme.fontFamily.sans],
+				body: [...defaultTheme.fontFamily.sans],
+				mono: [...defaultTheme.fontFamily.mono]
+			},
+			fontWeight: {
+				black: '800' // Sora doesn't include 900, so we remap this
+			}
+		}
 	},
 	plugins: [
 		forms,

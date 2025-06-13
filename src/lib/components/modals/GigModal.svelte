@@ -33,7 +33,7 @@
 	<div class="w-[1100px] gig-details">
 		<!-- Gig Title -->
 		<h2
-			class="px-5 py-3 mb-1 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
+			class="px-6 py-5 mb-1 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
 		>
 			{@html gig.title}
 			<!-- Venue -->
@@ -44,7 +44,7 @@
 							<span>@ {gig.venue.name}</span>
 						</div>
 					</a>
-					<div class="ml-2 font-sans text-gray-400 font-extralight">
+					<div class="ml-2 font-sans font-thin text-gray-400">
 						{gig.venue.suburb === 'Melbourne' ? 'Melbourne, City' : gig.venue.suburb}
 					</div>
 				</div>
@@ -128,7 +128,7 @@
 						<h2
 							class="justify-center w-full pt-2 font-sans text-2xl font-black text-center text-white row"
 						>
-							<span class="font-mono border-[1px] border-white rounded-full px-4"
+							<span class="font-mono border-[1px] border-white rounded-full text-3xl px-3"
 								>{gig.bandObjects.length}</span
 							>
 

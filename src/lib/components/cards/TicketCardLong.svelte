@@ -23,7 +23,7 @@
 	</div>
 
 	<!-- Ticket type -->
-	<div class="font-serif font-extralight">{@html ticket.ticketType}</div>
+	<div class="font-serif font-thin">{@html ticket.ticketType}</div>
 
 	<!-- Ticket price -->
 	<div class="flex items-center mr-2 font-black">
@@ -47,10 +47,10 @@
 			</svg>
 			{ticket.price}
 		{:else}
-			<span class="text-gray-600 font-extralight">Free</span>
+			<span class="text-gray-600 font-thin">Free</span>
 		{/if}
 	</div>
-	<div class="relative font-mono font-extralight">
+	<div class="relative font-mono font-thin">
 		<!-- Ticket availability -->
 		{#if ticket.availability === 'SoldOut'}
 			<div class="absolute inset-0 center">
