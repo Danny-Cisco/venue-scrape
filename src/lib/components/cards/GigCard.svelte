@@ -38,20 +38,9 @@
 				<DateTextMinimal date={gig.startDate} />
 			</div>
 		</div>
-
-		<!-- Genres -->
-		<div class="flex items-end justify-end w-full gap-2 pr-4">
-			{#each gig.genres as genre}
-				<div
-					class="px-3 py-1 bg-white font-normal uppercase shadow-xl whitespace-nowrap border-[1px] border-black text-base text-black font-body border-dashed rounded-full"
-				>
-					{genre}
-				</div>
-			{/each}
-		</div>
 	</div>
 
-	<div class="grid bg-black w-full pl-1 grid-cols-[auto_1fr]">
+	<div class="grid bg-black w-full pl-1 grid-cols-[auto_1fr_auto]">
 		<!-- Image Section -->
 		<div class="">
 			<!-- 🎨 Poster -->
@@ -95,9 +84,7 @@
 			</h2>
 
 			<div class="grid items-stretch grid-cols-[auto_1fr]">
-				<!-- left hand side -->
-
-				<!-- middle section -->
+				<!-- left section -->
 				<div class="flex flex-col justify-between">
 					<ul class="flex flex-col mb-4 ml-4 font-sans font-black text-black">
 						<!-- <p class="">Featuring...</p> -->
@@ -122,7 +109,7 @@
 					<div class="flex-grow"></div>
 				</div>
 
-				<!-- right hand side -->
+				<!-- middle hand side -->
 				<div class="flex flex-col items-end justify-end mt-1">
 					<!-- TICKET SECTION UPPER-->
 					<div
@@ -136,6 +123,21 @@
 
 					<div class="flex-1"></div>
 				</div>
+			</div>
+		</div>
+		<!-- right section -->
+		<div class="bg-black w-[170px] flex flex-col">
+			<!-- Genres -->
+			<div
+				class="flex flex-col items-start justify-start w-full h-full gap-2 px-2 py-4 m-1 bg-gray-100"
+			>
+				{#each gig.genres as genre}
+					<div
+						class="px-3 py-1 bg-white font-normal uppercase shadow-xl whitespace-nowrap border-[1px] border-black text-base text-black font-body border-dashed rounded-full"
+					>
+						{genre}
+					</div>
+				{/each}
 			</div>
 		</div>
 	</div>
