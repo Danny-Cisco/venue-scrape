@@ -17,7 +17,8 @@ export default {
 				sans: ['Matangi ', ...defaultTheme.fontFamily.sans],
 				// sans: [...defaultTheme.fontFamily.sans],
 				body: [...defaultTheme.fontFamily.sans],
-				mono: [...defaultTheme.fontFamily.mono]
+				mono: [...defaultTheme.fontFamily.mono],
+				ibmPlexMono: ['IBM Plex Mono', ...defaultTheme.fontFamily.mono]
 			},
 			fontWeight: {
 				black: '800' // Sora doesn't include 900, so we remap this

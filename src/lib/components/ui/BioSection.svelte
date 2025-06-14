@@ -9,7 +9,7 @@
 		if (!bio) return '';
 		return bio.replace(
 			instagramRegex,
-			'<a href="https://www.instagram.com/$1" target="_blank" rel="noopener noreferrer" class="font-bold hover:underline">@$1</a>'
+			'<a href="https://www.instagram.com/$1" target="_blank" rel="noopener noreferrer" class="px-[2px] font-semibold text-blue-400 hover:underline hover:text-pink-500 ">@$1</a>'
 		);
 	}
 

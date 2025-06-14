@@ -9,12 +9,13 @@
 
 	let writingBio = false;
 
+	let failed = false;
+
 	export let bandObject;
 
 	let key = 0;
 	let loading = false;
 	let showLinktreePic = false;
-	let failed = false;
 
 	let profilePicUrl = '';
 
@@ -150,82 +151,94 @@
 	<div class="flex min-w-full">
 		<!-- Instagram Profile Picture via Weserv -->
 		<div
-			class="bg-black gap-4 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
+			class="bg-black/5 gap-4 center font-sans text-xs text-gray-400 font-extralight min-w-[150px] max-w-[150px] rounded-sm overflow-hidden min-h-[150px] max-h-[150px]"
 		>
 			{#key key}
 				{#if showLinktreePic}
-					<img src={profilePicUrl} alt="_linktree pic" fallback="/fallback-avatar.png" />
+					<img src={profilePicUrl} alt="_linktree pic" />
 				{:else if loading}
 					<!-- SHOW ANIMATED GRADIENT WAVE WHILE LOADING -->
 					<div class="w-full h-full loading-wave"></div>
-				{:else if bandObject.instagram?.profilePicUrl}
+				{:else if bandObject.instagram?.profilePicUrl && !failed}
 					<img
 						src={weserv(bandObject.instagram.profilePicUrl)}
 						alt="_insta pic"
-						fallback="/fallback-avatar.png"
 						on:error={getLinktreePic(bandObject.instagram?.externalUrl)}
 					/>
 				{:else}
 					<!-- FALLBACK TO SOLID BLACK IF NOT LOADING AND NOTHING ELSE -->
-					<div class="w-full h-full bg-black"></div>
+					<div class="w-full h-full center" in:fade>
+						<img class="pt-4 opacity-5" src="/noun-group.png" alt="_default pic" />
+					</div>
 				{/if}
 			{/key}
 		</div>
-		<div class="flex flex-col w-full h-[150px] ml-4">
+		<div class="flex flex-col w-full h-[150px] items-stretch ml-4">
 			<!-- Top section: Band Name -->
 			<div class="flex flex-col justify-between w-full h-full max-w-full">
 				<div>
 					<h2
-						class="pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
+						class="pb-1 pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
 						bind:this={bandnameElement}
 					>
 						{bandObject.bandname}
 					</h2>
-					{#if bandObject.instagram}
-						<p>
-							<a
-								href={bandObject.instagram?.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="flex text-xs font-semibold text-purple-400 font-body hover:underline"
-								on:click|stopPropagation
-								>@{bandObject.instagram?.username || bandObject.instagram}
-							</a>
-						</p>
-					{/if}
 				</div>
 			</div>
-			<div class="grid items-stretch w-full grid-cols-[auto_1fr]">
-				<div class="flex flex-col justify-between">
+			<div class="grid items-stretch w-full gap-4 -mt-1 grid-cols-[100px_1fr]">
+				<div class="flex flex-col max-w-[200px] min-h-[110px] justify-around">
+					<!-- instagram profile name link -->
+					{#if bandObject.instagram}
+						<a
+							href={bandObject.instagram?.url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="flex text-sm font-semibold max-w-[200px] text-blue-400 bg-transparent font-body hover:text-pink-500 hover:underline"
+							on:click|stopPropagation
+							>@{bandObject.instagram?.username || bandObject.instagram}
+						</a>
+					{/if}
+					<div class="flex-1"></div>
 					<!-- Star Rating : Bar graph, not stars-->
-					<div class="flex mt-3 mb-3">
+					<div class="flex">
 						<StarRatingBarColor {bandObject} />
 					</div>
 
+					<div class="flex-1"></div>
+
 					<!-- Instagram Info Section -->
-					<div class="block">
+					<div class="font-ibmPlexMono">
 						{#if bandObject.instagram}
-							{#if bandObject.instagram.followersCount}
-								<div class="flex items-end gap-2 text-sm text-black">
-									{(bandObject.instagram.followersCount / 1000).toFixed(1)}k
-									<div class="font-sans text-sm font-bold">Followers</div>
+							<div class="grid items-end gap-2 text-xs text-black grid-cols-[auto_1fr]">
+								<div>
+									{#if bandObject.instagram.followersCount}
+										<div class="justify-start h-4 row">
+											{(bandObject.instagram.followersCount / 1000).toFixed(1)}k
+										</div>
+									{/if}
+									{#if bandObject.instagram.postsCount}
+										<div class="justify-start h-4 row">
+											{bandObject.instagram.postsCount}
+										</div>
+									{/if}
 								</div>
-							{/if}
-							{#if bandObject.instagram.postsCount}
-								<div class="flex items-end gap-2 text-sm text-black">
-									{bandObject.instagram.postsCount}
-									<div class="font-sans text-sm font-bold">Posts</div>
+								<div class="text-start">
+									<div class="h-4 row">Followers</div>
+									<div class="h-4 row">Posts</div>
 								</div>
-							{/if}
+							</div>
 						{:else}
 							<div class="text-xs italic text-gray-500">No Instagram profile</div>
 						{/if}
+
+						<div class="flex-1"></div>
 					</div>
 				</div>
 
 				<div
-					class="relative flex flex-col items-end h-full pt-3 mt-auto space-y-1 border-t-0 border-gray-200"
+					class="relative flex flex-col min-h-[110px] items-end h-full pt-3 pb-1 mt-1 space-y-1 border-t-0 border-gray-200"
 				>
+					<div class="flex-1"></div>
 					<!-- links section -->
 					{#if bandObject.instagram}
 						<div class="flex-1"></div>
