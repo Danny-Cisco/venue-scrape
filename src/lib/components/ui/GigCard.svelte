@@ -18,7 +18,9 @@
 		<p class="gig-description">{gig.description}</p>
 
 		{#if gig.ticketUrl && gig.ticketUrl !== '#'}
-			<a href={gig.ticketUrl} target="_blank" class="gig-ticket-button">Visit Ticketing Site</a>
+			<a href={gig.ticketUrl} target="_blank" class="font-thin gig-ticket-button font-body"
+				>Visit Ticketing Site</a
+			>
 		{:else}
 			<p class="gig-ticket-free">Free Entry</p>
 		{/if}

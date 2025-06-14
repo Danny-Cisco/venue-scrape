@@ -14,8 +14,8 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['Matangi ', ...defaultTheme.fontFamily.sans],
-				// sans: [...defaultTheme.fontFamily.sans],
+				sans: ['Lexend', ...defaultTheme.fontFamily.sans],
+				heading: ['Lexend', ...defaultTheme.fontFamily.sans],
 				body: [...defaultTheme.fontFamily.sans],
 				mono: [...defaultTheme.fontFamily.mono],
 				ibmPlexMono: ['IBM Plex Mono', ...defaultTheme.fontFamily.mono]

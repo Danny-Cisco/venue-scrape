@@ -5,7 +5,7 @@
 </script>
 
 <div
-	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px]"
+	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px]"
 >
 	<!-- FANCY SHADOW CURLS -->
 	<div>

@@ -350,7 +350,7 @@
 			</h2>
 		{/if}
 		<h2
-			class="mb-0 font-mono border-[1px] rounded-full px-4 py-1 text-3xl"
+			class="mb-0 font-mono absolute right-[70px] border-[1px] rounded-full px-4 py-1 text-3xl"
 			in:fade={{ duration: 1000 }}
 		>
 			{$gigsStoreFiltered.length}
@@ -360,7 +360,7 @@
 			<div class="relative center left-10" in:fade>
 				<button
 					on:click={handleManualReset}
-					class="absolute px-3 py-1 text-xs text-white transition-colors bg-purple-500 rounded-full btn-hover font-thin row hover:bg-pink-500"
+					class="absolute px-3 py-1 text-xs font-thin text-white transition-colors bg-purple-500 rounded-full btn-hover row hover:bg-pink-500"
 					aria-label="Reset filters"
 				>
 					<svg

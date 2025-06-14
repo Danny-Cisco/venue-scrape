@@ -38,7 +38,7 @@
 			{@html gig.title}
 			<!-- Venue -->
 			{#if gig.venue}
-				<div class="mt-3 font-sans text-3xl font-extrabold text-gray-700 row">
+				<div class="mt-3 text-3xl font-extrabold text-gray-700 font-body row">
 					<a href={gig.venue.website}>
 						<div class="uppercase row whitespace-nowrap hover:cursor-pointer hover:underline">
 							<span>@ {gig.venue.name}</span>
@@ -98,7 +98,7 @@
 				<div class="flex items-end justify-end w-full gap-2">
 					{#each gig.genres as genre}
 						<div
-							class="px-6 py-2 bg-white shadow-xl whitespace-nowrap border-[1px] border-black text-2xl text-black border-dashed rounded-full"
+							class="px-6 py-2 bg-white font-thin shadow-xl whitespace-nowrap border-[1px] border-black text-2xl text-black font-body border-dashed rounded-full"
 						>
 							{genre}
 						</div>
@@ -191,7 +191,7 @@
 							<a
 								href={gig.ticketUrl}
 								target="_blank"
-								class="justify-end w-full mr-2 row gig-ticket-button hover:underline"
+								class="justify-end w-full mr-2 font-medium row gig-ticket-button font-body hover:underline"
 							>
 								Visit Ticketing Site
 								<svg
