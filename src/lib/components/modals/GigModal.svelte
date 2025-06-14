@@ -32,15 +32,15 @@
 	<!-- Top Summary Section -->
 	<div class="w-[1100px] gig-details">
 		<!-- Gig Title -->
-		<h2
-			class="px-6 py-5 mb-1 font-sans text-4xl font-black text-white uppercase bg-black shadow-xl"
-		>
+		<h2 class="px-6 py-5 mb-1 text-4xl font-semibold text-white bg-black shadow-xl font-fancy2">
 			{@html gig.title}
 			<!-- Venue -->
 			{#if gig.venue}
 				<div class="mt-3 text-3xl font-extrabold text-gray-700 font-body row">
 					<a href={gig.venue.website}>
-						<div class="uppercase row whitespace-nowrap hover:cursor-pointer hover:underline">
+						<div
+							class="uppercase row whitespace-nowrap hover:cursor-pointer hover:text-pink-500 hover:underline"
+						>
 							<span>@ {gig.venue.name}</span>
 						</div>
 					</a>
@@ -98,7 +98,7 @@
 				<div class="flex items-end justify-end w-full gap-2">
 					{#each gig.genres as genre}
 						<div
-							class="px-6 py-2 bg-white font-thin shadow-xl whitespace-nowrap border-[1px] border-black text-2xl text-black font-body border-dashed rounded-full"
+							class="px-6 py-2 bg-white font-normal uppercase shadow-xl whitespace-nowrap border-[1px] border-black text-2xl text-black font-body border-dashed rounded-full"
 						>
 							{genre}
 						</div>
@@ -126,7 +126,7 @@
 				<div class="flex flex-col w-full overflow-hidden bg-black border-l-0 border-black">
 					{#if gig.bandObjects?.length > 0}
 						<h2
-							class="justify-center w-full pt-2 font-sans text-2xl font-black text-center text-white row"
+							class="justify-center w-full pt-2 text-2xl font-black text-center text-white font-fancy2 row"
 						>
 							<span class="font-mono border-[1px] border-white rounded-full text-3xl px-3"
 								>{gig.bandObjects.length}</span
@@ -166,7 +166,7 @@
 			<!-- TICKETS SECTION LOWER-->
 			<div
 				id="ticket-lower"
-				class="flex flex-col w-full max-w-full gap-1 p-5 font-sans text-2xl font-black text-white bg-black rounded-sm"
+				class="flex flex-col w-full max-w-full gap-1 p-5 text-2xl font-black text-white bg-black rounded-sm font-fancy2"
 				in:fade
 			>
 				<div class="flex justify-between w-full">
@@ -191,7 +191,7 @@
 							<a
 								href={gig.ticketUrl}
 								target="_blank"
-								class="justify-end w-full mr-2 font-medium row gig-ticket-button font-body hover:underline"
+								class="justify-end w-full mr-2 font-medium hover:text-pink-500 row gig-ticket-button font-body hover:underline"
 							>
 								Visit Ticketing Site
 								<svg

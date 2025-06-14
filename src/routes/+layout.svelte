@@ -752,8 +752,8 @@
 >
 	<!-- Logo -->
 	<strong class="flex items-end p-2 px-4 text-3xl bg-black border-0 border-purple-500 rounded-full">
-		<img src="/icon.svg" class="size-10" alt="" />
-		<span class="px-3 py-1 font-sans text-2xl font-black text-white uppercase bg-black">
+		<!-- <img src="/icon.svg" class="size-10" alt="" /> -->
+		<span class="px-3 py-1 text-4xl font-black text-white uppercase bg-black font-fancy2">
 			Music Naarm
 		</span>
 	</strong>
