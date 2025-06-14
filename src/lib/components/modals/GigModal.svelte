@@ -44,7 +44,7 @@
 							<span>@ {gig.venue.name}</span>
 						</div>
 					</a>
-					<div class="ml-2 font-sans font-thin text-gray-400">
+					<div class="ml-2 font-thin text-gray-400 font-body">
 						{gig.venue.suburb === 'Melbourne' ? 'Melbourne, City' : gig.venue.suburb}
 					</div>
 				</div>

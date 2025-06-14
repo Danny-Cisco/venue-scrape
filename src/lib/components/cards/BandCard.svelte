@@ -197,12 +197,14 @@
 							on:click|stopPropagation
 							>@{bandObject.instagram?.username || bandObject.instagram}
 						</a>
+						<div class="flex-1"></div>
+						<!-- Star Rating : Bar graph, not stars-->
+						<div class="flex">
+							<StarRatingBarColor {bandObject} />
+						</div>
+					{:else}
+						<div class="text-xs italic text-gray-500 whitespace-nowrap">No Instagram profile</div>
 					{/if}
-					<div class="flex-1"></div>
-					<!-- Star Rating : Bar graph, not stars-->
-					<div class="flex">
-						<StarRatingBarColor {bandObject} />
-					</div>
 
 					<div class="flex-1"></div>
 
@@ -227,8 +229,6 @@
 									<div class="h-4 row">Posts</div>
 								</div>
 							</div>
-						{:else}
-							<div class="text-xs italic text-gray-500">No Instagram profile</div>
 						{/if}
 
 						<div class="flex-1"></div>
