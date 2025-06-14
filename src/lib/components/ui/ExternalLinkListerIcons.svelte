@@ -85,7 +85,7 @@
 </script>
 
 {#if links.length > 12}
-	<div class="absolute text-xs text-purple-500 -top-2 right-2">
+	<div class="absolute text-xs text-gray-900 -top-2 right-2">
 		{`(${links.length})`}
 	</div>
 {/if}
@@ -97,12 +97,12 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		title={new URL(url).hostname}
-		class="w-6 h-6 text-purple-500 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
+		class="w-6 h-6 text-gray-900 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
 	>
 		{@html getIcon(url)?.svg || fallbackIcon}
 	</a>
 {:else if loading}
-	<div class="text-xs text-gray-400">Loading links…</div>
+	<div class="text-xs text-gray-900">Loading links…</div>
 {:else if error}
 	<div class="text-xs text-red-500">{error}</div>
 {/if}
@@ -117,7 +117,7 @@
 			href={link}
 			target="_blank"
 			rel="noopener noreferrer"
-			class="flex items-center justify-center w-6 h-6 text-purple-500 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
+			class="flex items-center justify-center w-6 h-6 text-gray-900 rounded-full btn-hover hover:cursor-pointer hover:text-pink-500"
 			title={getIcon(link)?.label || new URL(link).hostname}
 			in:fly={{ x: 100, delay: index * 50 }}
 		>

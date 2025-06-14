@@ -187,7 +187,7 @@
 								href={bandObject.instagram?.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								class="flex text-xs text-gray-400 font-extralight hover:underline"
+								class="flex text-xs font-semibold text-purple-400 font-body hover:underline"
 								on:click|stopPropagation
 								>@{bandObject.instagram?.username || bandObject.instagram}
 							</a>
@@ -246,7 +246,7 @@
 	<!-- Biography section -->
 
 	<div
-		class=" font-body min-h-[5.2rem] text-sm py-2 text-center items-center justify-center flex-col flex text-black"
+		class=" font-body min-h-[5.2rem] text-sm py-2 text-center items-center font-medium justify-center flex-col flex text-black"
 	>
 		{#if writingBio}
 			<!-- Loading Animation -->
