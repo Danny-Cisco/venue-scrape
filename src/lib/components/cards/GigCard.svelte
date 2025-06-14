@@ -129,7 +129,7 @@
 		<div class="bg-black w-[170px] flex flex-col">
 			<!-- Genres -->
 			<div
-				class="flex flex-col items-start justify-start w-full h-full gap-2 px-2 py-4 m-1 bg-gray-100"
+				class="flex flex-col items-start justify-start w-full h-full gap-2 px-2 py-4 m-1 bg-gray-800"
 			>
 				{#each gig.genres as genre}
 					<div
