@@ -145,18 +145,21 @@
 	}
 
 	.custom-scrollbar::-webkit-scrollbar-thumb {
-		background: rgba(139, 92, 246, 0.3);
+		/* background: rgba(139, 92, 246, 0.3); */
+		background: lightgray;
 		border-radius: 4px;
 	}
 
 	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-		background: rgba(139, 92, 246, 0.5);
+		/* background: rgba(139, 92, 246, 0.5); */
+		background: lightgray;
 	}
 
 	/* Firefox scrollbar styles */
 	.custom-scrollbar {
 		scrollbar-width: thin;
-		scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+		/* scrollbar-color: rgba(139, 92, 246, 0.3) transparent; */
+		scrollbar-color: lightgray transparent;
 	}
 
 	/* Prevent horizontal scrolling globally */

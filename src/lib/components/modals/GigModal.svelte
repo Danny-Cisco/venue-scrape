@@ -28,7 +28,7 @@
 	}
 </script>
 
-<div class="min-w-full overflow-y-auto gig-card bg-gradient-to-br from-gray-50 to-gray-100">
+<div class="min-w-full overflow-y-auto bg-gray-100 gig-card">
 	<!-- Top Summary Section -->
 	<div class="w-[1100px] gig-details">
 		<!-- Gig Title -->

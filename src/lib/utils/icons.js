@@ -71,6 +71,8 @@ fill="currentColor"
 		label: 'Merch',
 		match: [
 			'store',
+			'shop',
+			'artistfirst.com.au',
 			'merch',
 			'sound-merch.com.au',
 			'officialmerchandise.store',
