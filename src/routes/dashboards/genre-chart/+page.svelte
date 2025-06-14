@@ -24,6 +24,7 @@
 		lastClicked,
 		showMapsModal
 	} from '$lib/stores/modalStores.js';
+	import GigCardsTable from '../../../lib/components/tables/GigCardsTable.svelte';
 
 	let spellCheckedTimeRange = '';
 	let gigs = {};
@@ -326,7 +327,8 @@
 					Click on a chart intersection to see a filtered list of gigs.
 				</p>
 			{:else}
-				<GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} />
+				<!-- <GigsBandsTable gigs={$gigsStoreFiltered} bands={{}} /> -->
+				<GigCardsTable gigs={$gigsStoreFiltered} />
 			{/if}
 		</div>
 	</div>

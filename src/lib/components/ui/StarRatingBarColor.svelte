@@ -3,6 +3,8 @@
 
 	export let bandObject;
 
+	export let small = false;
+
 	const levelColors = [
 		'bg-lime-400 border-lime-500',
 		'bg-green-400 border-green-500',
@@ -18,8 +20,14 @@
 <!-- Uniform Color Based on Max Level -->
 <div class="flex items-center">
 	{#each Array(5) as _, i}
-		<div
-			class={`w-4 h-4 rounded-sm border ${i < level ? filledColor : 'bg-gray-50 border-gray-200'}`}
-		></div>
+		{#if small}
+			<div
+				class={`w-2 h-2 rounded-sm border ${i < level ? filledColor : 'bg-gray-50 border-gray-200'}`}
+			></div>
+		{:else}
+			<div
+				class={`w-4 h-4 rounded-sm border ${i < level ? filledColor : 'bg-gray-50 border-gray-200'}`}
+			></div>
+		{/if}
 	{/each}
 </div>
