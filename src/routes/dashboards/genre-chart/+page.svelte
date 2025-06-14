@@ -353,7 +353,7 @@
 			class="mb-0 font-mono absolute right-[70px] border-[1px] rounded-full px-4 py-1 text-3xl"
 			in:fade={{ duration: 1000 }}
 		>
-			{$gigsStoreFiltered.length}
+			{$gigsStoreFiltered.length} <span class="w-8 -ml-4 text-xs font-thin font-body">gigs</span>
 		</h2>
 		<!-- The Reset Button -->
 		{#if $clickedGenres}
