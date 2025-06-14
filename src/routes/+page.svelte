@@ -7,8 +7,10 @@
 </script>
 
 <div class="page-center" in:fade>
-	<h1 class="text-6xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400">
-		Venue Scrape
+	<h1
+		class="font-black text-center text-transparent uppercase text-8xl font-fancy2 bg-clip-text bg-gradient-to-r to-emerald-400 from-sky-400"
+	>
+		Music Naarm
 	</h1>
 	<p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">
 		Book better with data.

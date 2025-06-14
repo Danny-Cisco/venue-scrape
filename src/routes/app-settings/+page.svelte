@@ -2,4 +2,4 @@
 	import { fade } from 'svelte/transition';
 </script>
 
-<div class="page-center" in:fade>If we need settings, this is the page</div>
+<div class="page-center" in:fade>Settings page, coming soon...</div>

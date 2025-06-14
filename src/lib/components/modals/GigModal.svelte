@@ -28,11 +28,11 @@
 	}
 </script>
 
-<div class="min-w-full overflow-y-auto gig-card">
+<div class="min-w-full overflow-y-auto gig-card bg-gradient-to-br from-gray-50 to-gray-100">
 	<!-- Top Summary Section -->
 	<div class="w-[1100px] gig-details">
 		<!-- Gig Title -->
-		<h2 class="px-6 py-5 mb-1 text-4xl font-semibold text-white bg-black shadow-xl font-fancy2">
+		<h2 class="px-6 py-5 mb-1 font-sans text-4xl font-semibold text-white bg-black shadow-xl">
 			{@html gig.title}
 			<!-- Venue -->
 			{#if gig.venue}
@@ -230,7 +230,6 @@
 		flex-direction: column;
 		align-items: end;
 		gap: 1rem;
-		background-color: white;
 
 		max-width: 1200px;
 

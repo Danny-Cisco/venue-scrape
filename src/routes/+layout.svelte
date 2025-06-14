@@ -112,7 +112,7 @@
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<aside
 			bind:this={leftSidebarContainer}
-			class="w-[270px] p-4 pt-16 bg-black top-0 isolate absolute z-[99999] left-0 h-full overflow-y-auto"
+			class="w-[270px] p-4 pt-16 bg-black top-0 isolate absolute z-[99999] left-0 h-full font-sans font-thin hover:text-pink-500 overflow-y-auto"
 			transition:slide={{ axis: 'x' }}
 			on:click={closeAll}
 		>
@@ -189,11 +189,12 @@
 			</ul>
 			<a href="/dashboards">
 				<h2
-					class="justify-start mb-2 ml-0 font-sans text-base font-thin text-white uppercase whitespace-nowrap"
+					class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"
 				>
 					Dashboards
 				</h2></a
 			>
+
 			<ul class="justify-start ml-0 whitespace-nowrap">
 				<li class="mb-2 row">
 					<a
@@ -242,9 +243,45 @@
 			</ul>
 
 			{#if !profile?.read_only}
+				<!-- divider -->
+				<div class="h-5"></div>
+				<div class="h-5 border-t-[1px] border-white/50 border-dotted"></div>
+
+				<a href="/ticket-sites">
+					<h2
+						class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"
+					>
+						Ticket Sites
+					</h2></a
+				>
+
+				<ul class="justify-start ml-0 whitespace-nowrap">
+					<li class="mb-2 row">
+						<a
+							href="/ticket-sites/moshtix"
+							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-5"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
+								/>
+							</svg>
+							Moshtix
+						</a>
+					</li>
+				</ul>
 				<a href="/venues">
 					<h2
-						class="justify-start mb-2 ml-0 font-sans text-base font-thin text-white uppercase whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"
 					>
 						Venues
 					</h2></a
@@ -342,7 +379,7 @@
 				</ul>
 				<a href="/gig-guides">
 					<h2
-						class="justify-start mb-2 ml-0 font-sans text-base font-thin text-white uppercase whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"
 					>
 						Gig Guides
 					</h2></a
@@ -372,47 +409,18 @@
 						</a>
 					</li>
 				</ul>
-
-				<a href="/ticket-sites">
-					<h2
-						class="justify-start mb-2 ml-0 font-sans text-base font-thin text-white uppercase whitespace-nowrap"
-					>
-						Ticket Sites
-					</h2></a
-				>
-
-				<ul class="justify-start ml-0 whitespace-nowrap">
-					<li class="mb-2 row">
-						<a
-							href="/ticket-sites/moshtix"
-							class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-5"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-								/>
-							</svg>
-							Moshtix
-						</a>
-					</li>
-				</ul>
 			{/if}
 
 			{#if profile?.dev_mode}
+				<!-- divider -->
+				<div class="h-5"></div>
+				<div class="h-5 border-t-[1px] border-white/50 border-dotted"></div>
+
 				<a href="/tools">
 					<h2
-						class="justify-start mb-2 ml-0 font-sans text-base font-thin text-white uppercase whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"
 					>
-						Tools
+						Developer Tools
 					</h2></a
 				>
 
@@ -763,7 +771,7 @@
 		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-white rounded-md">
 			{#if session}
 				<a href="/account" class="flex items-center gap-4"
-					><p class="text-lg font-thin text-white font-body">
+					><p class="text-lg font-semibold text-white font-body">
 						{profile?.username || session.user.email || session.user.displayName}
 					</p>
 

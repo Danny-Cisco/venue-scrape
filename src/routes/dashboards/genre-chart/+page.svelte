@@ -275,7 +275,7 @@
 	<div class="absolute inset-0 top-[150px] isolate" in:fade>
 		<!-- Main content -->
 		<div
-			class="flex flex-col items-stretch items-center justify-center max-w-full min-w-full gap-6 p-4 pt-12"
+			class="flex flex-col items-stretch items-center relative -left-[50px] justify-center max-w-full min-w-full gap-6 p-4 pt-12"
 			bind:this={chartSectionRef}
 		>
 			{#key upsetPlotData}
