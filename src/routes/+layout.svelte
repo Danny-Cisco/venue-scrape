@@ -187,6 +187,10 @@
 					</a>
 				</li>
 			</ul>
+			<!-- divider -->
+			<div class="h-5"></div>
+			<div class="h-5 border-t-[1px] border-white/50 border-dotted"></div>
+
 			<a href="/dashboards">
 				<h2
 					class="justify-start mb-2 ml-0 text-base font-semibold text-white uppercase font-fancy2 whitespace-nowrap"

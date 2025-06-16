@@ -3,6 +3,7 @@
 	import { fade, slide, fly } from 'svelte/transition';
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
 	import UpsetPlot from '$lib/components/outputs/UpsetPlot.svelte';
+	import GigNumberIndicator from '$lib/components/ui/GigNumberIndicator.svelte';
 
 	import { dateRangePrompt } from '$lib/utils/prompts.ts';
 	import { toISOStringLocal } from '$lib/utils/date.ts';
@@ -321,7 +322,7 @@
 		{/if}
 
 		<!-- *** MODIFIED: Filtered Gigs Section with Reset Button *** -->
-		<div class="p-4 my-4" bind:this={tableSectionRef}>
+		<div class="" bind:this={tableSectionRef}>
 			{#if !$gigsStoreFiltered || $gigsStoreFiltered.length === 0}
 				<p class="italic text-center text-gray-500">
 					Click on a chart intersection to see a filtered list of gigs.
@@ -351,12 +352,7 @@
 				{$clickedGenres || 'ALL Genres'}
 			</h2>
 		{/if}
-		<h2
-			class="mb-0 font-mono absolute right-[70px] border-[1px] rounded-full px-4 py-1 text-3xl"
-			in:fade={{ duration: 1000 }}
-		>
-			{$gigsStoreFiltered.length} <span class="w-8 -ml-4 text-xs font-thin font-body">gigs</span>
-		</h2>
+		<GigNumberIndicator />
 		<!-- The Reset Button -->
 		{#if $clickedGenres}
 			<div class="relative center left-10" in:fade>

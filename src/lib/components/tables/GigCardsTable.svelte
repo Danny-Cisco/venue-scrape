@@ -4,6 +4,7 @@
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 
 	import GigCard from '../cards/GigCard.svelte';
+	import GIgNumberIndicator from '../ui/GIgNumberIndicator.svelte';
 
 	export let gigs = []; // Initialize as an empty array for safety
 
@@ -76,9 +77,9 @@
 </script>
 
 {#if activeTab === 'gigs' && gigs && gigs.length > 0}
-	<div class="w-full bg-black">
-		<h2 class="py-3 text-4xl font-semibold text-center font-fancy2">
-			Found {gigs.length} Gigs
+	<div class="flex justify-center w-full pt-4 bg-black">
+		<h2 class="py-3 mb-0 text-4xl font-semibold text-center row font-fancy2">
+			Now Showing <GIgNumberIndicator />
 		</h2>
 	</div>
 	<div class="flex flex-col w-screen gap-4 px-4 overflow-x-auto bg-black" in:fade>
