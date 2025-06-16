@@ -12,16 +12,23 @@
 </script>
 
 <div class="page">
-	<div class="row">
+	<h2 class="mt-8 font-sans text-xl font-medium">Search for any venue name found on Oztix</h2>
+	<div class="my-8 row">
 		<input bind:value={venue} placeholder="Search..." />
-		<button on:click={search}>Search</button>
+		<button class="btn" on:click={search}>Search</button>
 	</div>
 	<ul class="gap-4 mx-auto w-max-sm">
-		{#each results as result}
-			<li class="mb-4">
-				<p>{result.EventName}</p>
-				<a href={result.EventUrl} target="_blank">{result.EventUrl}</a>
-			</li>
-		{/each}
+		{#if results.length > 0}
+			<h2 class="mt-8 font-sans text-xl font-medium text-center">({results.length}) links found</h2>
+
+			{#each results as result}
+				<li class="mb-4">
+					<p>{result.EventName}</p>
+					<a href={result.EventUrl} target="_blank">{result.EventUrl}</a>
+				</li>
+			{/each}
+		{:else}
+			<p class="text-gray-500">No Results</p>
+		{/if}
 	</ul>
 </div>
