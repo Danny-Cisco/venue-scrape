@@ -26,6 +26,17 @@
 
 		return url;
 	}
+
+	$: if (gig.genres) gig.genres = sortGenres(gig.genres);
+
+	function sortGenres(genres) {
+		return [...genres].sort((a, b) => {
+			if (a.length !== b.length) {
+				return b.length - a.length; // longer strings first
+			}
+			return a.localeCompare(b); // alphabetical fallback
+		});
+	}
 </script>
 
 <div class="flex flex-col max-w-[1200px] w-full mx-auto">
