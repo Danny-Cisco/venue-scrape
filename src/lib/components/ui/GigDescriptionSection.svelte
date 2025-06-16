@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { htmlFormatter } from '$lib/utils/prompts.ts';
+	import WaveText from '$lib/components/ui/WaveText.svelte';
 
 	export let showDescription = false;
 	export let gig;
@@ -35,24 +36,18 @@
 </script>
 
 <!-- Description Container -->
-<div class="">
+<div class="pl-4 bg-black">
 	{#if htmlDescription}
 		<!-- Formatted HTML Description -->
-		<div class="min-w-full p-5 font-sans text-white bg-black description font-thin" in:fade>
+		<div class="min-w-full p-5 font-sans font-thin text-white bg-black description" in:fade>
 			{@html htmlDescription}
 		</div>
 	{:else if formatting}
 		<!-- Loading Animation -->
-		<div class="relative pl-5 overflow-hidden text-xs text-gray-400 bg-black">
-			<span
-				class="wave-mask bg-gradient-to-r from-gray-500 via-white to-gray-500 bg-[length:200%_100%] bg-clip-text text-transparent"
-			>
-				A nice, formatted description is on its way...
-			</span>
-		</div>
 
+		<WaveText text={'  A nice, formatted description is on its way...'} />
 		<!-- Fallback Raw Description with toggle -->
-		<div class="max-w-full p-4 font-sans text-white bg-black font-thin">
+		<div class="max-w-full p-4 font-sans font-thin text-white bg-black">
 			<!-- <p class={showDescription ? '' : 'line-clamp-3'}>
 				{@html gig.descriptionHtml || gig.description}
 			</p> -->
@@ -69,19 +64,6 @@
 </div>
 
 <style>
-	.wave-mask {
-		animation: waveMove 2.5s linear infinite;
-	}
-
-	@keyframes waveMove {
-		0% {
-			background-position: -200% 0;
-		}
-		100% {
-			background-position: 200% 0;
-		}
-	}
-
 	:global(.description p) {
 		margin-bottom: 1rem;
 		margin-top: 1rem;

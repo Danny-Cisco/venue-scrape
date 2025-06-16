@@ -3,5 +3,5 @@
 </script>
 
 <div class="justify-center row" transition:slide>
-	loading <img src="/pac-man.svg" alt="" class=" size-10" />
+	<img src="/pac-man.svg" alt="" class=" size-10" />
 </div>

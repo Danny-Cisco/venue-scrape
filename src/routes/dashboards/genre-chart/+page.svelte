@@ -9,6 +9,8 @@
 	import { toISOStringLocal } from '$lib/utils/date.ts';
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
+	import WaveText from '$lib/components/ui/WaveText.svelte';
+
 	import {
 		gigsStore,
 		gigsGenreStore,
@@ -264,13 +266,13 @@
 
 {#if pageInitialising}
 	<div class="page center h-[100vhs]" in:fade>
-		<p>Fetching the next 7 days...</p>
-		<PacMan />
+		<WaveText large={true} text={'Fetching the next 7 days...'} />
+		<!-- <PacMan /> -->
 	</div>
 {:else if loading}
 	<div class="page center h-[100vhs]" in:fade>
-		<p>Preparing the data...</p>
-		<PacMan />
+		<WaveText large={true} text={`Fetching ${timeRangePrompt}`} />
+		<!-- <PacMan /> -->
 	</div>
 {:else}
 	<!-- UI -->
@@ -286,7 +288,7 @@
 		</div>
 
 		<!-- Old school datepicker -->
-		<button
+		<!-- <button
 			class="w-full mx-auto text-xs text-center text-gray-500"
 			on:click={() => {
 				showDatePicker = !showDatePicker;
@@ -319,7 +321,7 @@
 					/>
 				</div>
 			</div>
-		{/if}
+		{/if} -->
 
 		<!-- *** MODIFIED: Filtered Gigs Section with Reset Button *** -->
 		<div class="" bind:this={tableSectionRef}>
