@@ -19,11 +19,18 @@
 	</div>
 	<ul class="gap-4 mx-auto w-max-sm">
 		{#if results.length > 0}
-			<h2 class="mt-8 font-sans text-xl font-medium text-center">({results.length}) links found</h2>
+			<h2 class="mt-8 font-sans text-xl font-medium text-center">
+				({results.length}) Oztix links found
+			</h2>
 
 			{#each results as result}
 				<li class="mb-4">
-					<p>{result.EventName}</p>
+					<p class="font-sans text-lg font-medium">{result.EventName}</p>
+					<div class="flex flex-col ml-4">
+						{#each result.Bands as band}
+							<p>- {band}</p>
+						{/each}
+					</div>
 					<a href={result.EventUrl} target="_blank">{result.EventUrl}</a>
 				</li>
 			{/each}

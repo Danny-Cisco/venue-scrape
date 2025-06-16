@@ -77,12 +77,12 @@
 </script>
 
 {#if activeTab === 'gigs' && gigs && gigs.length > 0}
-	<div class="flex justify-center w-full pt-4 bg-black">
+	<div class="flex sticky top-[100px] z-[1] w-full justify-center w-full pt-4 bg-black">
 		<h2 class="py-3 mb-0 text-4xl font-semibold text-center row font-fancy2">
 			Now Showing <GIgNumberIndicator />
 		</h2>
 	</div>
-	<div class="flex flex-col w-screen gap-4 px-4 overflow-x-auto bg-black" in:fade>
+	<div class="flex flex-col w-screen gap-4 px-4 overflow-x-auto bg-black isolate" in:fade>
 		<div class="h-[10px]"></div>
 
 		{#each gigs as gig}
