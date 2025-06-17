@@ -4,7 +4,7 @@
 </script>
 
 {#if large}
-	<div class="relative text-3xl font-black text-gray-400 font-fancy2 verflow-hidden">
+	<div class="relative font-sans text-3xl font-thin text-gray-400 verflow-hidden">
 		<span
 			class="wave-mask bg-gradient-to-r from-gray-500 via-white to-gray-500 bg-[length:200%_100%] bg-clip-text text-transparent"
 		>

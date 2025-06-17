@@ -44,8 +44,9 @@
 		</div>
 	{:else if formatting}
 		<!-- Loading Animation -->
-
-		<WaveText text={'  A nice, formatted description is on its way...'} />
+		<div class="pt-2 ml-4">
+			<WaveText text={'A nice, formatted description is on its way...'} />
+		</div>
 		<!-- Fallback Raw Description with toggle -->
 		<div class="max-w-full p-4 font-sans font-thin text-white bg-black">
 			<!-- <p class={showDescription ? '' : 'line-clamp-3'}>

@@ -818,8 +818,8 @@
 	{#if !$loading}
 		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-white rounded-md">
 			{#if session}
-				<a href="/account" class="flex items-center gap-4"
-					><p class="text-lg font-semibold text-white font-body">
+				<a href="/account" class="flex items-center gap-2"
+					><p class="text-lg font-thin text-gray-300 font-body">
 						{profile?.username || session.user.email || session.user.displayName}
 					</p>
 
