@@ -10,41 +10,43 @@ export async function GET({ url }) {
 	const ALGOLIA_API_KEY = 'bc11adffff267d354ad0a04aedebb5b5';
 	const ALGOLIA_URL = `https://${ALGOLIA_APP_ID}-dsn.algolia.net/1/indexes/*/queries`;
 
-	// 🔒 Critical: stringified double-nested array for facetFilters
-	const facetFilterString = JSON.stringify([[`Venue.Name:${venue}`]]);
+	// Build query safely with URLSearchParams to escape ampersand
+	const queryParams = new URLSearchParams({
+		maxValuesPerFacet: '150',
+		highlightPreTag: '__ais-highlight__',
+		highlightPostTag: '__/ais-highlight__',
+		page: '0',
+		query: '',
+		facets: '["Venue.State","Categories","Bands","Venue.Name"]',
+		tagFilters: '',
+		facetFilters: JSON.stringify([[`Venue.Name:${venue}`]])
+	}).toString();
+
+	const facetDiscoveryParams = new URLSearchParams({
+		maxValuesPerFacet: '150',
+		highlightPreTag: '__ais-highlight__',
+		highlightPostTag: '__/ais-highlight__',
+		page: '0',
+		query: '',
+		hitsPerPage: '1',
+		attributesToRetrieve: '[]',
+		attributesToHighlight: '[]',
+		attributesToSnippet: '[]',
+		tagFilters: '',
+		analytics: 'false',
+		clickAnalytics: 'false',
+		facets: 'Venue.Name'
+	}).toString();
 
 	const requestBody = {
 		requests: [
 			{
 				indexName: 'prod_oztix_eventguide',
-				params: [
-					'maxValuesPerFacet=150',
-					'highlightPreTag=__ais-highlight__',
-					'highlightPostTag=__/ais-highlight__',
-					'page=0',
-					'query=',
-					'facets=["Venue.State","Categories","Bands","Venue.Name"]',
-					'tagFilters=',
-					`facetFilters=${facetFilterString}`
-				].join('&')
+				params: queryParams
 			},
 			{
 				indexName: 'prod_oztix_eventguide',
-				params: [
-					'maxValuesPerFacet=150',
-					'highlightPreTag=__ais-highlight__',
-					'highlightPostTag=__/ais-highlight__',
-					'page=0',
-					'query=',
-					'hitsPerPage=1',
-					'attributesToRetrieve=[]',
-					'attributesToHighlight=[]',
-					'attributesToSnippet=[]',
-					'tagFilters=',
-					'analytics=false',
-					'clickAnalytics=false',
-					'facets=Venue.Name'
-				].join('&')
+				params: facetDiscoveryParams
 			}
 		]
 	};
