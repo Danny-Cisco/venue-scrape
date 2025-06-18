@@ -31,7 +31,7 @@
 		{
 			name: 'Gem Bar',
 			id: '8242a072-91fc-4329-940b-1ad477dcba53',
-			moshtix: 'the gem bar'
+			oztix: 'the gem bar'
 		}
 	];
 
@@ -67,6 +67,8 @@
 	// }
 
 	async function beginCrawl() {
+		console.trace('TRACE : beginCrawl: ');
+
 		loading = true;
 		let result = null;
 		// error = null;
@@ -75,7 +77,7 @@
 
 		for (const venue of venues) {
 			readOut = `✅ Collecting all links from oztix search ${venue.name}`;
-			const bodyJson = { urls: [venue.moshtix] };
+			console.log('venue', venue);
 			try {
 				const res = await fetch(`/api/algoria/search?venue=${encodeURIComponent(venue.oztix)} `);
 
@@ -85,7 +87,7 @@
 
 				result = await res.json();
 				console.log('✅BOOP✅ ~ BEGIN CRAWL ~ result:', result);
-
+				debugger;
 				///// NEXT STEP IS TO MAKE A LIST OF THE LINKS HERE
 				/// BUT LATER I WILL LIKELY JUST MAKE AN ENDPOINT WHICH RETURN ALL THE SCRAPED LINKS IN ONE ENDPOINT
 
