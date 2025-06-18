@@ -3,7 +3,7 @@
 	let results = [];
 
 	async function search() {
-		const res = await fetch(`/api/algoria/search?venue=${encodeURIComponent(venue)}`);
+		const res = await fetch(`/api/algolia/search?venue=${encodeURIComponent(venue)}`);
 		const data = await res.json();
 
 		results = data.hits || [];
