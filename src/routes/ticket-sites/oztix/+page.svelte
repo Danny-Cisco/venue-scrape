@@ -89,7 +89,6 @@
 
 				result = await res.json();
 				console.log('✅BOOP✅ ~ BEGIN CRAWL ~ result:', result);
-				debugger;
 				///// NEXT STEP IS TO MAKE A LIST OF THE LINKS HERE
 				/// BUT LATER I WILL LIKELY JUST MAKE AN ENDPOINT WHICH RETURN ALL THE SCRAPED LINKS IN ONE ENDPOINT
 
@@ -246,6 +245,7 @@
 
 		const data = await response.json();
 		const responseJson = data.answer;
+		console.log('🚀🚀🚀 ~ getBands ~ responseJson:', responseJson);
 
 		const finalJson = await JSON.parse(responseJson);
 		let bandObjects = [];
@@ -430,7 +430,7 @@
 
 <div class="page isolate" in:fade>
 	<!-- upper section of output -->
-	<div class="w-screen pt-4 text-lg font-bold text-center uppercase bg-black">Oztix (temp)</div>
+	<div class="w-screen pt-4 text-lg font-bold text-center uppercase bg-black">Oztix</div>
 	<div class="flex flex-col items-center w-screen p-10 text-center h-[100px] bg-black">
 		{#key readOut}
 			<div class="h-[2rem] flex items-center text-green-600 overflow-hidden max-w-full" in:fade>

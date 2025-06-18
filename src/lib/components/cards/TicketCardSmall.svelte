@@ -1,6 +1,7 @@
 <script>
 	export let showTickets = true;
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
+	import ticketText from '$lib/utils/tickets.js';
 	export let ticket;
 	export let xs = false;
 
@@ -58,6 +59,6 @@
 				<SoldOut />
 			</div>
 		{/if}
-		<div class="w-full text-center text-green-500">{ticket.availability}</div>
+		<div class="w-full text-center text-green-500">{ticketText(ticket.availability)}</div>
 	</div>
 </div>

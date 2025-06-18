@@ -1,6 +1,7 @@
 <script>
 	export let showTickets = true;
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
+	import { ticketText } from '$lib/utils/tickets.js';
 	export let ticket;
 </script>
 
@@ -47,7 +48,7 @@
 			</svg>
 			{ticket.price}
 		{:else}
-			<span class="text-gray-600 font-thin">Free</span>
+			<span class="font-thin text-gray-600">Free</span>
 		{/if}
 	</div>
 	<div class="relative font-mono font-thin">
@@ -56,6 +57,8 @@
 			<div class="absolute inset-0 center">
 				<SoldOut />
 			</div>
-		{/if}<span class="text-green-500">{ticket.availability}</span>
+		{/if}
+
+		<span class="text-green-500">{ticketText(ticket.availability)}</span>
 	</div>
 </div>
