@@ -13,6 +13,7 @@
 		'moshtix-json',
 		'moshtix-venue',
 		'moshtix-venueUrls-to-gigs',
+		'oztix-venueName-to-gigs',
 		'humanitix-json',
 		'eventbrite-json',
 		'john-curtain-links',
