@@ -15,7 +15,7 @@
 		if (el) el.scrollIntoView({ behavior: 'smooth' });
 	}
 
-	function moshtix140to600image(url) {
+	function largerImageUrl(url) {
 		if (typeof url !== 'string') return url;
 
 		const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
@@ -121,7 +121,7 @@
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img
-					src={moshtix140to600image(gig.image)}
+					src={largerImageUrl(gig.image)}
 					alt={gig.title}
 					class="object-cover border-4 border-black w-[600px] h-[600px]"
 				/>
