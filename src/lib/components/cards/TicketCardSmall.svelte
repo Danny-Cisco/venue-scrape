@@ -1,7 +1,7 @@
 <script>
 	export let showTickets = true;
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
-	import ticketText from '$lib/utils/tickets.js';
+	import { ticketText } from '$lib/utils/tickets.js';
 	export let ticket;
 	export let xs = false;
 
