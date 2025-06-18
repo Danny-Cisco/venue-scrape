@@ -24,6 +24,12 @@
 			return url.replace('x140x140', 'x600x600');
 		}
 
+		const isOztix = url.includes('oztix');
+
+		if (isOztix) {
+			return url.replace(/(\?|&)width=\d+&height=\d+/, '?width=600&height=600');
+		}
+
 		return url;
 	}
 </script>
