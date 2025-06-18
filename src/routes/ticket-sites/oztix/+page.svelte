@@ -74,21 +74,20 @@
 		readOut = 'Begin Crawl!';
 
 		for (const venue of venues) {
-			readOut = `✅ Collecting all gigs from Moshtix url ${venue.name}`;
+			readOut = `✅ Collecting all links from oztix search ${venue.name}`;
 			const bodyJson = { urls: [venue.moshtix] };
 			try {
-				const res = await fetch('/api/cheerio/moshtix-venueUrls-to-gigs', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(bodyJson)
-				});
+				const res = await fetch(`/api/algoria/search?venue=${encodeURIComponent(venue.oztix)} `);
 
 				if (!res.ok) {
 					throw new Error(`Error ${res.status}: ${await res.text()}`);
 				}
 
 				result = await res.json();
-				console.log('✅BOOP✅ ~ fetchTicketLinks ~ result:', result);
+				console.log('✅BOOP✅ ~ BEGIN CRAWL ~ result:', result);
+
+				///// NEXT STEP IS TO MAKE A LIST OF THE LINKS HERE
+				/// BUT LATER I WILL LIKELY JUST MAKE AN ENDPOINT WHICH RETURN ALL THE SCRAPED LINKS IN ONE ENDPOINT
 
 				let knownIdsCache = []; // { venue, id }
 

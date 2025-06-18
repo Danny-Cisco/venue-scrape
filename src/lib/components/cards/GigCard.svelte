@@ -122,14 +122,17 @@
 			</div>
 		</div>
 		<!-- inner right side section-->
-		<div class="flex flex-col items-end justify-end mt-1">
+
+		<div class="flex flex-col items-end mb-[50px] justify-center mt-1">
 			<!-- TICKET SECTION UPPER-->
+			<div class="flex-1"></div>
+
 			<div
 				class="flex flex-wrap max-w-[350px] justify-end gap-1 mr-4 hover:cursor-pointer"
 				on:click={scrollToTickets}
 			>
 				{#each gig.tickets as ticket}
-					<TicketCardSmall {ticket} />
+					<TicketCardSmall {ticket} xs={true} />
 				{/each}
 			</div>
 

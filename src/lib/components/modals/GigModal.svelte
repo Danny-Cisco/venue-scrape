@@ -86,7 +86,10 @@
 			<!-- right hand side -->
 			<div class="flex flex-col justify-end gap-4 mt-1">
 				<!-- TICKET SECTION UPPER-->
-				<div class="flex justify-end gap-1 hover:cursor-pointer" on:click={scrollToTickets}>
+				<div
+					class="flex flex-wrap justify-end gap-1 max-w-1/2 hover:cursor-pointer"
+					on:click={scrollToTickets}
+				>
 					{#each gig.tickets as ticket}
 						<TicketCardSmall {ticket} />
 					{/each}

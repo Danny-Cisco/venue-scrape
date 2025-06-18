@@ -2,10 +2,21 @@
 	export let showTickets = true;
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 	export let ticket;
+	export let xs = false;
+
+	let optionalClass = '';
+	let padding = 'p-3';
+	let textSize = '';
+
+	if (xs) {
+		optionalClass = 'scale-75';
+		padding = 'p-2';
+		textSize = 'text-xs';
+	}
 </script>
 
 <div
-	class="relative flex flex-col items-center justify-start p-4 font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px]"
+	class={`relative flex flex-col items-center h-fit justify-between font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px] ${padding} ${textSize}`}
 >
 	<!-- FANCY SHADOW CURLS -->
 	<div>
@@ -15,13 +26,6 @@
 		<!-- <div
 			class="absolute bottom-0 left-0 w-4 h-8 bg-gradient-to-tr from-black/10 via-transparent to-transparent"
 		></div> -->
-	</div>
-
-	<div class="absolute left-0 flex-col justify-center">
-		<div class="w-1 h-12 bg-gray-100 border-gray-200 rounded-r-full rounded-l-0"></div>
-	</div>
-	<div class="absolute right-0 flex-col justify-center">
-		<div class="w-1 h-12 bg-gray-100 border-gray-200 rounded-l-full rounded-r-0"></div>
 	</div>
 
 	<!-- <div class="font-serif capitalise">{@html ticket.ticketType}</div> -->
@@ -45,12 +49,12 @@
 				></path>
 			</svg>{ticket.price}
 		{:else}
-			<div class="ml-2 font-mono font-thin text-gray-600">Free</div>
+			<div class="h-6 ml-2 font-mono font-thin text-gray-600 center">Free</div>
 		{/if}
 	</div>
 	<div class="relative font-mono center">
 		{#if ticket.availability === 'SoldOut'}
-			<div class="absolute top-0">
+			<div class={`absolute -bottom-3 ${optionalClass}`}>
 				<SoldOut />
 			</div>
 		{/if}
