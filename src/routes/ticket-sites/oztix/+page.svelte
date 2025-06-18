@@ -79,7 +79,9 @@
 			readOut = `✅ Collecting all links from oztix search ${venue.name}`;
 			console.log('venue', venue);
 			try {
-				const res = await fetch(`/api/algolia/search?venue=${encodeURIComponent(venue.oztix)} `);
+				const res = await fetch(
+					`/api/cheerio/oztix-venueName-to-gigs?venue=${encodeURIComponent(venue.oztix)} `
+				);
 
 				if (!res.ok) {
 					throw new Error(`Error ${res.status}: ${await res.text()}`);
