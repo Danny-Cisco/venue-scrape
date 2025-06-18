@@ -39,7 +39,7 @@ async function fetchGigObjectsFromOztix(fetchFn: typeof fetch, urls: string[]) {
 
 // === GET handler ===
 export async function GET({ url, fetch }) {
-	const venueName = url.searchParams.get('url');
+	const venueName = url.searchParams.get('venue');
 	console.log('🚀 ~ GET ~ venueName:', venueName);
 
 	if (!venueName) {
@@ -69,7 +69,7 @@ export async function GET({ url, fetch }) {
 // === POST handler ===
 export async function POST({ request, fetch }) {
 	const body = await request.json();
-	const venueNames = body.urls;
+	const venueNames = body.venues;
 
 	if (!Array.isArray(venueNames) || venueNames.length === 0) {
 		return new Response(JSON.stringify({ error: 'Missing or invalid `urls` array in body' }), {
@@ -81,8 +81,8 @@ export async function POST({ request, fetch }) {
 	try {
 		const allLinks = new Set<string>();
 
-		for (const url of venueNames) {
-			const links = await extractOztixLinksFrom(url);
+		for (const venueName of venueNames) {
+			const links = await extractOztixLinksFrom(fetch, venueName);
 			links.forEach((link) => allLinks.add(link));
 		}
 
