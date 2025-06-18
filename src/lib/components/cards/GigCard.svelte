@@ -2,7 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	export let gig = {};
 
-	import { imageUrlToMedium } from '$lib/utils/image.js';
+	import { imageUrlToMedium, imageUrlToLarge, weserv } from '$lib/utils/image.js';
 
 	import GigDescriptionSection from '../ui/GigDescriptionSection.svelte';
 	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
@@ -144,6 +144,17 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="hidden">
+	{#if gig.image}
+		<img
+			src={weserv(imageUrlToLarge(gig.image))}
+			alt={`preload ${gig.title}`}
+			class=" border-4 border-black w-[600px] h-fit"
+			loading="lazy"
+		/>
+	{/if}
 </div>
 
 <style>

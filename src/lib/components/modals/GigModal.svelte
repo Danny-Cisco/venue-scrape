@@ -1,7 +1,7 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
 
-	import { imageUrlToLarge } from '$lib/utils/image.js';
+	import { imageUrlToLarge, weserv } from '$lib/utils/image.js';
 
 	export let gig = {};
 
@@ -104,13 +104,15 @@
 		<!-- Cards Section -->
 		<div class="relative flex items-start w-full mt-4 bg-black">
 			<!-- 🎨 Poster -->
-			{#if gig.image}
-				<img
-					src={imageUrlToLarge(gig.image)}
-					alt={gig.title}
-					class="object-cover border-4 border-black w-[600px] h-[600px]"
-				/>
-			{/if}
+			<div class="h-[600px]">
+				{#if gig.image}
+					<img
+						src={weserv(imageUrlToLarge(gig.image))}
+						alt={gig.title}
+						class=" border-4 border-black w-[600px] h-fit"
+					/>
+				{/if}
+			</div>
 
 			<!-- 📝 Details -->
 			<div class="flex flex-col flex-1 w-full min-h-full">
@@ -219,6 +221,37 @@
 </div>
 
 <style>
+	.wave-mask {
+		animation: waveMove 2.5s linear infinite;
+	}
+
+	@keyframes waveMove {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
+	.loading-wave {
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, black, #555, black);
+		background-size: 200% 100%;
+		animation: wave 2s ease-in-out infinite;
+	}
+
+	@keyframes wave {
+		0% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+		100% {
+			background-position: 0% 50%;
+		}
+	}
 	.gig-card {
 		display: flex;
 		flex-direction: column;
