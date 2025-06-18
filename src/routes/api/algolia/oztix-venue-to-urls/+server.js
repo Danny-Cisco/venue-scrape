@@ -1,3 +1,5 @@
+// RECEIVES A VENUE NAME AND RETURNS AN ARRAY OF TICKET URLS
+
 import { json } from '@sveltejs/kit';
 
 export async function GET({ url }) {
