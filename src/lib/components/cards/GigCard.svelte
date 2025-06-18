@@ -2,6 +2,8 @@
 	import { fade, fly } from 'svelte/transition';
 	export let gig = {};
 
+	import { imageUrlToMedium } from '$lib/utils/image.js';
+
 	import GigDescriptionSection from '../ui/GigDescriptionSection.svelte';
 	import DateTextMinimal from '$lib/components/ui/DateTextMinimal.svelte';
 	import StarRatingBarColor from '../ui/StarRatingBarColor.svelte';
@@ -13,18 +15,6 @@
 	function scrollToTickets() {
 		const el = document.getElementById('ticket-lower');
 		if (el) el.scrollIntoView({ behavior: 'smooth' });
-	}
-
-	function moshtix140to600image(url) {
-		if (typeof url !== 'string') return url;
-
-		const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
-
-		if (isMoshtix) {
-			return url.replace('x140x140', 'x600x600');
-		}
-
-		return url;
 	}
 
 	$: if (gig.genres) gig.genres = sortGenres(gig.genres);
@@ -57,7 +47,7 @@
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img
-					src={moshtix140to600image(gig.image)}
+					src={imageUrlToMedium(gig.image)}
 					alt={gig.title}
 					class="object-cover border-0 border-black w-[200px] h-[200px]"
 				/>

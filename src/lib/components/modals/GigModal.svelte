@@ -1,5 +1,8 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
+
+	import { imageUrlToLarge } from '$lib/utils/image.js';
+
 	export let gig = {};
 
 	import GigDescriptionSection from '../ui/GigDescriptionSection.svelte';
@@ -13,24 +16,6 @@
 	function scrollToTickets() {
 		const el = document.getElementById('ticket-lower');
 		if (el) el.scrollIntoView({ behavior: 'smooth' });
-	}
-
-	function largerImageUrl(url) {
-		if (typeof url !== 'string') return url;
-
-		const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
-
-		if (isMoshtix) {
-			return url.replace('x140x140', 'x600x600');
-		}
-
-		const isOztix = url.includes('oztix');
-
-		if (isOztix) {
-			return url.replace(/(\?|&)width=\d+&height=\d+/, '?width=600&height=600');
-		}
-
-		return url;
 	}
 </script>
 
@@ -121,7 +106,7 @@
 			<!-- 🎨 Poster -->
 			{#if gig.image}
 				<img
-					src={largerImageUrl(gig.image)}
+					src={imageUrlToLarge(gig.image)}
 					alt={gig.title}
 					class="object-cover border-4 border-black w-[600px] h-[600px]"
 				/>

@@ -24,3 +24,39 @@ export function photon(url) {
 
 	return photonUrl;
 }
+
+export function imageUrlToLarge(url) {
+	if (typeof url !== 'string') return url;
+
+	const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
+
+	if (isMoshtix) {
+		return url.replace('x140x140', 'x600x600');
+	}
+
+	const isOztix = url.includes('oztix');
+
+	if (isOztix) {
+		return url.replace(/(\?|&)width=\d+&height=\d+/, '?width=600&height=600');
+	}
+
+	return url;
+}
+
+export function imageUrlToMedium(url) {
+	if (typeof url !== 'string') return url;
+
+	const isMoshtix = url.includes('moshtix') && url.includes('x140x140');
+
+	if (isMoshtix) {
+		return url.replace('x140x140', 'x300x300');
+	}
+
+	const isOztix = url.includes('oztix');
+
+	if (isOztix) {
+		return url.replace(/(\?|&)width=\d+&height=\d+/, '?width=200&height=200');
+	}
+
+	return url;
+}
