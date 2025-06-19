@@ -8,38 +8,38 @@ function isUpcoming(dateStr) {
 	const valid = !isNaN(date);
 	const upcoming = valid && date > now;
 
-	console.table([
-		{
-			label: 'Raw dateStr',
-			value: dateStr
-		},
-		{
-			label: 'Parsed date (local)',
-			value: date.toString()
-		},
-		{
-			label: 'Parsed date (ISO)',
-			value: date.toISOString()
-		},
-		{
-			label: 'Now (local)',
-			value: now.toString()
-		},
-		{
-			label: 'Now (ISO)',
-			value: now.toISOString()
-		},
+	// console.table([
+	// 	{
+	// 		label: 'Raw dateStr',
+	// 		value: dateStr
+	// 	},
+	// 	{
+	// 		label: 'Parsed date (local)',
+	// 		value: date.toString()
+	// 	},
+	// 	{
+	// 		label: 'Parsed date (ISO)',
+	// 		value: date.toISOString()
+	// 	},
+	// 	{
+	// 		label: 'Now (local)',
+	// 		value: now.toString()
+	// 	},
+	// 	{
+	// 		label: 'Now (ISO)',
+	// 		value: now.toISOString()
+	// 	},
 
-		{
-			label: 'Is upcoming?',
-			value: upcoming
-		}
-	]);
+	// 	{
+	// 		label: 'Is upcoming?',
+	// 		value: upcoming
+	// 	}
+	// ]);
 
 	return upcoming;
 }
 
-// Scrape one Eventbrite URL and return all event URLs with upcoming status
+// Scrape one Eventbrite URL and return only upcoming event URLs
 async function scrapeEventUrls(inputUrl) {
 	const results = [];
 
@@ -59,7 +59,9 @@ async function scrapeEventUrls(inputUrl) {
 						if (typeof node === 'object') {
 							if (node['@type'] === 'Event' && node.url) {
 								const upcoming = isUpcoming(node.endDate);
-								results.push({ url: node.url, upcoming });
+								if (upcoming) {
+									results.push(node.url);
+								}
 							}
 							for (const key in node) walk(node[key]);
 						}
