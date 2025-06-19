@@ -16,6 +16,8 @@
 		'oztix-venueName-to-gigs',
 		'humanitix-json',
 		'eventbrite-json',
+		'eventbrite-organiser-to-gigs',
+		'eventbrite-organiser-to-urls',
 		'john-curtain-links',
 		'linktree-profile-pic',
 		'linktree-links',
