@@ -29,9 +29,9 @@
 
 	let venues = [
 		{
-			name: 'Gem Bar',
-			id: '8242a072-91fc-4329-940b-1ad477dcba53',
-			oztix: 'the gem bar'
+			name: 'Yah Yahs',
+			id: '9e61d117-edf6-48a9-a009-15372432ed0a',
+			eventbrite: 'https://www.eventbrite.com.au/o/yah-yahs-28740119359'
 		}
 	];
 
@@ -76,11 +76,11 @@
 		readOut = 'Begin Crawl!';
 
 		for (const venue of venues) {
-			readOut = `✅ Collecting all links from oztix search ${venue.name}`;
+			readOut = `✅ Collecting all links from eventbrite search ${venue.name}`;
 			console.log('venue', venue);
 			try {
 				const res = await fetch(
-					`/api/cheerio/oztix-venueName-to-gigs?venue=${encodeURIComponent(venue.oztix)} `
+					`/api/cheerio/eventbrite-organiser-to-gigs?url=${encodeURIComponent(venue.eventbrite)} `
 				);
 
 				if (!res.ok) {
@@ -189,9 +189,9 @@
 	// 		gig.bios = []; // add some blank fields ready for the ui
 	// 		gig.instaCaptions = []; // add some blank fields ready for the ui
 	// 		gig.instaHashtags = []; // add some blank fields ready for the ui
-	// 		gig.oztix = {};
+	// 		gig.eventbrite = {};
 	// 		if (gig.ticketUrl != '#' || false) {
-	// 			gig.oztix = await getOztix(gig.ticketUrl);
+	// 			gig.eventbrite = await getEventbrite(gig.ticketUrl);
 	// 		}
 
 	// 		gigs = [...gigs, gig];
@@ -202,7 +202,7 @@
 
 	async function getGenres(gig) {
 		const systemPrompt = genreClassifier;
-		const question = gig.description + gig.bios + gig.tags + gigs.oztix + gigs.instaCaptions; // look into this more
+		const question = gig.description + gig.bios + gig.tags + gigs.eventbrite + gigs.instaCaptions; // look into this more
 
 		// fetch from openai qa endpoint
 
@@ -295,7 +295,7 @@
 
 		gigs[gigIndex].followers = followersTotal;
 
-		if (gigs[gigIndex].oztix?.tickets?.[0]?.availability !== 'http://shema.org/InStock') {
+		if (gigs[gigIndex].eventbrite?.tickets?.[0]?.availability !== 'http://shema.org/InStock') {
 			gigs[gigIndex].soldout = true;
 		}
 
@@ -416,7 +416,7 @@
 		(async () => {
 			if (getAllVenues) {
 				try {
-					const res = await fetch('/api/supabase/get-venues-oztix');
+					const res = await fetch('/api/supabase/get-venues-eventbrite');
 					const data = await res.json();
 					venues = data.records;
 					console.log('🚀 ~ venues:', venues);
@@ -430,7 +430,7 @@
 
 <div class="page isolate" in:fade>
 	<!-- upper section of output -->
-	<div class="w-screen pt-4 text-lg font-bold text-center uppercase bg-black">Oztix</div>
+	<div class="w-screen pt-4 text-lg font-bold text-center uppercase bg-black">Eventbrite</div>
 	<div class="flex flex-col items-center w-screen p-10 text-center h-[100px] bg-black">
 		{#key readOut}
 			<div class="h-[2rem] flex items-center text-green-600 overflow-hidden max-w-full" in:fade>
