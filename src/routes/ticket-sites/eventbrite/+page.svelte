@@ -14,7 +14,7 @@
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
-	let getAllVenues = true; // this is switch to test one venue or many
+	let getAllVenues = false; // this is switch to test one venue or many
 
 	let links = [];
 	let gigs = [];
@@ -37,34 +37,6 @@
 
 	let urls; // this turns the venues oblect into the urls list i need
 	$: urls = venues.map((venue) => venue.moshtix); // this turns the venues oblect into the urls list i need
-
-	// async function beginCrawl() {
-	// 	loading = true;
-
-	// 	// venueId = await softMatchVenueName(venueName); // THIS IS A MULTI VENUE PAGE, CANNOT GET ID FIRST
-
-	// 	readOut = '✋ Cheerio is finding links';
-
-	// 	const res = await fetch(`/api/cheerio/gem-links?url=${url}`);
-
-	// 	if (!res.ok) {
-	// 		readOut = await res.text();
-	// 		throw new Error('Cheerio failed to fetch Links');
-	// 	}
-
-	// 	const json = await res.json(); // ✅ this is already your array
-
-	// 	output = JSON.stringify(json, null, 2); // ✅ this is just for visual logging or display
-	// 	console.log('👀👀🤖🥸 ~ beginCrawl ~ 🔥output:', output);
-
-	// 	// ✅ assign json directly to links
-	// 	links = [...new Set(json)];
-	// 	console.log('👀👀🤖🥸 ~ beginCrawl ~ links:', links);
-
-	// 	loading = false;
-	// 	readOut = '✅ Done!';
-	// 	crawlGemGigs();
-	// }
 
 	async function beginCrawl() {
 		console.trace('TRACE : beginCrawl: ');
@@ -203,7 +175,10 @@
 	async function getGenres(gig) {
 		const systemPrompt = genreClassifier;
 		const question = gig.description + gig.bios + gig.tags + gigs.eventbrite + gigs.instaCaptions; // look into this more
+		console.log('🚀 ~ getGenres ~ gigs.instaCaptions:', gigs.instaCaptions);
+		console.log('🚀 ~ getGenres ~ gigs.eventbrite:', gigs.eventbrite);
 
+		debugger;
 		// fetch from openai qa endpoint
 
 		loading = true;

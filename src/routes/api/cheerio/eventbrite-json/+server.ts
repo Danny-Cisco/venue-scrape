@@ -41,7 +41,7 @@ async function scrapeEventbritePage(targetUrl) {
 	const crawler = new CheerioCrawler({
 		requestQueue,
 		async requestHandler({ $, request }) {
-			// Grab any LD+JSON blocks with @type: Event
+			// Grab any LD+JSON blocks with @type: Event or BusinessEvent
 			$('script[type="application/ld+json"]').each((_, el) => {
 				try {
 					const json = JSON.parse($(el).html().trim());
@@ -50,8 +50,13 @@ async function scrapeEventbritePage(targetUrl) {
 						if (!n) return;
 						if (Array.isArray(n)) return n.forEach(walk);
 						if (typeof n === 'object') {
-							if (n['@type'] === 'Event') events.push(n);
+							const type = n['@type'];
+							if (type === 'Event' || type === 'BusinessEvent') events.push(n);
 							if (n['@graph']) walk(n['@graph']);
+							// Also walk nested properties that may contain embedded types
+							for (const key in n) {
+								if (typeof n[key] === 'object') walk(n[key]);
+							}
 						}
 					})(json);
 					if (events.length) rawResult.ld_events.push(...events);
