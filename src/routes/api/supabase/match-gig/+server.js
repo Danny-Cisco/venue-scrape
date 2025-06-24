@@ -78,8 +78,7 @@ export async function POST({ request, locals }) {
 
 		for (const potentialMatch of potentialMatches) {
 			// STEP 1 : Gig Title matching logic:
-			console.log('🚀 ~ POST ~ title: ', title);
-			console.log('🚀 ~ POST ~ potentialMatch.title:', potentialMatch.title);
+
 			if (title != '' && title == potentialMatch.title) {
 				console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳 TITLE MATCH');
 				return json({ matchId: potentialMatch.id, reason: 'Gig titles are identical' });
