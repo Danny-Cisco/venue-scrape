@@ -62,7 +62,7 @@ export async function POST({ request, locals }) {
 
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
-			.select('id, start_date, venue_id, band_objects', 'title')
+			.select('id, start_date, venue_id, band_objects, title')
 			.gte('start_date', dayStart.toISOString())
 			.lt('start_date', dayEnd.toISOString());
 
@@ -78,8 +78,10 @@ export async function POST({ request, locals }) {
 
 		for (const potentialMatch of potentialMatches) {
 			// STEP 1 : Gig Title matching logic:
+			console.log('🚀 ~ POST ~ title: ', title);
+			console.log('🚀 ~ POST ~ potentialMatch.title:', potentialMatch.title);
 			if (title != '' && title == potentialMatch.title) {
-				console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳');
+				console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳 TITLE MATCH');
 				return json({ matchId: potentialMatch.id, reason: 'Gig titles are identical' });
 			}
 
@@ -115,7 +117,7 @@ export async function POST({ request, locals }) {
 			if (inputBands.length > 0 && matchBands.length > 0) {
 				const hasBandOverlap = matchBands.some((b) => inputBands.includes(b));
 				if (hasBandOverlap) {
-					console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳');
+					console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳 VENUE AND BAND OVERLAP');
 					return json({ matchId: potentialMatch.id, reason: 'Venue and band overlap' });
 				}
 			}

@@ -63,7 +63,6 @@
 				console.log('✅BOOP✅ ~ BEGIN CRAWL ~ result:', result);
 				///// NEXT STEP IS TO MAKE A LIST OF THE LINKS HERE
 				/// BUT LATER I WILL LIKELY JUST MAKE AN ENDPOINT WHICH RETURN ALL THE SCRAPED LINKS IN ONE ENDPOINT
-				debugger;
 				let knownIdsCache = []; // { venue, id }
 
 				for (const gig of result.gigs) {
@@ -97,8 +96,6 @@
 					if (!gig.startDate) {
 						gig.startDate = await findStartDate(gig);
 						console.log('startDate: ', gig);
-
-						debugger;
 					}
 				}
 
@@ -209,7 +206,6 @@
 		console.log('🚀 ~ getGenres ~ gig.instaCaptions:', gig.instaCaptions);
 		console.log('🚀 ~ getGenres ~ gig.instaHashtags:', gig.instaHashtags);
 
-		debugger;
 		// fetch from openai qa endpoint
 
 		loading = true;
