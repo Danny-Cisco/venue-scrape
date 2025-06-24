@@ -24,17 +24,27 @@ export async function POST({ request, locals }) {
 	try {
 		const reqBody = await request.json();
 
-		const { startDate, venueId, bandObjects } = reqBody;
+		const { startDate, venueId, bandObjects, title } = reqBody;
 
-		if (
-			!startDate ||
-			!venueId ||
-			!bandObjects ||
-			!Array.isArray(bandObjects) ||
-			typeof venueId !== 'string'
-		) {
+		// MORE INFORMATIVE ERROR RETURNS
+		if (!startDate) {
+			return json({ error: 'Missing startDate' }, { status: 400 });
+		}
+
+		if (!venueId || typeof venueId !== 'string') {
 			return json(
-				{ error: 'Missing or invalid startDate, venue, or bandObjects' },
+				{ error: `Invalid venueId: ${venueId} (type: ${typeof venueId})` },
+				{ status: 400 }
+			);
+		}
+
+		if (!title) {
+			return json({ error: 'Missing title' }, { status: 400 });
+		}
+
+		if (!Array.isArray(bandObjects)) {
+			return json(
+				{ error: `bandObjects is not an array (type: ${typeof bandObjects})` },
 				{ status: 400 }
 			);
 		}
@@ -52,7 +62,7 @@ export async function POST({ request, locals }) {
 
 		const { data: potentialMatches, error } = await supabase
 			.from('gigs')
-			.select('id, start_date, venue_id, band_objects')
+			.select('id, start_date, venue_id, band_objects', 'title')
 			.gte('start_date', dayStart.toISOString())
 			.lt('start_date', dayEnd.toISOString());
 
@@ -67,6 +77,13 @@ export async function POST({ request, locals }) {
 			.filter((name) => name.length > 0);
 
 		for (const potentialMatch of potentialMatches) {
+			// STEP 1 : Gig Title matching logic:
+			if (title != '' && title == potentialMatch.title) {
+				console.log('🥳 HOORAY!!!!!! GIG MATCH FOUND IN DATABASE 🥳');
+				return json({ matchId: potentialMatch.id, reason: 'Gig titles are identical' });
+			}
+
+			// STEP 2 : check if band_objects exists and make sure venue_id is a string
 			if (
 				typeof potentialMatch.venue_id !== 'string' ||
 				!Array.isArray(potentialMatch.band_objects)

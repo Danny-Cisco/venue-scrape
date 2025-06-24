@@ -1,10 +1,17 @@
-export function weserv(url) {
-	if (!url) return;
-	const weservUrl = `https://images.weserv.nl/?url=${encodeURIComponent(
-		url.replace(/^https?:\/\//, '')
-	)}`;
+export function weserv(rawUrl, options = '') {
+	if (!rawUrl) return;
 
-	return weservUrl;
+	// Check for raw URL by checking for unescaped "?"
+	const hasRawQuery = rawUrl.includes('?') && !rawUrl.includes('%3F');
+
+	// If it contains unescaped query params, assume it's not fully encoded
+	const shouldEncode = hasRawQuery || decodeURIComponent(rawUrl) === rawUrl;
+
+	const fullUrl = shouldEncode ? encodeURIComponent(rawUrl) : rawUrl;
+
+	const query = options ? `&${options}` : 'w=600';
+
+	return `https://images.weserv.nl/?url=${fullUrl}${'&' + query}`;
 }
 
 export function imgHaste(url) {

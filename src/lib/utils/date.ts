@@ -150,3 +150,19 @@ export function toISOStringLocal(date) {
 
 	return `${year}-${month}-${day}T${hour}:${minute}:${second}.${ms}`;
 }
+
+export function nowForChat() {
+	const now = new Date();
+
+	const formatter = new Intl.DateTimeFormat('en-AU', {
+		weekday: 'long',
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		hour12: true,
+		timeZoneName: 'short'
+	});
+	return formatter.format(now);
+}

@@ -1,4 +1,9 @@
 export async function gigsFuzzyDupeCheckWithUpdate(gig) {
+	if (!gig.startDate) {
+		console.error(`No gig.startDate found. for ${gig.title} Aborted save to supabase`);
+		return;
+	}
+
 	const gigDupeData = await checkSupabaseForDuplicate(gig);
 	console.log('🌼🌼🌼 gigDupeData : ', gigDupeData);
 	const gigDupeId = gigDupeData.matchId;
@@ -12,7 +17,12 @@ export async function checkSupabaseForDuplicate(gig) {
 	// new location of bandnames is inside 'gig.bandObjects[].bandname'
 
 	// loading = true;
-	const body = { startDate: gig.startDate, venueId: gig.venueId, bandObjects: gig.bandObjects };
+	const body = {
+		startDate: gig.startDate,
+		venueId: gig.venueId,
+		bandObjects: gig.bandObjects,
+		title: gig.title
+	};
 	console.log('👀👀 checking gig for a match in Supabase:', body);
 
 	const response = await fetch('/api/supabase/match-gig', {

@@ -118,7 +118,7 @@ export async function POST({ request }) {
 	for (const inputUrl of urls) {
 		try {
 			const gig = await scrapeEventbritePage(inputUrl);
-			results.push({ url: inputUrl, gig });
+			results.push(gig);
 		} catch (err) {
 			console.error(`❌ Failed to scrape ${inputUrl}:`, err.message);
 			results.push({ url: inputUrl, error: true, message: err.message });

@@ -3,10 +3,10 @@
 	import PacMan from '$lib/components/loadingSpinners/PacMan.svelte';
 
 	import GigsBandsTable from '$lib/components/tables/GigsBandsTable.svelte';
-	import { genreClassifier, bandnameExtractor } from '$lib/utils/prompts';
+	import { genreClassifier, bandnameExtractor, startDateFinder } from '$lib/utils/prompts';
 	import { gigsFuzzyDupeCheckWithUpdate } from '$lib/utils/supabase.js';
 
-	import { convertStringToDatetime } from '$lib/utils/date.ts';
+	import { convertStringToDatetime, nowForChat } from '$lib/utils/date.ts';
 	import { readonly } from 'svelte/store';
 
 	import { onMount } from 'svelte';
@@ -63,7 +63,7 @@
 				console.log('✅BOOP✅ ~ BEGIN CRAWL ~ result:', result);
 				///// NEXT STEP IS TO MAKE A LIST OF THE LINKS HERE
 				/// BUT LATER I WILL LIKELY JUST MAKE AN ENDPOINT WHICH RETURN ALL THE SCRAPED LINKS IN ONE ENDPOINT
-
+				debugger;
 				let knownIdsCache = []; // { venue, id }
 
 				for (const gig of result.gigs) {
@@ -93,6 +93,13 @@
 					gig.bios = [];
 					gig.instaCaptions = [];
 					gig.instaHashtags = [];
+
+					if (!gig.startDate) {
+						gig.startDate = await findStartDate(gig);
+						console.log('startDate: ', gig);
+
+						debugger;
+					}
 				}
 
 				gigs = [...gigs, result.gigs || []].flat();
@@ -172,11 +179,35 @@
 	// 	loading = false;
 	// }
 
+	async function findStartDate(gig) {
+		const systemPrompt = startDateFinder;
+
+		loading = true;
+
+		const question = `{CURRENT DATE FOR REFERENCE: ${await nowForChat()}, ACTUAL EVENT: ${JSON.stringify(gig)}}`;
+		const parsedBody = JSON.stringify({ question, systemPrompt });
+		const response = await fetch('/api/openai/qabot', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: parsedBody
+		});
+
+		const data = await response.json();
+		const dataObj = await JSON.parse(data.answer);
+		console.log('🚀 ~ findStartDate ~ dataObj:', dataObj);
+		loading = false;
+		return dataObj.startDate;
+	}
+
 	async function getGenres(gig) {
 		const systemPrompt = genreClassifier;
-		const question = gig.description + gig.bios + gig.tags + gigs.eventbrite + gigs.instaCaptions; // look into this more
-		console.log('🚀 ~ getGenres ~ gigs.instaCaptions:', gigs.instaCaptions);
-		console.log('🚀 ~ getGenres ~ gigs.eventbrite:', gigs.eventbrite);
+		const question =
+			gig.description + gig.bios + gig.tags + gig.instaHashtags + gig.instaCaptions + gig.genres; // look into this more
+		console.log('🚀 ~ getGenres ~ gig.genres:', gig.genres);
+		console.log('🚀 ~ getGenres ~ gig.instaCaptions:', gig.instaCaptions);
+		console.log('🚀 ~ getGenres ~ gig.instaHashtags:', gig.instaHashtags);
 
 		debugger;
 		// fetch from openai qa endpoint

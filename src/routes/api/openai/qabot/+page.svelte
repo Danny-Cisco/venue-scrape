@@ -1,13 +1,16 @@
 <script>
 	import { slide, fade } from 'svelte/transition';
-	import { dog, eventToJson } from '$lib/utils/prompts.ts';
+	import { dog, eventToJson, startDateFinder } from '$lib/utils/prompts.ts';
+	import { nowForChat } from '$lib/utils/date.ts';
 	let question = '';
-	let systemPrompt = eventToJson;
+	let systemPrompt = startDateFinder;
 	let responseText = '';
 	let loading = false;
 
 	async function sendQuestion() {
 		loading = true;
+
+		question = `{now: ${nowForChat()}, event: ${question}}`;
 		const parsedBody = await JSON.stringify({ question, systemPrompt });
 		const response = await fetch('/api/openai/qabot', {
 			method: 'POST',
