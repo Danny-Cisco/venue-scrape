@@ -29,9 +29,9 @@
 
 	let venues = [
 		{
-			name: 'Retreat Hotel',
-			id: '7972ac4e-36c3-441a-9f9c-8ed650e0261a',
-			eventbrite: 'https://www.eventbrite.com.au/o/the-retreat-hotel-28439300263'
+			name: 'The Lomond Hotel',
+			id: '4a4ee7c7-5c27-4c4b-927c-e2512eac4148',
+			eventbrite: 'https://www.eventbrite.com.au/o/the-lomond-hotel-84134234723'
 		}
 	];
 
