@@ -22,23 +22,25 @@ export async function POST({ request, locals }) {
 	console.log('🚀 Incoming scrapedName:', scrapedName);
 
 	// Fetch known venues
-	const { data: venues, error } = await supabase.from('venues').select('id, name');
+	const { data: venues, error } = await supabase.from('venues').select('id, name, address');
 	if (error || !venues?.length) {
 		console.error('❌ Supabase venue fetch failed:', error?.message);
 		return json({ error: 'Failed to load venues' }, { status: 500 });
 	}
 
 	// Build prompt
-	const venueList = venues.map((v) => `- ${v.name}`).join('\n');
+	const venueList = venues.map((v) => `- {name: ${v.name}, address: ${v.address}}`).join('\n');
 
 	const prompt = `
-	You are to act as a fuzzy matching system to find venues in their desired spellings from inputs that may have incorrect ar alternative spellings.
+	You are to act as a fuzzy matching system to find venue names in their desired spellings from inputs that may have incorrect ar alternative spellings or only the address provided.
 Here is a list of known venue names, shown in the EXACT SPELLING you are to use in your output:
 [START VENUE LIST]
 ${venueList}
 [END VENUE LIST]
 
-Match the following venue name: "${scrapedName}"
+Find a the correct/desired venue name of the following name or address : "${scrapedName}"
+
+hint: i have provided the addresses too in case it helps. But remember. Your job is to find a VENUE NAME.
 
 If one of the known venues is a good match, return ONLY the exact name AS SHOWN IT THE VENUE LIST. It is important you prioritise the exact spelling found in the venue list. The presence of words such as 'the' capitals etc.
 If none match, return "NO MATCH".

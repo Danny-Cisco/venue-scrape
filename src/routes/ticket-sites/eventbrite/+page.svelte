@@ -76,7 +76,6 @@
 
 					console.log('🚀 ~ beginCrawl ~ gig.venue;:', gig.venue);
 					console.log('🚀 ~ beginCrawl ~ gig;:', gig);
-					debugger;
 
 					if (cached) {
 						// Use cached venue
@@ -112,7 +111,6 @@
 
 				gigs = [...gigs, result.gigs || []].flat();
 				console.log('🚀 ~ beginCrawl ~ gigs:', gigs);
-				debugger;
 			} catch (err) {
 				console.log('🚀 ~ beginCrawl ~ err.message:', err.message);
 			} finally {
