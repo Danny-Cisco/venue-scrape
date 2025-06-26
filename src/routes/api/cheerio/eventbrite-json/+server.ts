@@ -51,7 +51,8 @@ async function scrapeEventbritePage(targetUrl) {
 						if (Array.isArray(n)) return n.forEach(walk);
 						if (typeof n === 'object') {
 							const type = n['@type'];
-							if (type === 'Event' || type === 'BusinessEvent') events.push(n);
+							if (type === 'Event' || type === 'BusinessEvent' || type === 'SocialEvent')
+								events.push(n);
 							if (n['@graph']) walk(n['@graph']);
 							// Also walk nested properties that may contain embedded types
 							for (const key in n) {

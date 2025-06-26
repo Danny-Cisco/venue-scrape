@@ -29,9 +29,9 @@
 
 	let venues = [
 		{
-			name: 'Yah Yahs',
-			id: '9e61d117-edf6-48a9-a009-15372432ed0a',
-			eventbrite: 'https://www.eventbrite.com.au/o/yah-yahs-28740119359'
+			name: 'Retreat Hotel',
+			id: '7972ac4e-36c3-441a-9f9c-8ed650e0261a',
+			eventbrite: 'https://www.eventbrite.com.au/o/the-retreat-hotel-28439300263'
 		}
 	];
 
@@ -74,15 +74,26 @@
 
 					let venue;
 
+					console.log('🚀 ~ beginCrawl ~ gig.venue;:', gig.venue);
+					console.log('🚀 ~ beginCrawl ~ gig;:', gig);
+					debugger;
+
 					if (cached) {
 						// Use cached venue
 						venue = { id: cached.id, name: cached.venue };
 					} else {
 						// Not cached — run the soft match
 						venue = await softMatchVenueName(gig.venue);
+						console.log('🚀 ~ beginCrawl ~ venue:', venue);
+
+						if (venue.name == 'NO MATCH') {
+							console.log('Trying gig title and description to find venue match...');
+							venue = await softMatchVenueName(`${gig.title} ${gig.description}`);
+						}
+						console.log('🚀 ~ beginCrawl ~ HOW DID IT GO? venue:', venue);
+
 						knownIdsCache.push({ venue: venue.name, id: venue.id, input: gig.venue });
 					}
-
 					// Assign matched venue info
 					gig.venueId = venue.id;
 					gig.venue = venue.name;
@@ -100,6 +111,8 @@
 				}
 
 				gigs = [...gigs, result.gigs || []].flat();
+				console.log('🚀 ~ beginCrawl ~ gigs:', gigs);
+				debugger;
 			} catch (err) {
 				console.log('🚀 ~ beginCrawl ~ err.message:', err.message);
 			} finally {
