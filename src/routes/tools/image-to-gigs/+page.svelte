@@ -124,7 +124,8 @@
 				<CopyClipboard text={prettyResponse} />
 			</div>
 
-			<pre class="max-w-full p-4 whitespace-pre-wrap rounded bg-white/5">{prettyResponse}</pre>
+			<pre
+				class="max-w-full p-4 text-xs whitespace-pre-wrap rounded bg-white/5">{prettyResponse}</pre>
 		</div>
 	{/if}
 </div>
