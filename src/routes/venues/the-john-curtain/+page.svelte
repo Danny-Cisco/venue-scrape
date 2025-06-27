@@ -7,7 +7,7 @@
 
 	import { convertStringToDatetime } from '$lib/utils/date.ts';
 
-	let venueName = 'The John Curtain';
+	let venueName = 'The John Curtin';
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 

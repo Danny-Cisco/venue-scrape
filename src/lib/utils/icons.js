@@ -68,56 +68,6 @@ fill="currentColor"
 `
 	},
 	{
-		label: 'Merch',
-		match: [
-			'store',
-			'shop',
-			'artistfirst.com.au',
-			'merch',
-			'sound-merch.com.au',
-			'officialmerchandise.store',
-			'orcd.co',
-			// Square Online (AU-friendly, free “square.site” sub-domains)
-			'square.site', //  🄰 [oai_citation:0‡my.squareup.com](https://my.squareup.com/help/au/en/article/6966-use-a-custom-subdomain-with-your-online-store?utm_source=chatgpt.com)
-
-			// Shopify (default sub-domain given to every new store)
-			'myshopify.com', //  🄱 [oai_citation:1‡community.shopify.com](https://community.shopify.com/c/shopify-discussions/where-can-i-find-my-domain-in-the-store-setup-process/m-p/1210819?utm_source=chatgpt.com) [oai_citation:2‡help.shopify.com](https://help.shopify.com/en/manual/domains?utm_source=chatgpt.com)
-
-			// Big Cartel (artist-centric store builder)
-			'bigcartel.com', //  🄲 [oai_citation:3‡bigcartel.com](https://www.bigcartel.com/resources/help/article/use-a-custom-domain?utm_source=chatgpt.com)
-
-			// Bandcamp (digital & physical merch for musicians)
-			// 'bandcamp.com', //  🄳 [oai_citation:4‡store.bandcamp.com](https://store.bandcamp.com/?utm_source=chatgpt.com)
-
-			// Storenvy (DIY marketplace + standalone stores)
-			'storenvy.com', //  🄴 [oai_citation:5‡support.storenvy.com](https://support.storenvy.com/hc/en-us/articles/360039208831-How-do-I-set-up-a-custom-domain-for-my-Storenvy-store?utm_source=chatgpt.com)
-
-			// BigCommerce (enterprise & SMB SaaS storefronts)
-			'mybigcommerce.com',
-			'bigcommerce.com', //  🄵 [oai_citation:6‡developer.bigcommerce.com](https://developer.bigcommerce.com/docs/storefront/multi-storefront?utm_source=chatgpt.com)
-
-			// Spring / Teespring (print-on-demand merch for creators)
-			'creator-spring.com',
-			'spri.ng',
-			'teespring.com', //  🄶 [oai_citation:7‡spri.ng](https://www.spri.ng/?utm_source=chatgpt.com) [oai_citation:8‡teespring.com](https://teespring.com/?utm_source=chatgpt.com)
-
-			// Spreadshirt / Spreadshop (POD apparel stores)
-			'spreadshirt.com', //  🄷 [oai_citation:9‡spreadshirt.com](https://www.spreadshirt.com/create-your-own?utm_source=chatgpt.com)
-
-			// Printful (white-label POD storefronts & landing pages)
-			'printful.com', //  🄸 [oai_citation:10‡printful.com](https://www.printful.com/blog/how-to-start-an-online-store-with-printful?utm_source=chatgpt.com)
-
-			// Merchbar (band-merch specialist)
-			'merchbar.com' //  🄹 [oai_citation:11‡merchbar.com](https://www.merchbar.com/?utm_source=chatgpt.com)
-		],
-		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path></svg>`
-	},
-	{
-		label: 'YouTube',
-		match: ['youtube.com', 'youtu.be'],
-		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"></path></svg>`
-	},
-	{
 		label: 'Bandcamp',
 		match: ['bandcamp.com'],
 		svg: `<svg
@@ -158,6 +108,54 @@ fill="currentColor"
   />
 </svg>`
 	},
+	{
+		label: 'Merch',
+		match: [
+			'store',
+			'shop',
+			'artistfirst.com.au',
+			'merch',
+			'sound-merch.com.au',
+			'officialmerchandise.store',
+			'orcd.co',
+			// Square Online (AU-friendly, free “square.site” sub-domains)
+			'square.site', //  🄰 [oai_citation:0‡my.squareup.com](https://my.squareup.com/help/au/en/article/6966-use-a-custom-subdomain-with-your-online-store?utm_source=chatgpt.com)
+
+			// Shopify (default sub-domain given to every new store)
+			'myshopify.com', //  🄱 [oai_citation:1‡community.shopify.com](https://community.shopify.com/c/shopify-discussions/where-can-i-find-my-domain-in-the-store-setup-process/m-p/1210819?utm_source=chatgpt.com) [oai_citation:2‡help.shopify.com](https://help.shopify.com/en/manual/domains?utm_source=chatgpt.com)
+
+			// Big Cartel (artist-centric store builder)
+			'bigcartel.com', //  🄲 [oai_citation:3‡bigcartel.com](https://www.bigcartel.com/resources/help/article/use-a-custom-domain?utm_source=chatgpt.com)
+
+			// Storenvy (DIY marketplace + standalone stores)
+			'storenvy.com', //  🄴 [oai_citation:5‡support.storenvy.com](https://support.storenvy.com/hc/en-us/articles/360039208831-How-do-I-set-up-a-custom-domain-for-my-Storenvy-store?utm_source=chatgpt.com)
+
+			// BigCommerce (enterprise & SMB SaaS storefronts)
+			'mybigcommerce.com',
+			'bigcommerce.com', //  🄵 [oai_citation:6‡developer.bigcommerce.com](https://developer.bigcommerce.com/docs/storefront/multi-storefront?utm_source=chatgpt.com)
+
+			// Spring / Teespring (print-on-demand merch for creators)
+			'creator-spring.com',
+			'spri.ng',
+			'teespring.com', //  🄶 [oai_citation:7‡spri.ng](https://www.spri.ng/?utm_source=chatgpt.com) [oai_citation:8‡teespring.com](https://teespring.com/?utm_source=chatgpt.com)
+
+			// Spreadshirt / Spreadshop (POD apparel stores)
+			'spreadshirt.com', //  🄷 [oai_citation:9‡spreadshirt.com](https://www.spreadshirt.com/create-your-own?utm_source=chatgpt.com)
+
+			// Printful (white-label POD storefronts & landing pages)
+			'printful.com', //  🄸 [oai_citation:10‡printful.com](https://www.printful.com/blog/how-to-start-an-online-store-with-printful?utm_source=chatgpt.com)
+
+			// Merchbar (band-merch specialist)
+			'merchbar.com' //  🄹 [oai_citation:11‡merchbar.com](https://www.merchbar.com/?utm_source=chatgpt.com)
+		],
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7.00488 7.99966V5.99966C7.00488 3.23824 9.24346 0.999664 12.0049 0.999664C14.7663 0.999664 17.0049 3.23824 17.0049 5.99966V7.99966H20.0049C20.5572 7.99966 21.0049 8.44738 21.0049 8.99966V20.9997C21.0049 21.5519 20.5572 21.9997 20.0049 21.9997H4.00488C3.4526 21.9997 3.00488 21.5519 3.00488 20.9997V8.99966C3.00488 8.44738 3.4526 7.99966 4.00488 7.99966H7.00488ZM7.00488 9.99966H5.00488V19.9997H19.0049V9.99966H17.0049V11.9997H15.0049V9.99966H9.00488V11.9997H7.00488V9.99966ZM9.00488 7.99966H15.0049V5.99966C15.0049 4.34281 13.6617 2.99966 12.0049 2.99966C10.348 2.99966 9.00488 4.34281 9.00488 5.99966V7.99966Z"></path></svg>`
+	},
+	{
+		label: 'YouTube',
+		match: ['youtube.com', 'youtu.be'],
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.2439 4C12.778 4.00294 14.1143 4.01586 15.5341 4.07273L16.0375 4.09468C17.467 4.16236 18.8953 4.27798 19.6037 4.4755C20.5486 4.74095 21.2913 5.5155 21.5423 6.49732C21.942 8.05641 21.992 11.0994 21.9982 11.8358L21.9991 11.9884L21.9991 11.9991C21.9991 11.9991 21.9991 12.0028 21.9991 12.0099L21.9982 12.1625C21.992 12.8989 21.942 15.9419 21.5423 17.501C21.2878 18.4864 20.5451 19.261 19.6037 19.5228C18.8953 19.7203 17.467 19.8359 16.0375 19.9036L15.5341 19.9255C14.1143 19.9824 12.778 19.9953 12.2439 19.9983L12.0095 19.9991L11.9991 19.9991C11.9991 19.9991 11.9956 19.9991 11.9887 19.9991L11.7545 19.9983C10.6241 19.9921 5.89772 19.941 4.39451 19.5228C3.4496 19.2573 2.70692 18.4828 2.45587 17.501C2.0562 15.9419 2.00624 12.8989 2 12.1625V11.8358C2.00624 11.0994 2.0562 8.05641 2.45587 6.49732C2.7104 5.51186 3.45308 4.73732 4.39451 4.4755C5.89772 4.05723 10.6241 4.00622 11.7545 4H12.2439ZM9.99911 8.49914V15.4991L15.9991 11.9991L9.99911 8.49914Z"></path></svg>`
+	},
+
 	{
 		label: '', // Tickets
 		match: [
