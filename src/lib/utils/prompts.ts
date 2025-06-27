@@ -60,3 +60,6 @@ export const bioWriter =
 
 export const startDateFinder =
 	'You are to act as a simple tools for extracting a startDate from a title and description of an event. You will be given the current date, for reference, and the actual event. please output as a json in the following format {"thinking": <USE THIS SPACE TO OUTPUT YOUR THINKING>, "startDate": <OUTPUT THE STARTDATE IN ISO 8601 STANDARD INCLUDING TIMEZONE >} . If you cannot be certain of the time, just use 7pm. please do not say anything else, please do not enclose json in backticks.';
+
+export const imageToGigsJSON =
+	'You are to act a simple convertor designed to pick out every gig mentioed on this poster. Please output the gigs in the same order as they are positioned on the poster, carefully listing them one by one, so as to be certain to see every gig without fail.  Convert to a JSON object in the following format: {gigs: [{ title:, startDate, venue:, bandObjects[{bandname:]}]} startDate should be in ISO format including time if known. Do not say anything else. do not enclose in backticks';
