@@ -184,10 +184,10 @@
 		</div>
 		<div class="flex flex-col w-full h-[150px] items-stretch ml-4">
 			<!-- Top section: Band Name -->
-			<div class="flex flex-col w-full h-full max-w-full">
+			<div class="flex flex-col w-full h-full max-w-full mb-1">
 				<div>
 					<h2
-						class="pb-0 pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
+						class="pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
 						bind:this={bandnameElement}
 					>
 						{bandObject.bandname}
