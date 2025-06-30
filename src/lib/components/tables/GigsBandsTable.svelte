@@ -181,7 +181,7 @@
 								{#each gig.bandObjects || [] as bandObject}
 									<div class="text-green-400 row whitespace-nowrap">
 										'{bandObject.bandname}'
-										<div class="flex-1 text-blue-400 row">
+										<div class="flex-1 text-purple-600 row">
 											{formatFollowers(bandObject.instagram?.followersCount) || '---'}
 										</div>
 									</div>
@@ -191,7 +191,7 @@
 						<td class="px-4 py-2">
 							{#if gig.followers}
 								<div class="max-h-[200px] row overflow-y-auto">
-									<div class="flex-1 text-blue-400 row">
+									<div class="flex-1 text-purple-600 row">
 										{formatFollowers(gig.followers) || '---'}
 									</div>
 								</div>
@@ -391,7 +391,7 @@
 								N/A
 							{/if}
 						</td>
-						<td class="px-4 py-2 text-center text-blue-400"
+						<td class="px-4 py-2 text-center text-purple-600"
 							>{formatFollowers(band.instagram?.followersCount)}</td
 						>
 						<td class="px-4 py-2 text-center">{band.instagram?.postsCount ?? '---'}</td>
@@ -459,7 +459,7 @@
 													href={socialUrl}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="block text-purple-400 truncate hover:underline"
+													class="block text-purple-600 truncate hover:underline"
 													title={socialUrl}
 												>
 													{socialUrl.split('//')[1]?.split('/')[0] || 'Social Link'}

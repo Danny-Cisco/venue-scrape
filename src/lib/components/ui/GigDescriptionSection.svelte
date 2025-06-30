@@ -55,7 +55,7 @@
 
 			<!-- Toggle Button -->
 			<!-- <button
-				class="mt-2 text-sm text-blue-400 hover:text-blue-300 hover:underline"
+				class="mt-2 text-sm text-purple-600 hover:text-purple-300 hover:underline"
 				on:click={() => (showDescription = !showDescription)}
 			>
 				{showDescription ? 'Show less ▲' : 'Show more ▼'}

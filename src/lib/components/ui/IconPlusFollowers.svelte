@@ -2,7 +2,7 @@
 	export let count = 0;
 </script>
 
-<div class="justify-start text-sm font-semibold font-body row">
+<div class="justify-start text-sm row">
 	<div class="center">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -16,6 +16,10 @@
 	</div>
 
 	<div>
-		{(count / 1000).toFixed(1)}k
+		{#if count >= 1000}
+			{(count / 1000).toFixed(1)}<span class="pl-[1px]">k</span>
+		{:else}
+			{count}
+		{/if}
 	</div>
 </div>

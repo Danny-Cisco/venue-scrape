@@ -7,7 +7,7 @@
 </script>
 
 <details class="mt-2">
-	<summary class="cursor-pointer text-blue-500">View full record</summary>
+	<summary class="cursor-pointer text-purple-600">View full record</summary>
 	<pre class="mt-2 overflow-x-auto rounded bg-gray-200 p-2 text-sm">
     {JSON.stringify(displayRecord, null, 2)}
   </pre>

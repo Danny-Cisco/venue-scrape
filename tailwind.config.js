@@ -17,6 +17,7 @@ export default {
 				sans: ['Lexend', ...defaultTheme.fontFamily.sans],
 				fancy: ['Moirai One', ...defaultTheme.fontFamily.sans],
 				fancy2: ['Belanosima', ...defaultTheme.fontFamily.sans],
+				round: ['Nunito', ...defaultTheme.fontFamily.sans],
 				heading: ['Lexend', ...defaultTheme.fontFamily.sans],
 				body: [...defaultTheme.fontFamily.sans],
 				mono: [...defaultTheme.fontFamily.mono],

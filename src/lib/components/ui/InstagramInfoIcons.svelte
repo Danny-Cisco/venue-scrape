@@ -5,7 +5,7 @@
 </script>
 
 <!-- Instagram Info Section -->
-<div class="mt-1 mb-1 text-sm font-bold text-gray-800">
+<div class="mt-1 mb-1 text-sm font-bold text-gray-800 font-round">
 	{#if bandObject.instagram}
 		<div class="flex gap-3">
 			{#if bandObject.instagram.followersCount}

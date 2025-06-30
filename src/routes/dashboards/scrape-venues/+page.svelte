@@ -87,7 +87,7 @@
 							href={link}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="text-blue-600 break-all hover:underline"
+							class="text-purple-600 break-all hover:underline"
 						>
 							{link}
 						</a>

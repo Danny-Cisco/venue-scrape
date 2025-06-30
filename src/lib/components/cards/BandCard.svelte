@@ -61,6 +61,9 @@
 	}
 
 	async function getBio() {
+		if (!bandObject.instagram) {
+			return;
+		}
 		writingBio = true;
 		const systemPrompt = bioWriter;
 		const question =
@@ -122,6 +125,7 @@
 		needsSpacer = elementHeight > lineHeight * 1.2; // Use 1.2 to account for minor height variations
 
 		let bioResponse = await getBio();
+
 		console.log('🚀 ~ Raw response from getBio:', bioResponse);
 
 		let cleanedResponse = bioResponse.trim();
@@ -194,7 +198,7 @@
 							href={bandObject.instagram?.url}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="flex text-sm font-semibold max-w-[200px] text-blue-500 bg-transparent font-body hover:text-pink-500 hover:underline"
+							class="flex text-sm font-semibold max-w-[200px] text-purple-600 bg-transparent font-body hover:text-pink-500 hover:underline"
 							on:click|stopPropagation
 							>@{bandObject.instagram?.username || bandObject.instagram}
 						</a>
@@ -205,19 +209,21 @@
 						</div>
 						<!-- Instagram Info Section -->
 						<!-- <InstagramInfoIcons {bandObject} /> -->
+
+						<!-- <div class="flex-1"></div> -->
+
+						<!-- Instagram Info Section -->
+						<div class="flex flex-col flex-1 gap-1">
+							<InstagramInfoIcons {bandObject} />
+							<div class="flex-1"></div>
+							<StarRatingBarColor {bandObject} />
+							<div class="flex-1"></div>
+						</div>
 					{:else}
-						<div class="text-xs italic text-gray-500 whitespace-nowrap">No Instagram profile</div>
+						<div class="text-xs text-gray-500 font-round whitespace-nowrap">
+							No Instagram profile
+						</div>
 					{/if}
-
-					<!-- <div class="flex-1"></div> -->
-
-					<!-- Instagram Info Section -->
-					<div class="flex flex-col flex-1 gap-1">
-						<InstagramInfoIcons {bandObject} />
-						<div class="flex-1"></div>
-						<StarRatingBarColor {bandObject} />
-						<div class="flex-1"></div>
-					</div>
 				</div>
 
 				<div
@@ -246,7 +252,7 @@
 	<div
 		class=" font-body min-h-[5.2rem] text-sm py-2 text-center items-center font-medium justify-center flex-col flex text-black"
 	>
-		{#if writingBio}
+		{#if writingBio && bandObject.instagram}
 			<!-- Loading Animation -->
 			<div class="relative pl-5 overflow-hidden text-base text-gray-400">
 				<span
