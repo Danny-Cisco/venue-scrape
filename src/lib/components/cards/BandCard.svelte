@@ -173,7 +173,11 @@
 				{:else}
 					<!-- FALLBACK TO SOLID BLACK IF NOT LOADING AND NOTHING ELSE -->
 					<div class="w-full h-full center" in:fade>
-						<img class="pt-4 opacity-5" src="/noun-group.png" alt="_default pic" />
+						<img
+							class="pt-4 opacity-5 border-[6px] border-black border-dashed"
+							src="/noun-group.png"
+							alt="_default pic"
+						/>
 					</div>
 				{/if}
 			{/key}
