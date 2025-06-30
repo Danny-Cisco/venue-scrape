@@ -104,7 +104,7 @@
 		<!-- Cards Section -->
 		<div class="relative flex items-start w-full mt-4 bg-black">
 			<!-- 🎨 Poster -->
-			<div class="h-[600px]">
+			<div class="h-fit">
 				{#if gig.image}
 					<img
 						src={weserv(imageUrlToLarge(gig.image))}
