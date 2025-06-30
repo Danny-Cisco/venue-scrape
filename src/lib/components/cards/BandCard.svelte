@@ -6,7 +6,7 @@
 	import BioSection from '$lib/components/ui/BioSection.svelte';
 	import { fade } from 'svelte/transition';
 	import { bioWriter } from '$lib/utils/prompts.ts';
-	import InstagramInfo from '../ui/InstagramInfo.svelte';
+	import InstagramInfoIcons from '../ui/InstagramInfoIcons.svelte';
 
 	let writingBio = false;
 
@@ -176,10 +176,10 @@
 		</div>
 		<div class="flex flex-col w-full h-[150px] items-stretch ml-4">
 			<!-- Top section: Band Name -->
-			<div class="flex flex-col justify-between w-full h-full max-w-full">
+			<div class="flex flex-col w-full h-full max-w-full">
 				<div>
 					<h2
-						class="pb-1 pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
+						class="pb-0 pl-0 mb-0 ml-0 font-sans text-2xl font-black text-left text-black capitalize ellipsis w-fit line-clamp-2"
 						bind:this={bandnameElement}
 					>
 						{bandObject.bandname}
@@ -187,30 +187,37 @@
 				</div>
 			</div>
 			<div class="grid items-stretch w-full gap-4 -mt-1 grid-cols-[100px_1fr]">
-				<div class="flex flex-col max-w-[200px] min-h-[110px] justify-around">
+				<div class="flex flex-col max-w-[200px] min-h-[110px] justify-start">
 					<!-- instagram profile name link -->
 					{#if bandObject.instagram}
 						<a
 							href={bandObject.instagram?.url}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="flex text-sm font-semibold max-w-[200px] text-blue-400 bg-transparent font-body hover:text-pink-500 hover:underline"
+							class="flex text-sm font-semibold max-w-[200px] text-blue-500 bg-transparent font-body hover:text-pink-500 hover:underline"
 							on:click|stopPropagation
 							>@{bandObject.instagram?.username || bandObject.instagram}
 						</a>
-						<div class="flex-1"></div>
+						<!-- <div class="flex-1"></div> -->
 						<!-- Star Rating : Bar graph, not stars-->
 						<div class="flex">
-							<StarRatingBarColor {bandObject} />
+							<!-- <StarRatingBarColor {bandObject} /> -->
 						</div>
+						<!-- Instagram Info Section -->
+						<!-- <InstagramInfoIcons {bandObject} /> -->
 					{:else}
 						<div class="text-xs italic text-gray-500 whitespace-nowrap">No Instagram profile</div>
 					{/if}
 
-					<div class="flex-1"></div>
+					<!-- <div class="flex-1"></div> -->
 
 					<!-- Instagram Info Section -->
-					<InstagramInfo {bandObject} />
+					<div class="flex flex-col flex-1 gap-1">
+						<InstagramInfoIcons {bandObject} />
+						<div class="flex-1"></div>
+						<StarRatingBarColor {bandObject} />
+						<div class="flex-1"></div>
+					</div>
 				</div>
 
 				<div
@@ -264,18 +271,18 @@
 
 	@keyframes waveMove {
 		0% {
-			background-position: -200% 0;
+			background-position: 200% 0;
 		}
 		100% {
-			background-position: 200% 0;
+			background-position: -200% 0;
 		}
 	}
 	.loading-wave {
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(90deg, black, #555, black);
-		background-size: 200% 100%;
-		animation: wave 2s ease-in-out infinite;
+		background: linear-gradient(90deg, #eee, #ddd, #eee);
+		background-size: 300% 100%;
+		animation: wave 3s ease-in-out infinite;
 	}
 
 	@keyframes wave {
