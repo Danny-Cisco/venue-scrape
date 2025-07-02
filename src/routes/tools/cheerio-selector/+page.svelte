@@ -21,7 +21,8 @@
 		'john-curtain-links',
 		'linktree-profile-pic',
 		'linktree-links',
-		'linktree-links-all'
+		'linktree-links-all',
+		'html-links-all'
 	];
 
 	async function useCheerio(endpoint) {
