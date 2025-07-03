@@ -5,12 +5,18 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 export async function POST({ request }) {
 	try {
-		const { systemPrompt = '', question = '', imageBase64 = '' } = await request.json();
+		const {
+			systemPrompt = '',
+			question = '',
+			imageBase64 = '',
+			imageUrl = ''
+		} = await request.json();
 
-		if (!systemPrompt || (!question && !imageBase64)) {
+		if (!systemPrompt || (!question && !imageBase64 && !imageUrl)) {
 			return new Response(
 				JSON.stringify({
-					error: 'You must provide a systemPrompt and either a question or imageBase64.'
+					error:
+						'You must provide a systemPrompt and at least one of question, imageBase64, or imageUrl.'
 				}),
 				{
 					status: 400,
@@ -21,22 +27,28 @@ export async function POST({ request }) {
 
 		const messages = [{ role: 'system', content: systemPrompt }];
 
-		if (imageBase64) {
+		if (imageBase64 || imageUrl) {
 			// Append image input and optional question
-			messages.push({
-				role: 'user',
-				content: [
-					...(question ? [{ type: 'text', text: question }] : []),
-					{ type: 'image_url', image_url: { url: imageBase64 } }
-				]
-			});
+			const imageContent = {
+				type: 'image_url',
+				image_url: {
+					url: imageBase64 || imageUrl
+				}
+			};
+
+			const userContent = [];
+			if (question) {
+				userContent.push({ type: 'text', text: question });
+			}
+			userContent.push(imageContent);
+
+			messages.push({ role: 'user', content: userContent });
 		} else {
 			// Only question, no image
 			messages.push({ role: 'user', content: question });
 		}
 
-		const model = imageBase64 ? 'gpt-4o' : 'gpt-4.1-mini';
-		// const model = 'gpt-4o-mini';
+		const model = imageBase64 || imageUrl ? 'gpt-4o' : 'gpt-4.1-mini';
 
 		const response = await openai.chat.completions.create({
 			model,

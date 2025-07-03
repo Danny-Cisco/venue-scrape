@@ -59,6 +59,14 @@
 			output = `Network error: ${err.message}`;
 		}
 	}
+
+	$: tokenCount = approximateTokenCount(output);
+
+	function approximateTokenCount(text) {
+		if (!text) return 0;
+		// Estimate: average token = 4 characters
+		return Math.ceil(text.length / 4);
+	}
 </script>
 
 <div class="mb-4 space-y-4 page" in:fade>
@@ -76,6 +84,9 @@
 		<h1>OUTPUT GOES HERE:</h1>
 		<CopyClipboard text={output} {copied} />
 	</div>
+	<p class="text-sm italic text-right opacity-70">
+		Approx. {(tokenCount / 1000).toFixed(1)}k tokens
+	</p>
 	{#if output}
 		<div class="w-full my-8 border-t border-dashed"></div>
 

@@ -40,6 +40,53 @@ export const genres = [
 
 // VIBES??
 
+export const exampleGigJSON = `{
+	title: '',
+	description:
+		'<word for word as written by the artist on this page. Do not create a description if none is present>',
+	startDate: '<ISO format>',
+	imageUrl: '',
+	tickets: [
+		{
+			price: '',
+			currency: '',
+			ticketType: '',
+			availability: ''
+		}
+	],
+	ticketUrl: '',
+	tags: []
+}
+
+// Tickets:
+// If any ticket types are listed, extract them into an array like this:
+// [
+//   {
+//     price: '35.00',
+//     currency: 'AUD',
+//     ticketType: 'EARLY BIRD',
+//     availability: 'SoldOut'
+//   },
+//   {
+//     price: '45.00',
+//     currency: 'AUD',
+//     ticketType: 'GENERAL ADMISSION',
+//     availability: 'InStock'
+//   },
+//   {
+//     price: '0.00',
+//     currency: 'AUD',
+//     ticketType: 'FREE ENTRY',
+//     availability: 'InStock'
+//   }
+// ]
+// Use "AUD" for Australian dollars unless another currency is clearly shown.
+// Use "SoldOut" if the ticket is not available, "InStock" if it is.
+// For free tickets or entry, use a price of "0.00" and the correct ticketType (e.g. "FREE ENTRY", "RSVP", "REGISTER").
+// If no price or ticket type is listed, omit that ticket entirely.
+// Use the original ticket type labels as written (e.g., 'VIP', 'DOOR SALES', 'FREE ENTRY').
+`;
+
 export const liveMusicCheck = `You are to act as a simple music classifier. with the prime function of weeding out gigs that are heavily relying on djs to fill the night rather than bands. You will be given a description of an event, and you are to determine if the event is PREDOMINANTLY a live music event. Some events may be predominantly DJs, so these events will therefore NOT be live music events.  The output must be in the following json format. {"thinking": <please use this field to explain your thinking process, beginning with "So, I have been asked to determine if this gig is PREDOMINANTLY a live music event, billed with bands and/or solo artists, not djs.>, "liveMusic": [ <here is where you place the boolean TRUE or FALSE> ]} . Please dont say anything else or you will spoil the program. please dont include backticks or anything else like the word json. just provide the json, and do your thinking inside the provided field.  `;
 
 export const genreClassifier = `You are to act as a simple music genre classifier. You will be provided with all the information I have regarding a music gig. This may include: The description of the event. The tags from the ticketing site. The bios from the band's instagram pages. The content and tags from the band's recent instagram posts. Taking into consideration all the provided information, your job is to determine which of the following music genres best describe the event. the exact genres you are to use are as follows ${genres}. Please make certain to use ONLY these specific genres with these specific spellings. For example, the genre "Ska & Reggae" cannot be split to just Ska or just Reggae. Dont be afraid to add a genre that is a secondary genre, as it is not uncommon to describe a gig as a combination of two genres, and my system is designed to handle such cases. The output must be in the following json format. {"thinking": <please use this field to explain your thinking process, beginning with "So, I have been asked to classify this content as an array containing a single musical genre or a few genres>, "genres": [ <here is where you place the genre or genres> ]} . Please dont say anything else or you will spoil the program. please dont include backticks or anything else like the word json. just provide the json, and do your thinking inside the provided field.  `;
@@ -61,11 +108,12 @@ export const bioWriter =
 export const startDateFinder =
 	'You are to act as a simple tools for extracting a startDate from a title and description of an event. You will be given the current date, for reference, and the actual event. please output as a json in the following format {"thinking": <USE THIS SPACE TO OUTPUT YOUR THINKING>, "startDate": <OUTPUT THE STARTDATE IN ISO 8601 STANDARD INCLUDING TIMEZONE >} . If you cannot be certain of the time, just use 7pm. please do not say anything else, please do not enclose json in backticks.';
 
-export const imageToGigsJSON =
-	'You are to act a simple convertor designed to pick out every gig mentioed on this poster. Please output the gigs in the same order as they are positioned on the poster, carefully listing them one by one, so as to be certain to see every gig without fail. Sometimes you may be given some text with the image, and you should consider this to be extra information about the gig, possibly containing a clearer description as the poster often is lacking a description section.  Convert to a JSON object in the following format: {gigs: [{ title:, startDate, venue:, description:<only if a description is present> bandObjects[{bandname:]}]} startDate should be in ISO format including time if known. Do not say anything else. do not enclose in backticks';
+export const imageToGigsJSON = `You are to act a simple convertor designed to pick out every gig mentioned on this poster. Please output the gigs in the same order as they are positioned on the poster, carefully listing them one by one, so as to be certain to see every gig without fail. Sometimes you may be given some text with the image, and you should consider this to be extra information about the gig, possibly containing a clearer description as the poster often is lacking a description section.  Convert to a JSON object in the following format: ${exampleGigJSON}. Use the 'tags' field to add any clues gathered from the image that could help in decoding the musical genre, or even the genre/genres themselves if listed on the poster. Do not say anything else. do not enclose in backticks`;
 
 export const findAllGigLinks =
 	'return a json array of all the urls to pages that lead to pages with specific event data. Do not enclose in backticks.';
 
 export const findGigsDirectory =
 	'return a url for the page of this site which contains the full directory of gigs. It most likely will be called gigs, events or whats on.';
+
+export const pageToGigJSON = `output a json file with the following format ${exampleGigJSON} do not enclose in backticks. do not say anything else.`;

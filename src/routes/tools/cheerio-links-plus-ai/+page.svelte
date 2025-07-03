@@ -5,7 +5,7 @@
 
 	async function search() {
 		const res = await fetch(
-			`/api/cheerio/cheerio-plus-ai?url=${encodeURIComponent(url)}&ai=${encodeURIComponent(ai)}`
+			`/api/cheerio/cheerio-links-plus-ai?url=${encodeURIComponent(url)}&ai=${encodeURIComponent(ai)}`
 		);
 		const data = await res.json();
 		console.log(data);
@@ -15,7 +15,7 @@
 </script>
 
 <div class="gap-2 mt-4 page">
-	<h1>Cheerio html links plus AI</h1>
+	<h1>Cheerio JUST HTML LINKS plus AI</h1>
 
 	<input class="w-full" bind:value={url} placeholder="Url..." />
 	<input class="w-full" bind:value={ai} placeholder="ai..." />
