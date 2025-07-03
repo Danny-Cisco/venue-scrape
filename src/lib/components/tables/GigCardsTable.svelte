@@ -78,8 +78,10 @@
 
 {#if activeTab === 'gigs' && gigs && gigs.length > 0}
 	<div class="flex sticky top-[100px] z-[1] w-full justify-center w-full pt-4 bg-black">
-		<h2 class="py-3 mb-0 text-4xl font-semibold text-center row font-fancy2">
-			Now Showing <GIgNumberIndicator />
+		<h2 class="py-1 mb-0 text-lg font-thin font-semibold text-center text-gray-400 row font-body">
+			Now Showing <span class="border-[1px] rounded-full px-2 border-gray-400"
+				>{gigs.length} <span class="text-xs">gigs</span></span
+			>
 		</h2>
 	</div>
 	<div class="flex flex-col w-screen gap-4 px-4 overflow-x-auto bg-black isolate" in:fade>
