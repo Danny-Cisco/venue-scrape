@@ -62,7 +62,7 @@
 			</div>
 		{/if}
 		{#if ticket.availability.includes('OutOfStock')}
-			<div class="w-full text-center text-gray-100">{ticketText(ticket.availability)}</div>
+			<div class="w-full text-center text-gray-700">{ticketText(ticket.availability)}</div>
 		{:else}
 			<div class="w-full font-bold text-center text-green-500">
 				{ticketText(ticket.availability)}
