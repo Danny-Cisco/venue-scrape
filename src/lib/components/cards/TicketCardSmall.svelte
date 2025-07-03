@@ -41,6 +41,7 @@
 				id="Dollar--Streamline-Iconoir"
 				height="24"
 				width="24"
+				class="py-1 max-h-6"
 			>
 				<desc> Dollar Streamline Icon: https://streamlinehq.com </desc>
 				<path
@@ -55,12 +56,27 @@
 			<div class="h-6 ml-2 font-mono font-thin text-gray-600 center">Free</div>
 		{/if}
 	</div>
+	<!-- tint if sold out or ended -->
+	{#if ticket.availability.includes('OutOfStock')}
+		<div class="absolute inset-0 bg-black/30" />
+	{/if}
+	{#if ticket.availability === 'SoldOut'}
+		<div class="absolute inset-0 border-[3px] border-red-500 border-dashed" />
+		<div class="absolute inset-[-2px] border-[3px] border-white rounded" />
+	{/if}
+
 	<div class="relative font-mono center">
 		{#if ticket.availability === 'SoldOut'}
 			<div class={`absolute -bottom-3 ${optionalClass}`}>
 				<SoldOut />
 			</div>
 		{/if}
-		<div class="w-full text-center text-green-500">{ticketText(ticket.availability)}</div>
+		{#if ticket.availability.includes('OutOfStock')}
+			<div class="w-full text-center text-gray-100">{ticketText(ticket.availability)}</div>
+		{:else}
+			<div class="w-full font-bold text-center text-green-500">
+				{ticketText(ticket.availability)}
+			</div>
+		{/if}
 	</div>
 </div>
