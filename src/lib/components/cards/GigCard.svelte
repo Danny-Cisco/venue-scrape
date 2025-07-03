@@ -32,13 +32,13 @@
 <div class="flex flex-col max-w-[1200px] w-full mx-auto">
 	<div class="flex justify-between">
 		<!-- Date + Time -->
-		<div class="flex">
+		<!-- <div class="flex">
 			<div
-				class="pl-[2px] text-sm text-white border border-black rounded-sm whitespace-nowrap font-regular"
+				class="pl-[2px] ml-[216px] text-lg text-gray-400 font-thin font-body border border-black rounded-sm whitespace-nowrap font-regular"
 			>
 				<DateTextMinimal date={gig.startDate} />
 			</div>
-		</div>
+		</div> -->
 	</div>
 
 	<div class="grid bg-black text-white w-full ml-1 grid-cols-[auto_1fr_1fr_auto]">
@@ -61,6 +61,14 @@
 		</div>
 		<!--  Text Section -->
 		<div class="border-0 ml-[4px] bg-black border-black">
+			<!-- Date + Time -->
+			<div class="flex -mt-2">
+				<div
+					class="ml-3 text-lg font-thin text-gray-400 border border-black rounded-sm font-body whitespace-nowrap font-regular"
+				>
+					<DateTextMinimal date={gig.startDate} />
+				</div>
+			</div>
 			<!-- Gig Title -->
 			<h2
 				class="relative px-3 py-0 mb-0 max-w-[500px] font-sans text-2xl font-semibold text-white bg-black shadow-xl"

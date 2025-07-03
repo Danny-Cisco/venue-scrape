@@ -8,16 +8,18 @@
 	let optionalClass = '';
 	let padding = 'p-3';
 	let textSize = '';
+	let rounded = 'rounded';
 
 	if (xs) {
 		optionalClass = 'scale-75';
 		padding = 'p-2';
 		textSize = 'text-xs';
+		rounded = 'rounded-0';
 	}
 </script>
 
 <div
-	class={`relative flex flex-col items-center h-fit justify-between font-mono text-black bg-white border-black border-dashed rounded shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px] ${padding} ${textSize}`}
+	class={`relative flex flex-col items-center h-fit px-4 justify-between font-mono text-black bg-white border-black border-dashed ${rounded} shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px] ${padding} ${textSize}`}
 >
 	<!-- FANCY SHADOW CURLS -->
 	<div>
