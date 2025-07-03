@@ -62,7 +62,7 @@
 	{/if}
 	{#if ticket.availability === 'SoldOut'}
 		<div class="absolute inset-0 border-[3px] border-red-500 border-dashed" />
-		<div class="absolute inset-[-2px] border-[3px] border-white rounded" />
+		<div class="absolute inset-[-2px] border-[2px] border-white rounded" />
 	{/if}
 
 	<div class="relative font-mono center">
