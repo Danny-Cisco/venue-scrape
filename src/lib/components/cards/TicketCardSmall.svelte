@@ -21,16 +21,6 @@
 <div
 	class={`relative flex flex-col items-center h-fit px-4 justify-between font-mono text-black bg-white border-black border-dashed ${rounded} shadow-lg hover:shadow-xl hover:mt-[-1px] hover:mb-[1px] ${padding} ${textSize}`}
 >
-	<!-- FANCY SHADOW CURLS -->
-	<div>
-		<!-- <div
-			class="absolute top-0 left-0 w-4 h-4 bg-gradient-to-br from-black/10 via-transparent to-transparent"
-		></div> -->
-		<!-- <div
-			class="absolute bottom-0 left-0 w-4 h-8 bg-gradient-to-tr from-black/10 via-transparent to-transparent"
-		></div> -->
-	</div>
-
 	<!-- <div class="font-serif capitalise">{@html ticket.ticketType}</div> -->
 	<div class="flex items-center justify-center w-full -ml-2 font-mono font-black text-center">
 		{#if Number(ticket.price != 0)}
