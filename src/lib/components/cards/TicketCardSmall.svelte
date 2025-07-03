@@ -33,7 +33,7 @@
 
 	<!-- <div class="font-serif capitalise">{@html ticket.ticketType}</div> -->
 	<div class="flex items-center justify-center w-full -ml-2 font-mono font-black text-center">
-		{#if ticket.price != 0}
+		{#if Number(ticket.price != 0)}
 			<svg
 				viewBox="-0.5 -0.5 16 16"
 				fill="none"
@@ -51,7 +51,7 @@
 					stroke-linejoin="round"
 					stroke-width="1"
 				></path>
-			</svg>{ticket.price}
+			</svg>{Number(ticket.price).toFixed(2)}
 		{:else}
 			<div class="h-6 ml-2 font-mono font-thin text-gray-600 center">Free</div>
 		{/if}
