@@ -68,7 +68,7 @@ export async function GET({ url, fetch }) {
 
 		const answer = await sendQuestion(prompt, systemPrompt, fetch);
 
-		return json({ source: inputUrl, total: result.total, answer });
+		return json({ source: inputUrl, total: result.links, answer });
 	} catch (err) {
 		console.error(`❌ Error in cheerio-plus-ai:`, err);
 		return json({ error: 'Failed to scrape or analyze', details: err.message }, { status: 500 });
