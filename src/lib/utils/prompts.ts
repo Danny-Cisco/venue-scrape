@@ -63,3 +63,9 @@ export const startDateFinder =
 
 export const imageToGigsJSON =
 	'You are to act a simple convertor designed to pick out every gig mentioed on this poster. Please output the gigs in the same order as they are positioned on the poster, carefully listing them one by one, so as to be certain to see every gig without fail. Sometimes you may be given some text with the image, and you should consider this to be extra information about the gig, possibly containing a clearer description as the poster often is lacking a description section.  Convert to a JSON object in the following format: {gigs: [{ title:, startDate, venue:, description:<only if a description is present> bandObjects[{bandname:]}]} startDate should be in ISO format including time if known. Do not say anything else. do not enclose in backticks';
+
+export const findAllGigLinks =
+	'return a json array of all the urls to pages that lead to pages with specific event data. Do not enclose in backticks.';
+
+export const findGigsDirectory =
+	'return a url for the page of this site which contains the full directory of gigs. It most likely will be called gigs, events or whats on.';
