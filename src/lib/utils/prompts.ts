@@ -113,7 +113,6 @@ export const imageToGigsJSON = `You are to act a simple convertor designed to pi
 export const findAllGigLinks =
 	'return a json array of all the urls to pages that lead to pages with specific event data. Do not enclose in backticks.';
 
-export const findGigsDirectory =
-	'return a url for the page of this site which contains the full directory of gigs. It most likely will be called gigs, events or whats on.';
-
 export const pageToGigJSON = `output a json file with the following format ${exampleGigJSON} do not enclose in backticks. do not say anything else.`;
+
+export const findGigsDirectory = `You will be given the contents of a music venue website. Please locate the directory where you will most likely find the list of gigs. It may be called gigs, events, or whats on, or something else similar. Please output the url and nothing else`;
