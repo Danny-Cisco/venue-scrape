@@ -193,7 +193,7 @@
 
 			<a href="/dashboards">
 				<h2
-					class="justify-start mb-2 ml-0 text-base font-semibold text-gray-900 uppercase font-fancy2 whitespace-nowrap"
+					class="justify-start mb-2 ml-0 text-base font-semibold text-gray-100 uppercase font-fancy2 whitespace-nowrap"
 				>
 					Dashboards
 				</h2></a
@@ -253,7 +253,7 @@
 
 				<a href="/ticket-sites">
 					<h2
-						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-900 uppercase font-fancy2 whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-100 uppercase font-fancy2 whitespace-nowrap"
 					>
 						Ticket Sites
 					</h2></a
@@ -329,7 +329,7 @@
 				</ul>
 				<a href="/venues">
 					<h2
-						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-900 uppercase font-fancy2 whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-100 uppercase font-fancy2 whitespace-nowrap"
 					>
 						Venues
 					</h2></a
@@ -427,7 +427,7 @@
 				</ul>
 				<a href="/gig-guides">
 					<h2
-						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-900 uppercase font-fancy2 whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-100 uppercase font-fancy2 whitespace-nowrap"
 					>
 						Gig Guides
 					</h2></a
@@ -466,7 +466,7 @@
 
 				<a href="/tools">
 					<h2
-						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-900 uppercase font-fancy2 whitespace-nowrap"
+						class="justify-start mb-2 ml-0 text-base font-semibold text-gray-100 uppercase font-fancy2 whitespace-nowrap"
 					>
 						Developer Tools
 					</h2></a
@@ -932,7 +932,7 @@
 
 	<!-- Button to toggle left sidebar -->
 	<button
-		class="absolute left-0 z-20 p-2 pr-4 my-1 z-[999999] text-center rounded-r-full top-[101px] bg-purple-500 text-gray-900 btn-hover hover:bg-pink-500"
+		class="absolute left-0 z-20 p-2 pr-4 my-1 z-[999999] text-center rounded-r-full top-[101px] bg-purple-500 text-gray-100 btn-hover hover:bg-pink-500"
 		on:click={() => showLeftSidebar.update((v) => !v)}
 	>
 		MENU <div class="center">
@@ -963,14 +963,14 @@
 	<!-- Logo -->
 	<strong class="flex items-end p-2 px-4 text-3xl bg-black border-0 border-purple-500 rounded-full">
 		<!-- <img src="/icon.svg" class="size-10" alt="" /> -->
-		<span class="px-3 py-1 text-4xl font-black text-gray-900 uppercase bg-black font-fancy2">
+		<span class="px-3 py-1 text-4xl font-black text-gray-100 uppercase bg-black font-fancy2">
 			Music Naarm
 		</span>
 	</strong>
 
 	<!-- User Authentication -->
 	{#if !$loading}
-		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-gray-900 rounded-md">
+		<div class="flex items-end gap-4 py-2 pl-4 pr-2 m-4 mr-0 text-gray-100 rounded-md">
 			{#if session}
 				<a href="/account" class="flex items-center gap-2"
 					><p class="text-lg font-thin text-gray-300 font-body">
