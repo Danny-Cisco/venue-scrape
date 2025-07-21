@@ -988,16 +988,16 @@
 				<!-- Magic Link Form -->
 				<div class="flex flex-col items-end">
 					{#if $message}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
+						<div class="text-gray-500" in:fly={{ x: 200, duration: 500 }}>
 							{$message}
 						</div>
 					{/if}
 					{#if $error}
-						<div class="" in:fly={{ x: 200, duration: 500 }}>
+						<div class="text-orange-400" in:fly={{ x: 200, duration: 500 }}>
 							{$error}
 						</div>
 					{/if}
-					<div class="flex items-center justify-end gap-2 text-sm font-light">
+					<div class="flex items-center justify-end gap-2 mt-1 text-sm font-light">
 						<label for="email" class="hidden">Email</label>
 						<input
 							type="email"

@@ -58,7 +58,7 @@ export async function handleMagicLink(
 		const baseUrl = window.location.origin;
 		const redirectUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
-		console.log('[handleMagicLink] Redirect URL:', redirectUrl);
+		console.log('[handleMagicLink] Redirect URL:', `${redirectUrl}auth/confirm`);
 
 		const { error } = await supabase.auth.signInWithOtp({
 			email,
