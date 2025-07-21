@@ -116,3 +116,5 @@ export const findAllGigLinks =
 export const pageToGigJSON = `output a json file with the following format ${exampleGigJSON} do not enclose in backticks. do not say anything else.`;
 
 export const findGigsDirectory = `You will be given the contents of a music venue website. Please locate the directory where you will most likely find the list of gigs. It may be called gigs, events, or whats on, or something else similar. Please output the url and nothing else`;
+
+export const gigsTeamManager = ``;
