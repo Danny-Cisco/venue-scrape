@@ -997,7 +997,7 @@
 							{$error}
 						</div>
 					{/if}
-					<div class="flex items-center justify-end gap-2 text-sm">
+					<div class="flex items-center justify-end gap-2 text-sm font-light">
 						<label for="email" class="hidden">Email</label>
 						<input
 							type="email"
