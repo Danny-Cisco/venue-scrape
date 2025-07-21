@@ -20,5 +20,5 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
 	}
 
 	// Successfully loaded profile, redirect to control panels
-	throw redirect(303, '/dashboards');
+	throw redirect(303, '/dashboards/genre-chart');
 };
