@@ -4,7 +4,7 @@
 	import SoldOut from '$lib/components/ui/SoldOut.svelte';
 
 	import GigCard from '../cards/GigCard.svelte';
-	import GIgNumberIndicator from '../ui/GigNumberIndicator2.svelte';
+	import GIgNumberIndicator from '../ui/GigNumberIndicator.svelte';
 
 	export let gigs = []; // Initialize as an empty array for safety
 
