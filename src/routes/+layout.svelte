@@ -35,7 +35,7 @@
 	$: console.log('profile: ', profile);
 
 	$: if ($showLeftSidebar) {
-		if (profile?.read_only)
+		if (profile?.read_only || !profile)
 			setTimeout(() => {
 				showContactTips = true;
 			}, 300);
@@ -222,31 +222,9 @@
 						Genre Chart
 					</a>
 				</li>
-				<li class="mb-2 row">
-					<a
-						href="/dashboards/sold-out-gigs"
-						class="flex items-center justify-start gap-2 ml-0 font-light whitespace-nowrap hover:underline"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-5"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z"
-							/>
-						</svg>
-						Sold Out Gigs
-					</a>
-				</li>
 			</ul>
 
-			{#if !profile?.read_only}
+			{#if profile && !profile?.read_only}
 				<!-- divider -->
 				<div class="h-5"></div>
 				<div class="h-5 border-t-[1px] border-white/50 border-dotted"></div>
@@ -459,7 +437,7 @@
 				</ul>
 			{/if}
 
-			{#if profile?.dev_mode}
+			{#if profile && profile?.dev_mode}
 				<!-- divider -->
 				<div class="h-5"></div>
 				<div class="h-5 border-t-[1px] border-white/50 border-dotted"></div>
@@ -997,19 +975,26 @@
 							{$error}
 						</div>
 					{/if}
-					<div class="flex items-center justify-end gap-2 mt-1 text-sm font-light">
+					<form
+						on:submit|preventDefault={submitMagicLink}
+						class="flex items-center justify-end gap-2 mt-1 text-sm font-light"
+					>
 						<label for="email" class="hidden">Email</label>
 						<input
+							id="email"
 							type="email"
 							bind:value={email}
 							placeholder="Enter your email"
 							class="w-64 h-10 px-2 py-2 bg-transparent rounded !ring-black/20"
+							required
 						/>
+
 						<button
-							on:click={submitMagicLink}
+							type="submit"
 							class="px-4 py-2 font-light flex items-center gap-2 font-mono h-10 whitespace-nowrap text-[1rem] w-[200px] hover:shadow-md hover:mt-[-1px] rounded"
 						>
-							{isSubmitting ? 'Loading...' : 'Send Magic Link'}<svg
+							{isSubmitting ? 'Loading...' : 'Send Magic Link'}
+							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
 								viewBox="0 0 24 24"
@@ -1024,7 +1009,7 @@
 								/>
 							</svg>
 						</button>
-					</div>
+					</form>
 				</div>
 			{/if}
 		</div>
