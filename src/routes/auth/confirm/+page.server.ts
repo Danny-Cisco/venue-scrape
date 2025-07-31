@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import type { EmailOtpType } from '@supabase/supabase-js';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase, safeGetSession } }) => {
-	// First check if we're already authenticated
+	// First check if we're already authenticated booop
 	const session = await safeGetSession();
 
 	if (session?.user) {
