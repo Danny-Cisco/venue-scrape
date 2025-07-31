@@ -15,10 +15,13 @@ export const load: PageServerLoad = async ({ url, locals: { supabase, safeGetSes
 
 	// If not authenticated, verify OTP
 	const token_hash = url.searchParams.get('token_hash');
-	const type = url.searchParams.get('type') as EmailOtpType | null;
+	const type = url.searchParams.get('type') as EmailOtpType | null | email;
 
-	if (!token_hash || !type) {
-		console.error('❌: missing token_hash or type. Most likely an expired OTP');
+	if (!token_hash) {
+		console.error('❌: missing token_hash. Most likely an expired OTP');
+		throw redirect(303, '/auth/error');
+	} else if (!type) {
+		console.error('❌: type. Most likely an expired OTP');
 		throw redirect(303, '/auth/error');
 	}
 

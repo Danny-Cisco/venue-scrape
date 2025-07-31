@@ -14,7 +14,7 @@
 	let readOut = '😎 Ready to begin';
 	let loading = false;
 
-	let getAllVenues = false; // this is switch to test one venue or many
+	let getAllVenues = true; // this is switch to test one venue or many
 
 	let links = [];
 	let gigs = [];
