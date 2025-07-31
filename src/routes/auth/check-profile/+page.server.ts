@@ -7,28 +7,30 @@ export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession 
 	const session = await safeGetSession();
 
 	if (!session) {
-		console.log('❌ No session found, redirecting to login');
+		console.warn('❌ No session found — redirecting to login');
 		throw redirect(303, '/auth/login');
 	}
 
-	// Add error handling for the database query
+	const userId = session.user.id;
+
 	const { data: profile, error } = await supabase
 		.from('profiles')
 		.select('*')
-		.eq('id', session.user.id)
+		.eq('id', userId)
 		.maybeSingle();
 
 	if (error) {
-		console.error('❌ Profile fetch error:', error.message);
-		// You might want to handle this differently based on your needs
+		console.error('❌ Supabase profile fetch failed:', error.message);
+		// If it's a permission error, your table RLS might be misconfigured
+		// Instead of redirecting, consider showing a detailed error page for debugging
 		throw redirect(303, '/auth/error');
 	}
 
 	if (!profile) {
-		console.log('ℹ️ No profile found, redirecting to create profile');
+		console.log(`ℹ️ No profile found for user ${userId}, redirecting to create-profile`);
 		throw redirect(303, '/auth/create-profile');
 	}
 
-	console.log('✅ Profile found, redirecting to load profile');
+	console.log(`✅ Profile found for user ${userId}, redirecting to load-profile`);
 	throw redirect(303, '/auth/load-profile');
 };
