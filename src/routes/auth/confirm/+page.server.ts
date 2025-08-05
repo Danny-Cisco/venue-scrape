@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	const token_hash = url.searchParams.get('token_hash');
 	const type = url.searchParams.get('type') as EmailOtpType | null;
 
-	// Check for missing parameters separately
+	// Check for missing parameters separately boop
 	if (!token_hash || !type) {
 		console.error('❌ Malformed or expired magic link detected. Full URL:', url.href);
 
