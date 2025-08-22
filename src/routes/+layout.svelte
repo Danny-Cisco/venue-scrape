@@ -95,7 +95,7 @@
 </script>
 
 <!-- page gradient -->
-<div class="fixed inset-0 z-[0] bg-gradient-to-br from-white/10 to-black/50"></div>
+<div class="fixed inset-0 z-[0] bg-gradient-to-br from-white/5 to-black/5"></div>
 
 <div class="flex flex-1 h-full">
 	<!-- Main Content -->
@@ -941,7 +941,7 @@
 	<!-- Logo -->
 	<strong class="flex items-end p-2 px-4 text-3xl bg-black border-0 border-purple-500 rounded-full">
 		<!-- <img src="/icon.svg" class="size-10" alt="" /> -->
-		<span class="px-3 py-1 text-4xl font-black text-gray-100 uppercase bg-black font-fancy2">
+		<span class="px-3 py-1 text-4xl font-black uppercase bg-black text-cream font-fancy2">
 			Music Naarm
 		</span>
 	</strong>
