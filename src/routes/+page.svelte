@@ -9,15 +9,18 @@
 <div class="absolute inset-0 bg-black">
 	<div class="page-center" in:fade>
 		<div class="flex flex-col items-stretch items-start justify-start">
-			<div class="flex flex-wrap gap-8">
-				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Music</h1>
-				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Naarm</h1>
+			<div class="relative">
+				<img
+					src="http://musicnaarm.com/images/musicnaarm-poster.png"
+					alt="colorful graphic of electricity moving between 4 coloured rectangles"
+					class="object-cover w-full mx-auto mb-8"
+				/>
 			</div>
 
-			<p class="w-10 mt-20 mb-12 mr-auto font-sans font-semibold text-left text-7xl text-cream">
-				Find your crowd.
-			</p>
-
+			<!-- <div class="flex flex-wrap gap-8">
+				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Music</h1>
+				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Naarm</h1>
+			</div> -->
 			<a
 				href="/dashboards/genre-chart"
 				class="inline-flex items-center justify-center w-full px-5 py-3 text-base font-medium text-center text-white rounded-lg bg-naarmpink-500 hover:bg-purple-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
@@ -39,6 +42,9 @@
 					/>
 				</svg>
 			</a>
+			<p class="w-full mt-10 mr-auto font-sans font-medium text-center text-7xl text-cream">
+				FIND YOUR CROWD.
+			</p>
 		</div>
 	</div>
 </div>
