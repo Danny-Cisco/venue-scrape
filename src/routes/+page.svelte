@@ -37,9 +37,21 @@
 					/>
 				</svg>
 			</a>
-			<!-- <p class="w-full mt-10 mr-auto font-sans font-thin text-center text-7xl text-gray-500/50">
+			<p class="w-full mt-10 mr-auto font-sans font-thin text-center text-7xl text-gray-500/50">
 				FIND YOUR CROWD.
-			</p> -->
+			</p>
+			<div class="w-full mt-8 text-center">
+				<p class="font-sans text-lg text-gray-300">
+					Want early access to the beta?
+					<a
+						href="https://musicnaarm.com"
+						class="underline transition-colors duration-200 text-naarmpink-500 hover:text-purple-400"
+					>
+						Join our mailing list
+					</a>
+					to sign up!
+				</p>
+			</div>
 		</div>
 	</div>
 </div>
