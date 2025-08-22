@@ -8,7 +8,7 @@
 </script>
 
 <div
-	class="absolute bg-purple-500 rounded-full shadow-xl top-4 size-10 center hover:bg-pink-500 btn-hover right-5"
+	class="absolute bg-purple-500 rounded-full shadow-xl top-4 size-10 center hover:bg-pink-500 btn-hover left-5"
 	on:click={() => {
 		$showGigModal = false;
 		$showBandModal = false;
