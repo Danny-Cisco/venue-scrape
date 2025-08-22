@@ -7,7 +7,7 @@
 
 <div class="page-center" in:fade>
 	<div class="absolute inset-0 h-full bg-black">
-		<div class="flex flex-col items-stretch items-start justify-start max-w-4xl mx-auto">
+		<div class="flex flex-col items-stretch items-start justify-start max-w-4xl p-2 mx-auto">
 			<img
 				src="http://musicnaarm.com/images/musicnaarm-image.png"
 				alt="colorful graphic of electricity moving between 4 coloured rectangles"
