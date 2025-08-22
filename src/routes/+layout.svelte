@@ -939,9 +939,14 @@
 	class="fixed z-[999999] top-0 left-0 right-0 flex h-[100px] font-thin leading-none tracking-tight items-center justify-between px-4 py-2 isolate bg-black"
 >
 	<!-- Logo -->
-	<strong class="flex items-end p-2 px-4 text-3xl bg-black border-0 border-purple-500 rounded-full">
+	<strong class="relative flex items-center p-2 px-4 text-3xl rounded-full">
+		<img
+			src="http://musicnaarm.com/images/musicnaarm-electricity.png"
+			alt="colorful graphic of electricity moving between 4 coloured rectangles"
+			class="  z-[-1] w-12 h-12 overflow-hidden border-[1px] border-pink-200 rounded-full"
+		/>
 		<!-- <img src="/icon.svg" class="size-10" alt="" /> -->
-		<span class="px-3 py-1 text-4xl font-black uppercase bg-black text-cream font-fancy2">
+		<span class="px-3 py-1 text-4xl font-black uppercase text-cream font-fancy2">
 			Music Naarm
 		</span>
 	</strong>

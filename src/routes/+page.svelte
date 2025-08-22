@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-
 	import { onMount } from 'svelte';
 
 	onMount(() => {});
@@ -13,19 +12,15 @@
 				<img
 					src="http://musicnaarm.com/images/musicnaarm-poster.png"
 					alt="colorful graphic of electricity moving between 4 coloured rectangles"
-					class="object-cover w-full mx-auto mb-8"
+					class="object-cover w-full mx-auto mb-12"
 				/>
 			</div>
 
-			<!-- <div class="flex flex-wrap gap-8">
-				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Music</h1>
-				<h1 class="font-black text-left uppercase text-cream text-8xl font-fancy2">Naarm</h1>
-			</div> -->
 			<a
 				href="/dashboards/genre-chart"
-				class="inline-flex items-center justify-center w-full px-5 py-3 text-base font-medium text-center text-white rounded-lg bg-naarmpink-500 hover:bg-purple-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+				class="inline-flex items-center justify-center w-full px-5 py-4 text-base font-medium text-center text-white rounded-lg cta-button bg-naarmpink-500 hover:bg-purple-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
 			>
-				Go to Gig Guide
+				View Gig Guide
 				<svg
 					class="w-5 h-5 ms-2 rtl:rotate-180"
 					aria-hidden="true"
@@ -42,9 +37,50 @@
 					/>
 				</svg>
 			</a>
-			<p class="w-full mt-10 mr-auto font-sans font-medium text-center text-7xl text-cream">
+			<!-- <p class="w-full mt-10 mr-auto font-sans font-thin text-center text-7xl text-gray-500/50">
 				FIND YOUR CROWD.
-			</p>
+			</p> -->
 		</div>
 	</div>
 </div>
+
+<style>
+	/* Existing styles are assumed to be in a global stylesheet or component scope */
+	.cta-button {
+		position: relative;
+		overflow: hidden;
+		z-index: 1;
+	}
+
+	/* Animated outline effect */
+	.cta-button::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 0.5rem; /* Matches button's rounded-lg */
+		padding: 1px; /* Thickness of the outline */
+		background: linear-gradient(135deg, #ff00ff, #00ffff, #ff00ff);
+		-webkit-mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
+		mask:
+			linear-gradient(#fff 0 0) content-box,
+			linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+		animation: pulse 2s infinite;
+		z-index: -1;
+	}
+
+	@keyframes pulse {
+		0% {
+			opacity: 0.4;
+		}
+		50% {
+			opacity: 0.8;
+		}
+		100% {
+			opacity: 0.4;
+		}
+	}
+</style>
