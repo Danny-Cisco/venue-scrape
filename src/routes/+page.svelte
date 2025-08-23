@@ -23,10 +23,9 @@
 			</div>
 			<a
 				href="/dashboards/genre-chart"
-				class="inline-flex items-center justify-center w-full px-5 py-4 text-base font-medium text-center text-white rounded-lg cta-button bg-naarmpink-500 hover:bg-purple-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+				class="inline-flex items-center justify-center w-full hover:mt-[-1px] hover:mb-[1px] px-5 py-4 text-lg font-medium text-center text-white border-4 border-pink-300 rounded-lg my-shadow cta-button bg-naarmpink-500 hover:bg-purple-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
 			>
-				View Gig Guide
-				<svg
+				Take me to the gig guide <svg
 					class="w-5 h-5 ms-2 rtl:rotate-180"
 					aria-hidden="true"
 					xmlns="http://www.w3.org/2000/svg"
@@ -66,24 +65,12 @@
 		z-index: 1;
 	}
 
-	/* Animated outline effect */
-	.cta-button::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: 0.5rem; /* Matches button's rounded-lg */
-		padding: 1px; /* Thickness of the outline */
-		background: linear-gradient(135deg, #ff00ff, #00ffff, #ff00ff);
-		-webkit-mask:
-			linear-gradient(#fff 0 0) content-box,
-			linear-gradient(#fff 0 0);
-		mask:
-			linear-gradient(#fff 0 0) content-box,
-			linear-gradient(#fff 0 0);
-		-webkit-mask-composite: xor;
-		mask-composite: exclude;
-		animation: pulse 2s infinite;
-		z-index: -1;
+	.my-shadow:hover {
+		box-shadow: rgba(255, 0, 128, 0) 0px 0px 40px;
+	}
+
+	.my-shadow {
+		/* box-shadow: rgba(255, 0, 128, 0.4) 0px 10px 10px; */
 	}
 
 	@keyframes pulse {
